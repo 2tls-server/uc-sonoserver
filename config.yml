@@ -1,0 +1,10 @@
+server:
+  port: 39039
+  base-url: "http://127.0.0.1:39039/"
+sonolus:
+  required-client-version: 1.0.0
+  items-per-page:
+    default: 10
+    engines: 10
+  name: "UntitledCharts"
+  description: "discord.gg/UntitledCharts\nA custom chart server :)"
