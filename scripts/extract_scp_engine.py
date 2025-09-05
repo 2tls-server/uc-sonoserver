@@ -1,5 +1,5 @@
 """
-SCP Engine Extractor
+SCP Engine Extractor - Multi-SCP Support
 
 Requirements:
 - Pillow
@@ -31,10 +31,15 @@ def save_json(data: dict, dst: Path):
     dst.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
 
-def process_resource(zf: zipfile.ZipFile, resource: dict, resource_type: str, out_root: Path):
+def process_resource(
+    zf: zipfile.ZipFile, resource: dict, resource_type: str, out_root: Path
+):
+    """Process a single resource into a folder with JSON and files."""
     name = resource["name"]
     folder_name = f"{resource_type}_{name}"
     res_dir = out_root / folder_name
+    if res_dir.exists():
+        return res_dir  # Skip already extracted
     res_dir.mkdir(parents=True, exist_ok=True)
 
     # Resource JSON
@@ -42,9 +47,9 @@ def process_resource(zf: zipfile.ZipFile, resource: dict, resource_type: str, ou
         "version": resource["version"],
         "title": resource["title"],
         "subtitle": resource.get("subtitle", ""),
-        "author": resource.get("author", "")
+        "author": resource.get("author", ""),
     }
-    save_json(res_json, res_dir / "resource.json")
+    save_json(res_json, res_dir / f"{resource_type}.json")
 
     # Extract files
     for key, value in resource.items():
@@ -67,19 +72,23 @@ def process_resource(zf: zipfile.ZipFile, resource: dict, resource_type: str, ou
 
 
 def extract_engine(scp_path: Path, out_root: Path):
+    """Extract engine and all resources from a single SCP file."""
     out_root.mkdir(exist_ok=True)
 
     with zipfile.ZipFile(scp_path, "r") as zf:
-        with zf.open("sonolus/levels/list") as f:
-            levels_data = json.load(f)
+        # --- Engine ---
+        try:
+            with zf.open("sonolus/engines/list") as f:  # plural
+                engine_list = json.load(f)
+        except KeyError:
+            print(f"No engines found in {scp_path}")
+            return
 
-        first_level = levels_data["items"][0]
-        engine = first_level["engine"]
+        engine = engine_list["items"][0]
 
         engine_dir = out_root / engine["name"]
         engine_dir.mkdir(parents=True, exist_ok=True)
 
-        # Engine JSON
         engine_json = {
             "version": engine["version"],
             "title": engine["title"],
@@ -94,8 +103,15 @@ def extract_engine(scp_path: Path, out_root: Path):
             engine_json["description"] = engine["description"]
         save_json(engine_json, engine_dir / "engine.json")
 
-        # Extract top-level files
-        top_keys = ["thumbnail", "playData", "watchData", "previewData", "tutorialData", "configuration"]
+        # Top-level engine files
+        top_keys = [
+            "thumbnail",
+            "playData",
+            "watchData",
+            "previewData",
+            "tutorialData",
+            "configuration",
+        ]
         for key in top_keys:
             if key in engine:
                 url = engine[key]["url"]
@@ -106,19 +122,38 @@ def extract_engine(scp_path: Path, out_root: Path):
                 else:
                     extract_file(zf, url, engine_dir / key)
 
-        # Process resources
+        # Engine-attached resources
         for resource_type in ["skin", "background", "effect", "particle"]:
             if resource_type in engine:
                 process_resource(zf, engine[resource_type], resource_type, engine_dir)
 
+        # --- Additional resources from SCP lists ---
+        for resource_type_plural in ["skins", "backgrounds", "effects", "particles"]:
+            list_path = f"sonolus/{resource_type_plural}/list"
+            try:
+                with zf.open(list_path) as f:
+                    res_list = json.load(f)
+            except KeyError:
+                continue
+            type_name = resource_type_plural[:-1]  # skins -> skin
+            for res_item in res_list["items"]:
+                process_resource(zf, res_item, type_name, engine_dir)
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract first level engine from SCP file.")
-    parser.add_argument("scp", type=Path, help="Path to .scp file")
-    parser.add_argument("--out", type=Path, default=Path("extracted_engine"), help="Output folder")
+    parser = argparse.ArgumentParser(
+        description="Extract engines and resources from SCP files."
+    )
+    parser.add_argument("scp_files", type=Path, nargs="+", help="One or more SCP files")
+    parser.add_argument(
+        "--out", type=Path, default=Path("extracted_engine"), help="Output folder"
+    )
     args = parser.parse_args()
 
-    extract_engine(args.scp, args.out)
+    for scp_path in args.scp_files:
+        extract_engine(scp_path, args.out)
+
+    print("All done.")
 
 
 if __name__ == "__main__":

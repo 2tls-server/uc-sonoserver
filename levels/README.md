@@ -10,9 +10,9 @@ Instead of defining a `levels.json`, the server will iterate all directories her
 
 ### Files in a Level ZIP Folder
 Before zipping, ensure the following:
-1. `music.mp3` (if FFMPEG is installed, .wav will auto-convert)
+1. `music.mp3`
 2. `level.data` (THIS IS PROBABLY NOT A SUS FILE!!)
-3. `music_pre.mp3` OPTIONAL (if FFMPEG is installed, .wav will auto-convert)
+3. `music_pre.mp3` OPTIONAL
 4. `jacket.png`
 5. `stage.png` OPTIONAL - if not provided, one will be generated using `jacket.png`
 6. `stage_thumbnail.png` OPTIONAL - must be provided if stage.png is provided (will also be generated from jacket.png)

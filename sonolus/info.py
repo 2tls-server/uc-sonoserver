@@ -20,7 +20,7 @@ def setup():
         button_list = [
             "post",
             "level",
-            "playlist",
+            # "playlist",
             "skin",
             "background",
             "effect",

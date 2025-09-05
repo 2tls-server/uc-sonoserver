@@ -3,6 +3,11 @@ levels/*
 !levels/.gitkeep
 !levels/README.md
 
+# Extracted Engine and Charts
+extracted_engine/
+extracted_charts/
+!extracted_charts/processed.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

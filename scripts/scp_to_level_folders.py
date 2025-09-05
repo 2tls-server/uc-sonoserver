@@ -26,9 +26,25 @@ def extract_file(zf: zipfile.ZipFile, src: str, dst: Path):
 
 def convert_audio_to_mp3(src: Path, dst: Path):
     """Convert any audio file to mp3 using ffmpeg."""
-    subprocess.run([
-        "ffmpeg", "-y", "-i", str(src), "-vn", "-ar", "44100", "-ac", "2", "-b:a", "192k", str(dst)
-    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(src),
+            "-vn",
+            "-ar",
+            "44100",
+            "-ac",
+            "2",
+            "-b:a",
+            "192k",
+            str(dst),
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=True,
+    )
 
 
 def convert_image_to_png(src: Path, dst: Path):
@@ -56,7 +72,9 @@ def process_level(zf: zipfile.ZipFile, item: dict, out_root: Path, processed: se
         "artists": item.get("artists"),
         "author": item.get("author"),
     }
-    (level_dir / "level.json").write_text(json.dumps(level_json, indent=4), encoding="utf-8")
+    (level_dir / "level.json").write_text(
+        json.dumps(level_json, indent=4), encoding="utf-8"
+    )
 
     # 2. level.data
     data_url = item["data"]["url"].lstrip("/")
@@ -115,7 +133,9 @@ def process_level(zf: zipfile.ZipFile, item: dict, out_root: Path, processed: se
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract SCP(s) to multiple level folders.")
+    parser = argparse.ArgumentParser(
+        description="Extract SCP(s) to multiple level folders."
+    )
     parser.add_argument("scp", type=Path, nargs="+", help="Path(s) to .scp file(s)")
     args = parser.parse_args()
 

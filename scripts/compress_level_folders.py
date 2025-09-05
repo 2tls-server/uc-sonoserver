@@ -12,6 +12,7 @@ from pathlib import Path
 import argparse
 import uuid
 
+
 def zip_folder(folder: Path, output_dir: Path, prefix: str):
     """Zip a folder and name it {prefix}-{uuid4}-{uuid4}.zip."""
     uid1 = uuid.uuid4()
@@ -19,14 +20,20 @@ def zip_folder(folder: Path, output_dir: Path, prefix: str):
     zip_name = f"{prefix}-{uid1}-{uid2}.zip"
     zip_path = output_dir / zip_name
 
-    shutil.make_archive(str(zip_path.with_suffix('')), 'zip', folder)
+    shutil.make_archive(str(zip_path.with_suffix("")), "zip", folder)
     shutil.rmtree(folder)  # delete original folder
     print(f"Zipped {folder.name} -> {zip_name}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compile extracted level folders into zips.")
-    parser.add_argument("out_folder", type=Path, help="Path to the folder containing extracted level subdirs")
+    parser = argparse.ArgumentParser(
+        description="Compile extracted level folders into zips."
+    )
+    parser.add_argument(
+        "out_folder",
+        type=Path,
+        help="Path to the folder containing extracted level subdirs",
+    )
     args = parser.parse_args()
 
     out_folder = args.out_folder
