@@ -54,12 +54,13 @@ def setup():
                 keywords = query_params.get("keywords")
                 if keywords:
                     excluded_keys = ["description"]
-                    if any(
-                        keywords.lower() in str(value).lower()
-                        and key not in excluded_keys
-                        for key, value in item.items()
-                    ):
-                        filtered_data.append(item)
+                    for item in raw_data:
+                        if any(
+                            keywords.lower() in str(value).lower()
+                            and key not in excluded_keys
+                            for key, value in item.items()
+                        ):
+                            filtered_data.append(item)
                     data = filtered_data
                 else:
                     data = raw_data
