@@ -515,6 +515,13 @@ class ServerItemDetails(TypedDict):
     sections: List[ServerItemSection]
 
 
+class ServerItemInfo(TypedDict):
+    creates: Optional[List[ServerForm]]
+    searches: Optional[List[ServerForm]]
+    sections: List[ServerItemSection]
+    banner: Optional[SRL]
+
+
 # endregion
 
 

@@ -25,6 +25,9 @@ router = APIRouter()
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType, page: int = 0):
+        query_params = dict(request.query_params)
+        query_params.pop("localization", None)
+        query_params.pop("page", None)
         if item_type == "engines":
             data = compile_engines_list(request.app.base_url)
         elif item_type == "skins":
@@ -41,7 +44,36 @@ def setup():
         # elif item_type == "playlists":
         #     data = compile_playlists_list(request.app.base_url)
         elif item_type == "levels":
-            data = compile_static_levels_list(request.app.base_url)
+            raw_data = compile_static_levels_list(request.app.base_url)
+            # XXX: do japanese/romaji searching via CUTLET python lib
+            # XXX: fuzzy matching...
+            filtered_data = []
+            type_ = query_params.get("type")
+            print(type_)
+            if type_ == "quick":
+                keywords = query_params.get("keywords")
+                if keywords:
+                    excluded_keys = ["description"]
+                    if any(
+                        keywords.lower() in str(value).lower()
+                        and key not in excluded_keys
+                        for key, value in item.items()
+                    ):
+                        filtered_data.append(item)
+                    data = filtered_data
+                else:
+                    data = raw_data
+            elif type_ == "advanced":
+                title_search = query_params["title"]
+                for item in raw_data:
+                    if (
+                        "title" in item
+                        and title_search.lower() in item["title"].lower()
+                    ):
+                        filtered_data.append(item)
+                data = filtered_data
+            else:
+                data = raw_data
         # elif item_type == "replays":
         #     data = compile_replays_list(request.app.base_url)
         # elif item_type == "rooms":

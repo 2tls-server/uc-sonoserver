@@ -17,8 +17,14 @@ from helpers.datastructs import (
     LevelItemSection,
     ReplayItemSection,
     RoomItemSection,
+    ServerItemInfo,
+    ServerForm,
 )
-from helpers.section_helper import create_section
+from helpers.data_helpers import (
+    create_section,
+    create_server_form,
+    ServerFormOptionsFactory,
+)
 from helpers.data_compilers import (
     compile_banner,
     compile_backgrounds_list,
@@ -39,6 +45,7 @@ def setup():
     async def main(request: Request, item_type: ItemType):
         extended_description = ""
         banner_srl = compile_banner()
+        searches = []
         if item_type == "engines":
             data = compile_engines_list(request.app.base_url)
             sections: List[EngineItemSection] = [
@@ -129,6 +136,19 @@ def setup():
                     description=f"{request.app.config['description']}\n{extended_description}",
                 )
             ]
+            searches: List[ServerForm] = [
+                create_server_form(
+                    "advanced",
+                    "#ADVANCED",
+                    False,
+                    [
+                        ServerFormOptionsFactory.server_text_option(
+                            "title", "#TITLE", False, "", "#TITLE_PLACEHOLDER", 0, []
+                        )
+                    ],
+                    icon="advanced",
+                )
+            ]
         # elif item_type == "replays":
         #     data = compile_replays_list(request.app.base_url)
         #     sections: List[ReplayItemSection] = [
@@ -147,9 +167,11 @@ def setup():
             raise HTTPException(
                 status_code=404, detail=f'Item "{item_type}" not found.'
             )
-        data = {
+        data: ServerItemInfo = {
             "sections": sections,
         }
         if banner_srl:
             data["banner"] = banner_srl
+        if searches:
+            data["searches"] = searches
         return data

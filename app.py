@@ -8,7 +8,7 @@ with open("config.yml", "r") as f:
 
 from fastapi import FastAPI, Request
 from fastapi import status, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
@@ -16,7 +16,7 @@ import uvicorn
 
 from helpers.repository_map import repo
 
-debug = False
+debug = True
 
 
 class SonolusFastAPI(FastAPI):
@@ -75,8 +75,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(SonolusMiddleware)
-domain = urlparse(config["server"]["base-url"]).netloc
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=[domain])
+if not debug:
+    domain = urlparse(config["server"]["base-url"]).netloc
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=[domain])
+
+
+class ForceHTTPSRedirectResponse(RedirectResponse):
+    def __init__(self, url: str, *args, **kwargs):
+        # Force the URL to use HTTPS
+        if not url.startswith("https://"):
+            url = url.replace("http://", "https://", 1)
+        super().__init__(url, *args, **kwargs)
+
+
+@app.middleware("http")
+async def force_https_redirect(request, call_next):
+    response = await call_next(request)
+
+    if config["server"]["force-https"] and not debug:
+        if response.headers.get("Location"):
+            response.headers["Location"] = response.headers.get("Location").replace(
+                "http://", "https://", 1
+            )
+
+    return response
+
+
 # app.mount("/static", StaticFiles(directory="static"), name="static")
 # templates = Jinja2Templates(directory="templates")
 

@@ -1,6 +1,7 @@
 server:
   port: 39039
   base-url: "https://sonolus.untitledcharts.com"
+  force-https: true
 sonolus:
   required-client-version: 1.0.0
   items-per-page:

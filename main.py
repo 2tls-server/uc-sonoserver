@@ -1,9 +1,8 @@
 if __name__ == "__main__":
     import asyncio
     from app import start_fastapi
-
     import argparse
 
     args = argparse.ArgumentParser()
-
-    asyncio.run(start_fastapi(args))
+    parsed_args = args.parse_args()
+    asyncio.run(start_fastapi(parsed_args))
