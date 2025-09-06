@@ -13,6 +13,8 @@ import zipfile
 from pathlib import Path
 from PIL import Image
 
+add_to_description = "Archived (read-only) file from Chart Cyanvas by Nanashi.\n"
+
 
 def extract_file(zf: zipfile.ZipFile, src: str, dst: Path):
     """Extract a file from the zip to a destination path."""
@@ -36,6 +38,11 @@ def process_resource(
 ):
     """Process a single resource into a folder with JSON and files."""
     name = resource["name"]
+    if f"/sonolus/{resource_type}s/{name}" in zf.namelist():
+        with zf.open(f"/sonolus/{resource_type}s/{name}") as f:
+            resource_expanded_data = json.load(f)
+    else:
+        resource_expanded_data = {}
     folder_name = f"{resource_type}_{name}"
     res_dir = out_root / folder_name
     if res_dir.exists():
@@ -49,6 +56,14 @@ def process_resource(
         "subtitle": resource.get("subtitle", ""),
         "author": resource.get("author", ""),
     }
+    if resource.get("description"):
+        res_json["description"] = resource["description"]
+        res_json["description"] = f"{add_to_description}\n{res_json['description']}"
+    elif resource_expanded_data.get("description"):
+        res_json["description"] = resource_expanded_data["description"]
+        res_json["description"] = f"{add_to_description}\n{res_json['description']}"
+    elif len(add_to_description.strip()) != 0:
+        res_json["description"] = add_to_description
     save_json(res_json, res_dir / f"{resource_type}.json")
 
     # Extract files
@@ -76,15 +91,20 @@ def extract_engine(scp_path: Path, out_root: Path):
     out_root.mkdir(exist_ok=True)
 
     with zipfile.ZipFile(scp_path, "r") as zf:
-        # --- Engine ---
         try:
-            with zf.open("sonolus/engines/list") as f:  # plural
+            with zf.open("sonolus/engines/list") as f:
                 engine_list = json.load(f)
         except KeyError:
             print(f"No engines found in {scp_path}")
             return
 
         engine = engine_list["items"][0]
+
+        if f"sonolus/engines/{engine['name']}" in zf.namelist():
+            with zf.open(f"sonolus/engines/{engine['name']}") as f:
+                engine_expanded_data = json.load(f)
+        else:
+            engine_expanded_data = {}
 
         engine_dir = out_root / engine["name"]
         engine_dir.mkdir(parents=True, exist_ok=True)
@@ -99,8 +119,18 @@ def extract_engine(scp_path: Path, out_root: Path):
             "effect_name": engine["effect"]["name"],
             "particle_name": engine["particle"]["name"],
         }
-        if "description" in engine:
+        if engine.get("description"):
             engine_json["description"] = engine["description"]
+            engine_json["description"] = (
+                f"{add_to_description}\n{engine_json['description']}"
+            )
+        elif engine_expanded_data.get("description"):
+            engine_json["description"] = engine_expanded_data["description"]
+            engine_json["description"] = (
+                f"{add_to_description}\n{engine_json['description']}"
+            )
+        elif len(add_to_description.strip()) != 0:
+            engine_json["description"] = add_to_description
         save_json(engine_json, engine_dir / "engine.json")
 
         # Top-level engine files
@@ -122,12 +152,7 @@ def extract_engine(scp_path: Path, out_root: Path):
                 else:
                     extract_file(zf, url, engine_dir / key)
 
-        # Engine-attached resources
-        for resource_type in ["skin", "background", "effect", "particle"]:
-            if resource_type in engine:
-                process_resource(zf, engine[resource_type], resource_type, engine_dir)
-
-        # --- Additional resources from SCP lists ---
+        # --- Resources from SCP lists ---
         for resource_type_plural in ["skins", "backgrounds", "effects", "particles"]:
             list_path = f"sonolus/{resource_type_plural}/list"
             try:

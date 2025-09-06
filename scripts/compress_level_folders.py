@@ -14,10 +14,9 @@ import uuid
 
 
 def zip_folder(folder: Path, output_dir: Path, prefix: str):
-    """Zip a folder and name it {prefix}-{uuid4}-{uuid4}.zip."""
-    uid1 = uuid.uuid4()
-    uid2 = uuid.uuid4()
-    zip_name = f"{prefix}-{uid1}-{uid2}.zip"
+    """Zip a folder and name it {prefix}-{uuid4}.zip."""
+    uid1 = str(uuid.uuid4()).replace("-", "")
+    zip_name = f"{prefix}-{uid1}.zip"
     zip_path = output_dir / zip_name
 
     shutil.make_archive(str(zip_path.with_suffix("")), "zip", folder)

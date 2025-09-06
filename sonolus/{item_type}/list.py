@@ -11,7 +11,7 @@ from helpers.data_compilers import (
     compile_skins_list,
     compile_static_posts_list,
     # compile_playlists_list,
-    # compile_levels_list,
+    compile_static_levels_list,
     # compile_replays_list,
     # compile_rooms_list
     sort_posts_by_newest,
@@ -40,8 +40,8 @@ def setup():
             data = sort_posts_by_newest(data)
         # elif item_type == "playlists":
         #     data = compile_playlists_list(request.app.base_url)
-        # elif item_type == "levels":
-        #     data = compile_levels_list(request.app.base_url)
+        elif item_type == "levels":
+            data = compile_static_levels_list(request.app.base_url)
         # elif item_type == "replays":
         #     data = compile_replays_list(request.app.base_url)
         # elif item_type == "rooms":

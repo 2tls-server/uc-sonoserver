@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 def setup():
-    @router.get("/{hash}")
+    @router.get("/{hash}/")
     async def main(request: Request, hash: str):
         file_data = repo.get_file(hash)
         if file_data:

@@ -11,7 +11,7 @@ from helpers.data_compilers import (
     compile_skins_list,
     compile_static_posts_list,
     # compile_playlists_list,
-    # compile_levels_list,
+    compile_static_levels_list,
     # compile_replays_list,
     # compile_rooms_list
 )
@@ -29,7 +29,16 @@ def setup():
         elif item_type == "skins":
             data = compile_skins_list(request.app.base_url)
         elif item_type == "backgrounds":
-            data = compile_backgrounds_list(request.app.base_url)
+            if item_name.startswith("levelbg-"):
+                level_data = compile_static_levels_list(request.app.base_url)
+                level_item = next(
+                    item
+                    for item in level_data
+                    if item["name"] == item_name.removeprefix("levelbg-")
+                )
+                data = [level_item["useBackground"]["item"]]
+            else:
+                data = compile_backgrounds_list(request.app.base_url)
         elif item_type == "effects":
             data = compile_effects_list(request.app.base_url)
         elif item_type == "particles":
@@ -39,8 +48,8 @@ def setup():
             # maybe also grab non-static posts lol
         # elif item_type == "playlists":
         #     data = compile_playlists_list(request.app.base_url)
-        # elif item_type == "levels":
-        #     data = compile_levels_list(request.app.base_url)
+        elif item_type == "levels":
+            data = compile_static_levels_list(request.app.base_url)
         # elif item_type == "replays":
         #     data = compile_replays_list(request.app.base_url)
         # elif item_type == "rooms":

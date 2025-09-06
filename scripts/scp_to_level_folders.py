@@ -17,6 +17,8 @@ import zipfile
 from pathlib import Path
 from PIL import Image
 
+add_to_description = ""
+
 
 def extract_file(zf: zipfile.ZipFile, src: str, dst: Path):
     """Extract a file from the zip to a given destination path."""
@@ -55,6 +57,8 @@ def convert_image_to_png(src: Path, dst: Path):
 
 def process_level(zf: zipfile.ZipFile, item: dict, out_root: Path, processed: set):
     level_name = item["name"]
+    with zf.open(f"sonolus/levels/{level_name}") as f:
+        level_expanded_data = json.load(f)
     level_dir = out_root / level_name
 
     # Skip if already processed
@@ -72,6 +76,14 @@ def process_level(zf: zipfile.ZipFile, item: dict, out_root: Path, processed: se
         "artists": item.get("artists"),
         "author": item.get("author"),
     }
+    if item.get("description"):
+        level_json["description"] = item["description"]
+        level_json["description"] = f"{add_to_description}\n{level_json['description']}"
+    elif level_expanded_data.get("description"):
+        level_json["description"] = level_expanded_data["description"]
+        level_json["description"] = f"{add_to_description}\n{level_json['description']}"
+    elif len(add_to_description.strip()) != 0:
+        level_json["description"] = add_to_description
     (level_dir / "level.json").write_text(
         json.dumps(level_json, indent=4), encoding="utf-8"
     )

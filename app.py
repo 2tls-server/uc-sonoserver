@@ -1,4 +1,6 @@
 import os, importlib, re
+from urllib.parse import urlparse
+
 import yaml
 
 with open("config.yml", "r") as f:
@@ -9,6 +11,7 @@ from fastapi import status, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 import uvicorn
 
 from helpers.repository_map import repo
@@ -27,6 +30,12 @@ class SonolusFastAPI(FastAPI):
         self.repository = repo
 
         self.exception_handlers.setdefault(HTTPException, self.http_exception_handler)
+
+        from helpers.data_compilers import compile_static_levels_list
+
+        compile_static_levels_list(
+            self.base_url
+        )  # this might take time, maybe compile now?
 
     def get_items_per_page(self, route: str) -> int:
         return self.config["items-per-page"].get(
@@ -66,6 +75,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(SonolusMiddleware)
+domain = urlparse(config["server"]["base-url"]).netloc
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=[domain])
 # app.mount("/static", StaticFiles(directory="static"), name="static")
 # templates = Jinja2Templates(directory="templates")
 

@@ -1,6 +1,7 @@
 donotload = False
 
 from typing import List
+import random
 
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
@@ -26,6 +27,7 @@ from helpers.data_compilers import (
     compile_particles_list,
     compile_skins_list,
     compile_static_posts_list,
+    compile_static_levels_list,
     sort_posts_by_newest,
 )
 
@@ -107,13 +109,26 @@ def setup():
         #             "Playlists", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="playlist"
         #         )
         #     ]
-        # elif item_type == "levels":
-        #     data = compile_levels_list(request.app.base_url)
-        #     sections: List[LevelItemSection] = [
-        #         create_section(
-        #             "Levels", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="level"
-        #         )
-        #     ]
+        elif item_type == "levels":
+            data = compile_static_levels_list(request.app.base_url)
+
+            amount = 7
+            randomized_data = []
+            added = []
+            for _ in range((amount if amount >= len(data) else len(data))):
+                i = random.choice(data)
+                while i["name"] in added:
+                    i = random.choice(data)
+                randomized_data.append(i)
+                added.append(i["name"])
+            sections: List[LevelItemSection] = [
+                create_section(
+                    "Random",
+                    item_type,
+                    randomized_data[:7],
+                    description=f"{request.app.config['description']}\n{extended_description}",
+                )
+            ]
         # elif item_type == "replays":
         #     data = compile_replays_list(request.app.base_url)
         #     sections: List[ReplayItemSection] = [
