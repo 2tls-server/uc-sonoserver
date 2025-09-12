@@ -33,7 +33,6 @@ from helpers.data_compilers import (
     compile_particles_list,
     compile_skins_list,
     compile_static_posts_list,
-    compile_static_levels_list,
     sort_posts_by_newest,
 )
 
@@ -129,40 +128,7 @@ def setup():
         #         )
         #     ]
         elif item_type == "levels":
-            data = await request.app.run_blocking(
-                compile_static_levels_list, request.app.base_url
-            )
-
-            amount = 7
-            randomized_data = []
-            added = []
-            for _ in range((amount if amount >= len(data) else len(data))):
-                i = random.choice(data)
-                while i["name"] in added:
-                    i = random.choice(data)
-                randomized_data.append(i)
-                added.append(i["name"])
-            sections: List[LevelItemSection] = [
-                create_section(
-                    "Random",
-                    item_type,
-                    randomized_data[:7],
-                    description=f"{request.app.config['description']}\n{extended_description}",
-                )
-            ]
-            searches: List[ServerForm] = [
-                create_server_form(
-                    "advanced",
-                    "#ADVANCED",
-                    False,
-                    [
-                        ServerFormOptionsFactory.server_text_option(
-                            "title", "#TITLE", False, "", "#TITLE_PLACEHOLDER", 0, []
-                        )
-                    ],
-                    icon="advanced",
-                )
-            ]
+            data = []
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         #     sections: List[ReplayItemSection] = [

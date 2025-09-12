@@ -11,7 +11,6 @@ from helpers.data_compilers import (
     compile_skins_list,
     compile_static_posts_list,
     # compile_playlists_list,
-    compile_static_levels_list,
     # compile_replays_list,
     # compile_rooms_list
 )
@@ -34,15 +33,8 @@ def setup():
             )
         elif item_type == "backgrounds":
             if item_name.startswith("levelbg-"):
-                level_data = await request.app.run_blocking(
-                    compile_static_levels_list, request.app.base_url
-                )
-                level_item = next(
-                    item
-                    for item in level_data
-                    if item["name"] == item_name.removeprefix("levelbg-")
-                )
-                data = [level_item["useBackground"]["item"]]
+                level_data = None  # get from api
+                data = []
             else:
                 data = await request.app.run_blocking(
                     compile_backgrounds_list, request.app.base_url
@@ -63,9 +55,7 @@ def setup():
         # elif item_type == "playlists":
         #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         elif item_type == "levels":
-            data = await request.app.run_blocking(
-                compile_static_levels_list, request.app.base_url
-            )
+            data = []
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":

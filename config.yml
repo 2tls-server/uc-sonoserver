@@ -9,3 +9,6 @@ sonolus:
     engines: 10
   name: "UntitledCharts"
   description: "discord.gg/UntitledCharts\nA custom chart server :)"
+api:
+  url: ""
+  auth: ""

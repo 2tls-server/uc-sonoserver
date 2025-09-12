@@ -35,12 +35,6 @@ class SonolusFastAPI(FastAPI):
 
         self.exception_handlers.setdefault(HTTPException, self.http_exception_handler)
 
-        from helpers.data_compilers import compile_static_levels_list
-
-        compile_static_levels_list(
-            self.base_url
-        )  # this might take time, maybe compile now?
-
     async def run_blocking(self, func, *args, **kwargs):
         return await asyncio.get_event_loop().run_in_executor(
             self.executor, lambda: func(*args, **kwargs)

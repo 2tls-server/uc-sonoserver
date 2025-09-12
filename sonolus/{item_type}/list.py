@@ -11,7 +11,6 @@ from helpers.data_compilers import (
     compile_skins_list,
     compile_static_posts_list,
     # compile_playlists_list,
-    compile_static_levels_list,
     # compile_replays_list,
     # compile_rooms_list
     sort_posts_by_newest,
@@ -57,40 +56,8 @@ def setup():
         # elif item_type == "playlists":
         #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         elif item_type == "levels":
-            raw_data = await request.app.run_blocking(
-                compile_static_levels_list, request.app.base_url
-            )
-            # XXX: do japanese/romaji searching via CUTLET python lib
-            # XXX: fuzzy matching...
-            filtered_data = []
-            type_ = query_params.get("type")
-            if type_ == "quick":
-                keywords = query_params.get("keywords")
-                if keywords:
-                    searching = True
-                    excluded_keys = ["description", "name"]
-                    for item in raw_data:
-                        if any(
-                            keywords.lower() in str(value).lower()
-                            and key not in excluded_keys
-                            for key, value in item.items()
-                        ):
-                            filtered_data.append(item)
-                    data = filtered_data
-                else:
-                    data = raw_data
-            elif type_ == "advanced":
-                searching = True
-                title_search = query_params["title"]
-                for item in raw_data:
-                    if (
-                        "title" in item
-                        and title_search.lower() in item["title"].lower()
-                    ):
-                        filtered_data.append(item)
-                data = filtered_data
-            else:
-                data = raw_data
+            # get from API
+            data = []
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":
