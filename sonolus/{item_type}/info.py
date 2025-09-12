@@ -44,10 +44,12 @@ def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType):
         extended_description = ""
-        banner_srl = compile_banner()
+        banner_srl = await request.app.run_blocking(compile_banner)
         searches = []
         if item_type == "engines":
-            data = compile_engines_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_engines_list, request.app.base_url
+            )
             sections: List[EngineItemSection] = [
                 create_section(
                     "Engines",
@@ -58,7 +60,9 @@ def setup():
                 )
             ]
         elif item_type == "skins":
-            data = compile_skins_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_skins_list, request.app.base_url
+            )
             sections: List[SkinItemSection] = [
                 create_section(
                     "Skins",
@@ -69,7 +73,9 @@ def setup():
                 )
             ]
         elif item_type == "backgrounds":
-            data = compile_backgrounds_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_backgrounds_list, request.app.base_url
+            )
             sections: List[BackgroundItemSection] = [
                 create_section(
                     "Backgrounds",
@@ -80,7 +86,9 @@ def setup():
                 )
             ]
         elif item_type == "effects":
-            data = compile_effects_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_effects_list, request.app.base_url
+            )
             sections: List[EffectItemSection] = [
                 create_section(
                     "Effects",
@@ -91,7 +99,9 @@ def setup():
                 )
             ]
         elif item_type == "particles":
-            data = compile_particles_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_particles_list, request.app.base_url
+            )
             sections: List[ParticleItemSection] = [
                 create_section(
                     "Particles",
@@ -102,7 +112,9 @@ def setup():
                 )
             ]
         elif item_type == "posts":
-            data = compile_static_posts_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_static_posts_list, request.app.base_url
+            )
             # grab non-static posts too
             # sort em
             data = sort_posts_by_newest(data)
@@ -110,14 +122,16 @@ def setup():
                 create_section("Newest Posts", item_type, data[:5], icon="post")
             ]
         # elif item_type == "playlists":
-        #     data = compile_playlists_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         #     sections: List[PlaylistItemSection] = [
         #         create_section(
         #             "Playlists", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="playlist"
         #         )
         #     ]
         elif item_type == "levels":
-            data = compile_static_levels_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_static_levels_list, request.app.base_url
+            )
 
             amount = 7
             randomized_data = []
@@ -150,14 +164,14 @@ def setup():
                 )
             ]
         # elif item_type == "replays":
-        #     data = compile_replays_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         #     sections: List[ReplayItemSection] = [
         #         create_section(
         #             "Replays", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="replay"
         #         )
         #     ]
         # elif item_type == "rooms":
-        #     data = compile_rooms_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_rooms_list, request.app.base_url)
         #     sections: List[RoomItemSection] = [
         #         create_section(
         #             "Rooms", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="room"

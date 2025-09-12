@@ -16,6 +16,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 from PIL import Image
+import concurrent.futures
 
 add_to_description = ""
 
@@ -179,11 +180,21 @@ def main():
                 print(f"Warning: No levels list found in {scp_path}")
                 continue
 
+            with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
+                # Map each item to a worker in the thread pool
+                futures = [
+                    executor.submit(process_level, zf, item, out_root, processed)
+                    for item in levels_data["items"]
+                ]
+
+                # Iterate through the results after all threads have completed
+                for future in concurrent.futures.as_completed(futures):
+                    if future.result():
+                        updated = True
+
             for item in levels_data["items"]:
-                # process_level should return True if a new level was actually extracted
-                if process_level(zf, item, out_root, processed):
+                if item["name"] not in processed:
                     processed.add(item["name"])
-                    updated = True
 
     # Save updated processed list
     if updated:

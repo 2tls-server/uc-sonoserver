@@ -2,7 +2,7 @@ import json, os
 from zipfile import ZipFile
 from io import BytesIO
 
-from typing import Optional, List
+from typing import Optional, List, Union, Dict
 from helpers.datastructs import (
     EngineItem,
     SRL,
@@ -36,6 +36,7 @@ if os.path.exists("levels/compiled_static_levels.json"):
         static_levels_startup = json.load(f)
 else:
     static_levels_startup = {"levels": [], "resources": {}}
+alr_compiled = set()
 
 
 def clear_compile_cache(specific: str = None):
@@ -72,6 +73,8 @@ def compile_static_posts_list(source: str = None) -> List[PostItem]:
             compiled_data["source"] = source
         with open(f"files/posts/{post}/post.json", "r", encoding="utf8") as f:
             post_data: dict = json.load(f)
+        if not post_data.get("enabled", True):
+            continue
         item_keys = ["version", "title", "time", "author", "description"]
         for key in item_keys:
             compiled_data[key] = post_data[key]
@@ -92,10 +95,10 @@ def sort_posts_by_newest(posts: List[PostItem]) -> List[PostItem]:
 
 
 def compile_static_levels_list(source: str = None) -> List[LevelItem]:
-    alr_compiled = [item["name"] for item in cached["static_levels"]]
+    global alr_compiled
     if len(alr_compiled) == 0:
         cached["static_levels"] = static_levels_startup["levels"]
-        alr_compiled = [item["name"] for item in cached["static_levels"]]
+        alr_compiled = set([item["name"] for item in cached["static_levels"]])
         cached_static_level_resource_paths = static_levels_startup["resources"]
         for hash, file_path in cached_static_level_resource_paths.items():
             repo._map[hash] = {"hash": hash, "file": file_path}
@@ -103,112 +106,131 @@ def compile_static_levels_list(source: str = None) -> List[LevelItem]:
     levels_root = "levels"
     engines = compile_engines_list(source)
     modified = False
-    for engine_name in os.listdir(levels_root):
-        engine_path = os.path.join(levels_root, engine_name)
-        if not os.path.isdir(engine_path):
-            continue
-        engine_data: Optional[EngineItem] = next(
-            (engine for engine in engines if engine["name"] == engine_name), None
-        )
-        if not engine_data:
-            continue
-        for level_file in os.listdir(engine_path):
-            try:
-                invalid_chart_flag = False
-                if not level_file.endswith(".zip"):
+    with os.scandir(levels_root) as entries:
+        for entry in entries:
+            if entry.is_dir():
+                engine_name = entry.name
+                engine_path = entry.path
+                engine_data: Optional[EngineItem] = next(
+                    (engine for engine in engines if engine["name"] == engine_name),
+                    None,
+                )
+                if not engine_data:
                     continue
-                level_path = os.path.join(engine_path, level_file)
-                levelname = os.path.splitext(level_file)[0]
-                if levelname in alr_compiled:
-                    continue
-                # iterate all files, {levelname}.zip
-                compiled_data: LevelItem = {
-                    "name": levelname,
-                    "tags": [{"title": f"Engine: {engine_name}", "icon": engine_name}],
-                    "useSkin": {"useDefault": True},
-                    "useEffect": {"useDefault": True},
-                    "useParticle": {"useDefault": True},
-                    "useBackground": {"useDefault": True},
-                    "engine": engine_data,
-                }
-                if source:
-                    compiled_data["source"] = source
-                with ZipFile(level_path, "a") as zip_file:
-                    with zip_file.open("level.json") as f:
-                        level_data = json.load(f)
-                    item_keys = ["version", "title", "rating", "author", "artists"]
-                    for key in item_keys:
-                        compiled_data[key] = level_data[key]
-                    if level_data.get("description"):
-                        compiled_data["description"] = level_data["description"]
-                    data_files = {
-                        "cover": "jacket.png",
-                        "data": "level.data",
-                        "bgm": "music.mp3",
-                        "preview": "music_pre.mp3",
-                    }
-                    for key, filename in data_files.items():
-                        if filename in zip_file.namelist():
-                            hash = repo.add_file(f"{level_path}|{filename}")
-                            if hash:
-                                compiled_data[key] = repo.get_srl(hash)
-                                cached_static_level_resource_paths[hash] = (
-                                    f"{level_path}|{filename}"
-                                )
-                        else:
-                            if key == "preview":
-                                pass
-                            else:
-                                invalid_chart_flag = True
-                                break
-                    if invalid_chart_flag:
-                        continue
-                    if not "stage.png" in zip_file.namelist():
-                        if level_data.get("no_custom_stage"):
-                            pass
-                        else:
-                            jacket = Image.open(BytesIO(zip_file.read("jacket.png")))
-                            bg = pjsk_bg.render_v3(jacket)
-                            buf = BytesIO()
-                            bg.save(buf, format="PNG")
-                            stage_bytes = buf.getvalue()
-                            zip_file.writestr("stage.png", stage_bytes)
-                    if "stage.png" in zip_file.namelist():
-                        hash = repo.add_file(f"{level_path}|stage.png")
-                        image = repo.get_srl(hash)
-                        cached_static_level_resource_paths[hash] = (
-                            f"{level_path}|stage.png"
-                        )
-                        if "stage_thumbnail.png" not in zip_file.namelist():
-                            bg = Image.open(BytesIO(zip_file.read("stage.png")))
-                            tn = create_square_thumbnail(bg)
-                            buf = BytesIO()
-                            tn.save(buf, format="PNG")
-                            tn_bytes = buf.getvalue()
-                            zip_file.writestr("stage_thumbnail.png", tn_bytes)
-                        hash2 = repo.add_file(f"{level_path}|stage_thumbnail.png")
-                        thumbnail = repo.get_srl(hash2)
-                        cached_static_level_resource_paths[hash2] = (
-                            f"{level_path}|stage_thumbnail.png"
-                        )
-                        compiled_data["useBackground"]["useDefault"] = False
-                        stage_item: BackgroundItem = {
-                            "name": f"bg-{levelname}-v3",
-                            "version": 2,
-                            "tags": [],
-                            "title": level_data["title"],
-                            "subtitle": "UntitledCharts Background",
-                            "author": "YumYummity",
-                            "thumbnail": thumbnail,
-                            "data": engine_data["background"]["data"],
-                            "image": image,
-                            "configuration": engine_data["background"]["configuration"],
+                for level_file in os.listdir(engine_path):
+                    try:
+                        invalid_chart_flag = False
+                        if not level_file.endswith(".zip"):
+                            continue
+                        level_path = os.path.join(engine_path, level_file)
+                        levelname = os.path.splitext(level_file)[0]
+                        if levelname in alr_compiled:
+                            continue
+                        # iterate all files, {levelname}.zip
+                        compiled_data: LevelItem = {
+                            "name": levelname,
+                            "tags": [
+                                {"title": f"Engine: {engine_name}", "icon": "engine"}
+                            ],
+                            "useSkin": {"useDefault": True},
+                            "useEffect": {"useDefault": True},
+                            "useParticle": {"useDefault": True},
+                            "useBackground": {"useDefault": True},
+                            "engine": engine_data,
                         }
-                        compiled_data["useBackground"]["item"] = stage_item
-            except Exception as e:
-                continue
-            modified = True
-            cached["static_levels"].append(compiled_data)
+                        if source:
+                            compiled_data["source"] = source
+                        with ZipFile(level_path, "a") as zip_file:
+                            with zip_file.open("level.json") as f:
+                                level_data = json.load(f)
+                            item_keys = [
+                                "version",
+                                "title",
+                                "rating",
+                                "author",
+                                "artists",
+                            ]
+                            for key in item_keys:
+                                compiled_data[key] = level_data[key]
+                            if level_data.get("description"):
+                                compiled_data["description"] = level_data["description"]
+                            data_files = {
+                                "cover": "jacket.png",
+                                "data": "level.data",
+                                "bgm": "music.mp3",
+                                "preview": "music_pre.mp3",
+                            }
+                            for key, filename in data_files.items():
+                                if filename in zip_file.namelist():
+                                    hash = repo.add_file(f"{level_path}|{filename}")
+                                    if hash:
+                                        compiled_data[key] = repo.get_srl(hash)
+                                        level_path = level_path.replace("\\", "/")
+                                        cached_static_level_resource_paths[hash] = (
+                                            f"{level_path}|{filename}"
+                                        )
+                                else:
+                                    if key == "preview":
+                                        pass
+                                    else:
+                                        invalid_chart_flag = True
+                                        break
+                            if invalid_chart_flag:
+                                continue
+                            if not "stage.png" in zip_file.namelist():
+                                if level_data.get("no_custom_stage"):
+                                    pass
+                                else:
+                                    jacket = Image.open(
+                                        BytesIO(zip_file.read("jacket.png"))
+                                    )
+                                    bg = pjsk_bg.render_v3(jacket)
+                                    buf = BytesIO()
+                                    bg.save(buf, format="PNG")
+                                    stage_bytes = buf.getvalue()
+                                    zip_file.writestr("stage.png", stage_bytes)
+                            if "stage.png" in zip_file.namelist():
+                                hash = repo.add_file(f"{level_path}|stage.png")
+                                image = repo.get_srl(hash)
+                                level_path = level_path.replace("\\", "/")
+                                cached_static_level_resource_paths[hash] = (
+                                    f"{level_path}|stage.png"
+                                )
+                                if "stage_thumbnail.png" not in zip_file.namelist():
+                                    bg = Image.open(BytesIO(zip_file.read("stage.png")))
+                                    tn = create_square_thumbnail(bg)
+                                    buf = BytesIO()
+                                    tn.save(buf, format="PNG")
+                                    tn_bytes = buf.getvalue()
+                                    zip_file.writestr("stage_thumbnail.png", tn_bytes)
+                                hash2 = repo.add_file(
+                                    f"{level_path}|stage_thumbnail.png"
+                                )
+                                thumbnail = repo.get_srl(hash2)
+                                level_path = level_path.replace("\\", "/")
+                                cached_static_level_resource_paths[hash2] = (
+                                    f"{level_path}|stage_thumbnail.png"
+                                )
+                                compiled_data["useBackground"]["useDefault"] = False
+                                stage_item: BackgroundItem = {
+                                    "name": f"levelbg-{levelname}",
+                                    "version": 2,
+                                    "tags": [],
+                                    "title": level_data["title"],
+                                    "subtitle": "UntitledCharts Background",
+                                    "author": "YumYummity",
+                                    "thumbnail": thumbnail,
+                                    "data": engine_data["background"]["data"],
+                                    "image": image,
+                                    "configuration": engine_data["background"][
+                                        "configuration"
+                                    ],
+                                }
+                                compiled_data["useBackground"]["item"] = stage_item
+                    except Exception as e:
+                        continue
+                    modified = True
+                    cached["static_levels"].append(compiled_data)
     if modified:
         with open("levels/compiled_static_levels.json", "w", encoding="utf8") as f:
             json.dump(
@@ -234,6 +256,8 @@ def compile_effects_list(source: str = None) -> List[EffectItem]:
             compiled_data["source"] = source
         with open(f"files/effects/{effect}/effect.json", "r", encoding="utf8") as f:
             effect_data: dict = json.load(f)
+        if not effect_data.get("enabled", True):
+            continue
         item_keys = ["version", "title", "subtitle", "author"]
         for key in item_keys:
             compiled_data[key] = effect_data[key]
@@ -261,6 +285,8 @@ def compile_backgrounds_list(source: str = None) -> List[BackgroundItem]:
             f"files/backgrounds/{background}/background.json", "r", encoding="utf8"
         ) as f:
             background_data: dict = json.load(f)
+        if not background_data.get("enabled", True):
+            continue
         item_keys = ["version", "title", "subtitle", "author"]
         for key in item_keys:
             compiled_data[key] = background_data[key]
@@ -293,6 +319,8 @@ def compile_particles_list(source: str = None) -> List[ParticleItem]:
             f"files/particles/{particle}/particle.json", "r", encoding="utf8"
         ) as f:
             particle_data: dict = json.load(f)
+        if not particle_data.get("enabled", True):
+            continue
         item_keys = ["version", "title", "subtitle", "author"]
         for key in item_keys:
             compiled_data[key] = particle_data[key]
@@ -322,6 +350,8 @@ def compile_skins_list(source: str = None) -> List[SkinItem]:
             compiled_data["source"] = source
         with open(f"files/skins/{skin}/skin.json", "r", encoding="utf8") as f:
             skin_data: dict = json.load(f)
+        if not skin_data.get("enabled", True):
+            continue
         item_keys = ["version", "title", "subtitle", "author"]
         for key in item_keys:
             compiled_data[key] = skin_data[key]
@@ -354,6 +384,8 @@ def compile_engines_list(source: str = None) -> List[EngineItem]:
         }
         with open(f"files/engines/{engine}/engine.json", "r", encoding="utf8") as f:
             engine_data: dict = json.load(f)
+        if not engine_data.get("enabled", True):
+            continue
         if engine_data.get("description"):
             compiled_data["description"] = engine_data["description"]
         compiled_data["name"] = engine

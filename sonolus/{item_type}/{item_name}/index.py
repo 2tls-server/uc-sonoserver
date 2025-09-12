@@ -25,12 +25,18 @@ def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType, item_name: str):
         if item_type == "engines":
-            data = compile_engines_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_engines_list, request.app.base_url
+            )
         elif item_type == "skins":
-            data = compile_skins_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_skins_list, request.app.base_url
+            )
         elif item_type == "backgrounds":
             if item_name.startswith("levelbg-"):
-                level_data = compile_static_levels_list(request.app.base_url)
+                level_data = await request.app.run_blocking(
+                    compile_static_levels_list, request.app.base_url
+                )
                 level_item = next(
                     item
                     for item in level_data
@@ -38,22 +44,32 @@ def setup():
                 )
                 data = [level_item["useBackground"]["item"]]
             else:
-                data = compile_backgrounds_list(request.app.base_url)
+                data = await request.app.run_blocking(
+                    compile_backgrounds_list, request.app.base_url
+                )
         elif item_type == "effects":
-            data = compile_effects_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_effects_list, request.app.base_url
+            )
         elif item_type == "particles":
-            data = compile_particles_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_particles_list, request.app.base_url
+            )
         elif item_type == "posts":
-            data = compile_static_posts_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_static_posts_list, request.app.base_url
+            )
             # maybe also grab non-static posts lol
         # elif item_type == "playlists":
-        #     data = compile_playlists_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         elif item_type == "levels":
-            data = compile_static_levels_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_static_levels_list, request.app.base_url
+            )
         # elif item_type == "replays":
-        #     data = compile_replays_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":
-        #     data = compile_rooms_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_rooms_list, request.app.base_url)
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,

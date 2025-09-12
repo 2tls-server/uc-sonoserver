@@ -28,32 +28,47 @@ def setup():
         query_params = dict(request.query_params)
         query_params.pop("localization", None)
         query_params.pop("page", None)
+        searching = False
         if item_type == "engines":
-            data = compile_engines_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_engines_list, request.app.base_url
+            )
         elif item_type == "skins":
-            data = compile_skins_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_skins_list, request.app.base_url
+            )
         elif item_type == "backgrounds":
-            data = compile_backgrounds_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_backgrounds_list, request.app.base_url
+            )
         elif item_type == "effects":
-            data = compile_effects_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_effects_list, request.app.base_url
+            )
         elif item_type == "particles":
-            data = compile_particles_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_particles_list, request.app.base_url
+            )
         elif item_type == "posts":
-            data = compile_static_posts_list(request.app.base_url)
+            data = await request.app.run_blocking(
+                compile_static_posts_list, request.app.base_url
+            )
             data = sort_posts_by_newest(data)
         # elif item_type == "playlists":
-        #     data = compile_playlists_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         elif item_type == "levels":
-            raw_data = compile_static_levels_list(request.app.base_url)
+            raw_data = await request.app.run_blocking(
+                compile_static_levels_list, request.app.base_url
+            )
             # XXX: do japanese/romaji searching via CUTLET python lib
             # XXX: fuzzy matching...
             filtered_data = []
             type_ = query_params.get("type")
-            print(type_)
             if type_ == "quick":
                 keywords = query_params.get("keywords")
                 if keywords:
-                    excluded_keys = ["description"]
+                    searching = True
+                    excluded_keys = ["description", "name"]
                     for item in raw_data:
                         if any(
                             keywords.lower() in str(value).lower()
@@ -65,6 +80,7 @@ def setup():
                 else:
                     data = raw_data
             elif type_ == "advanced":
+                searching = True
                 title_search = query_params["title"]
                 for item in raw_data:
                     if (
@@ -76,15 +92,24 @@ def setup():
             else:
                 data = raw_data
         # elif item_type == "replays":
-        #     data = compile_replays_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":
-        #     data = compile_rooms_list(request.app.base_url)
+        #     data = await request.app.run_blocking(compile_rooms_list, request.app.base_url)
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f'Item "{item_type}" not found.',
             )
         pages = list_to_pages(data, request.app.get_items_per_page(item_type))
+        if len(pages) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=(
+                    f"Could not find any {item_type}."
+                    if not searching
+                    else f"Could not find any {item_type} matching your search."
+                ),
+            )
         page_data = pages[page]
 
         return {"pageCount": len(pages), "items": page_data}

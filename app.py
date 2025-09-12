@@ -1,5 +1,7 @@
-import os, importlib, re
+import os, importlib, asyncio
 from urllib.parse import urlparse
+
+from concurrent.futures import ThreadPoolExecutor
 
 import yaml
 
@@ -24,6 +26,8 @@ class SonolusFastAPI(FastAPI):
         super().__init__(*args, **kwargs)
         self.debug = kwargs["debug"]
 
+        self.executor = ThreadPoolExecutor(max_workers=16)
+
         self.config = kwargs["config"]
         self.base_url = kwargs["base_url"]
 
@@ -36,6 +40,11 @@ class SonolusFastAPI(FastAPI):
         compile_static_levels_list(
             self.base_url
         )  # this might take time, maybe compile now?
+
+    async def run_blocking(self, func, *args, **kwargs):
+        return await asyncio.get_event_loop().run_in_executor(
+            self.executor, lambda: func(*args, **kwargs)
+        )
 
     def get_items_per_page(self, route: str) -> int:
         return self.config["items-per-page"].get(
@@ -80,14 +89,6 @@ if not debug:
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=[domain])
 
 
-class ForceHTTPSRedirectResponse(RedirectResponse):
-    def __init__(self, url: str, *args, **kwargs):
-        # Force the URL to use HTTPS
-        if not url.startswith("https://"):
-            url = url.replace("http://", "https://", 1)
-        super().__init__(url, *args, **kwargs)
-
-
 @app.middleware("http")
 async def force_https_redirect(request, call_next):
     response = await call_next(request)
@@ -129,7 +130,7 @@ def loadRoutes(folder, cleanup: bool = True):
                     )
 
                     # Check if the route is dynamic or static
-                    if "{}" in route_name:
+                    if "{" in route_name and "}" in route_name:
                         routes.append(
                             (route_name, False)
                         )  # Dynamic route (priority lower)
@@ -189,7 +190,11 @@ app.add_event_handler("startup", startup_event)
 
 async def start_fastapi(args):
     config_server = uvicorn.Config(
-        "app:app", host="0.0.0.0", port=config["server"]["port"]
+        "app:app",
+        host="0.0.0.0",
+        port=config["server"]["port"],
+        workers=8,
+        # log_level="critical",
     )
     server = uvicorn.Server(config_server)
     await server.serve()
