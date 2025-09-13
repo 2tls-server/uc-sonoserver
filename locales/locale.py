@@ -12,6 +12,10 @@ class LocaleManager:
         self.locales: Dict[str, Type[MessagesProtocol]] = {}
 
     def load_locale(self, locale: str) -> Type[MessagesProtocol]:
+        if locale == "zhs":
+            locale = "zh-cn"
+        elif locale == "zht":
+            locale = "zh-TW"
         if locale in self.locales:
             return self.locales[locale]
         try:
