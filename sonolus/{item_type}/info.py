@@ -129,6 +129,7 @@ def setup():
         #     ]
         elif item_type == "levels":
             data = []
+            sections = []
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         #     sections: List[ReplayItemSection] = [

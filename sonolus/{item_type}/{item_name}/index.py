@@ -10,7 +10,6 @@ from helpers.data_compilers import (
     compile_particles_list,
     compile_skins_list,
     compile_static_posts_list,
-    # compile_playlists_list,
     # compile_replays_list,
     # compile_rooms_list
 )
@@ -52,8 +51,8 @@ def setup():
                 compile_static_posts_list, request.app.base_url
             )
             # maybe also grab non-static posts lol
-        # elif item_type == "playlists":
-        #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
+        elif item_type == "playlists":
+            data = []
         elif item_type == "levels":
             data = []
         # elif item_type == "replays":

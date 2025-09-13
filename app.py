@@ -18,7 +18,7 @@ import uvicorn
 
 from helpers.repository_map import repo
 
-debug = False
+debug = True
 
 
 class SonolusFastAPI(FastAPI):
@@ -28,8 +28,14 @@ class SonolusFastAPI(FastAPI):
 
         self.executor = ThreadPoolExecutor(max_workers=16)
 
-        self.config = kwargs["config"]
+        self.config = config["sonolus"]
+        self.api_config = config["api"]
         self.base_url = kwargs["base_url"]
+
+        self.auth = self.api_config["auth"]
+        self.auth_header = self.api_config["auth-header"]
+
+        self.remove_config_queries = ["localization", "page", "uwu"]
 
         self.repository = repo
 
@@ -51,7 +57,7 @@ class SonolusFastAPI(FastAPI):
                 content={"message": exc.detail}, status_code=exc.status_code
             )
         else:
-            return JSONResponse(status_code=exc.status_code)
+            return JSONResponse(content={}, status_code=exc.status_code)
 
 
 VERSION_REGEX = r"^\d+\.\d+\.\d+$"
@@ -67,9 +73,7 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         return response
 
 
-app = SonolusFastAPI(
-    debug=debug, config=config["sonolus"], base_url=config["server"]["base-url"]
-)
+app = SonolusFastAPI(debug=debug, base_url=config["server"]["base-url"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

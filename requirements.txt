@@ -2,3 +2,5 @@ fastapi
 uvicorn
 pyyaml
 git+https://github.com/YumYummity/pjsekai-background-gen-pillow-upd
+ecdsa[gmpy2]
+aiohttp
