@@ -1,0 +1,7 @@
+{
+    "server_description": "https://discord.gg/UntitledCharts\nThe official UntitledCharts custom server!",
+    "item_not_found": "{item} item \"{name}\" not found.",
+    "item_type_not_found": "Item \"{item}\" not found.",
+    "items_not_found": "Could not find any {item}.",
+    "items_not_found_search": "Could not find any {item} matching your search."
+}
