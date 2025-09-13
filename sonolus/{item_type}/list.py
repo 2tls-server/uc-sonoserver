@@ -20,13 +20,18 @@ from helpers.sonolus_typings import ItemType
 
 router = APIRouter()
 
+from locales.locale import Locale
+from helpers.owoify import handle_item_uwu
+
 
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType, page: int = 0):
         query_params = dict(request.query_params)
-        query_params.pop("localization", None)
-        query_params.pop("page", None)
+        for item in request.app.remove_config_queries:
+            query_params.pop(item, None)
+        locale = Locale.get_messages(request.state.localization)
+        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         searching = False
         if item_type == "engines":
             data = await request.app.run_blocking(
@@ -65,18 +70,19 @@ def setup():
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f'Item "{item_type}" not found.',
+                detail=locale.item_not_found(item_type),
             )
         pages = list_to_pages(data, request.app.get_items_per_page(item_type))
         if len(pages) == 0:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=(
-                    f"Could not find any {item_type}."
+                    locale.items_not_found(item_type)
                     if not searching
-                    else f"Could not find any {item_type} matching your search."
+                    else locale.items_not_found_search(item_type)
                 ),
             )
         page_data = pages[page]
+        page_data = handle_item_uwu(page_data, uwu_level)
 
         return {"pageCount": len(pages), "items": page_data}

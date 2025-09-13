@@ -618,14 +618,27 @@ def uvuify(source: str) -> str:
     return owoify(source=source, level=2)
 
 
-def handle_uwu(source: str, str_level: str) -> str:
-    symbols = True
-    if str_level == "off":
+def handle_uwu(source: str, uwu_level: str, symbols: bool = False) -> str:
+    if uwu_level == "off":
         return source
-    elif str_level == "owo":
+    elif uwu_level == "owo":
         return owoify(source, symbols=symbols)
-    elif str_level == "uwu":
+    elif uwu_level == "uwu":
         return owoify(source, level=1, symbols=symbols)
-    elif str_level == "uvu":
+    elif uwu_level == "uvu":
         return owoify(source, level=2, symbols=symbols)
     return source
+
+
+def handle_item_uwu(source_items: list, uwu_level: str) -> list:
+    returned = []
+    for item in source_items:
+        item = item.copy()
+        include_symbols = ["title", "subtitle", "description"]
+        for key in ["title", "author", "subtitle", "description"]:
+            if key in item:
+                item[key] = handle_uwu(
+                    item[key], uwu_level, symbols=key in include_symbols
+                )
+        returned.append(item)
+    return returned

@@ -53,7 +53,9 @@ def setup():
                 default="off",
                 values=[
                     {"name": "off", "title": "OFF"},
-                    {"name": "uwu", "title": "ON"},
+                    {"name": "owo", "title": "SLIGHTLY"},
+                    {"name": "uwu", "title": "A LOT"},
+                    {"name": "uvu", "title": "EXTREME"},
                 ],
                 description="Uwuify your menu (EN ONLY).",
             )

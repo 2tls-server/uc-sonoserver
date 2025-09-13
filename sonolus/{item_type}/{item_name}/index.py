@@ -18,10 +18,18 @@ from helpers.datastructs import ServerItemDetails, get_item_type
 
 router = APIRouter()
 
+from locales.locale import Locale
+from helpers.owoify import handle_item_uwu
+
 
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType, item_name: str):
+        query_params = dict(request.query_params)
+        for item in request.app.remove_config_queries:
+            query_params.pop(item, None)
+        locale = Locale.get_messages(request.state.localization)
+        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         if item_type == "engines":
             data = await request.app.run_blocking(
                 compile_engines_list, request.app.base_url
@@ -67,23 +75,26 @@ def setup():
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f'Item "{item_type}" not found.',
+                detail=locale.item_not_found(item_type),
             )
         item_data = next((i for i in data if i["name"] == item_name), None)
         if not item_data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"{item_type.capitalize().removesuffix('s')} item \"{item_name}\" not found.",
+                detail=locale.item_not_found(
+                    item_type.capitalize().removesuffix("s"), item_name
+                ),
             )
 
         T = get_item_type(item_type)
+        data = handle_item_uwu([item_data], uwu_level)[0]
         detail: ServerItemDetails[T] = {
-            "item": item_data,
+            "item": data,
             "actions": [],
             "hasCommunity": False,
             "leaderboards": [],
             "sections": [],
         }
-        if item_data.get("description"):
-            detail["description"] = item_data["description"]
+        if data.get("description"):
+            detail["description"] = data["description"]
         return detail

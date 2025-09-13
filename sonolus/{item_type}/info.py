@@ -38,11 +38,18 @@ from helpers.data_compilers import (
 
 router = APIRouter()
 
+from locales.locale import Locale
+from helpers.owoify import handle_uwu, handle_item_uwu
+
 
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType):
-        extended_description = ""
+        query_params = dict(request.query_params)
+        for item in request.app.remove_config_queries:
+            query_params.pop(item, None)
+        locale = Locale.get_messages(request.state.localization)
+        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         banner_srl = await request.app.run_blocking(compile_banner)
         searches = []
         if item_type == "engines":
@@ -53,8 +60,11 @@ def setup():
                 create_section(
                     "Engines",
                     item_type,
-                    data[:5],
-                    description=f"{request.app.config['description']}\n{extended_description}",
+                    handle_item_uwu(data[:5], uwu_level),
+                    description=handle_uwu(
+                        locale.server_description or request.app.config["description"],
+                        uwu_level,
+                    ),
                     icon="engine",
                 )
             ]
@@ -66,8 +76,11 @@ def setup():
                 create_section(
                     "Skins",
                     item_type,
-                    data[:5],
-                    description=f"{request.app.config['description']}\n{extended_description}",
+                    handle_item_uwu(data[:5], uwu_level),
+                    description=handle_uwu(
+                        locale.server_description or request.app.config["description"],
+                        uwu_level,
+                    ),
                     icon="skin",
                 )
             ]
@@ -79,8 +92,11 @@ def setup():
                 create_section(
                     "Backgrounds",
                     item_type,
-                    data[:5],
-                    description=f"{request.app.config['description']}\n{extended_description}",
+                    handle_item_uwu(data[:5], uwu_level),
+                    description=handle_uwu(
+                        locale.server_description or request.app.config["description"],
+                        uwu_level,
+                    ),
                     icon="background",
                 )
             ]
@@ -92,8 +108,11 @@ def setup():
                 create_section(
                     "Effects",
                     item_type,
-                    data[:5],
-                    description=f"{request.app.config['description']}\n{extended_description}",
+                    handle_item_uwu(data[:5], uwu_level),
+                    description=handle_uwu(
+                        locale.server_description or request.app.config["description"],
+                        uwu_level,
+                    ),
                     icon="effect",
                 )
             ]
@@ -105,8 +124,11 @@ def setup():
                 create_section(
                     "Particles",
                     item_type,
-                    data[:5],
-                    description=f"{request.app.config['description']}\n{extended_description}",
+                    handle_item_uwu(data[:5], uwu_level),
+                    description=handle_uwu(
+                        locale.server_description or request.app.config["description"],
+                        uwu_level,
+                    ),
                     icon="particle",
                 )
             ]
@@ -118,13 +140,21 @@ def setup():
             # sort em
             data = sort_posts_by_newest(data)
             sections: List[PostItemSection] = [
-                create_section("Newest Posts", item_type, data[:5], icon="post")
+                create_section(
+                    "Newest Posts",
+                    item_type,
+                    handle_item_uwu(data[:5], uwu_level),
+                    icon="post",
+                )
             ]
         # elif item_type == "playlists":
         #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         #     sections: List[PlaylistItemSection] = [
         #         create_section(
-        #             "Playlists", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="playlist"
+        #             "Playlists", item_type, data[:5], description=handle_uwu(
+        #     locale.server_description or request.app.config["description"],
+        #     uwu_level,
+        # ), icon="playlist"
         #         )
         #     ]
         elif item_type == "levels":
@@ -134,19 +164,25 @@ def setup():
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         #     sections: List[ReplayItemSection] = [
         #         create_section(
-        #             "Replays", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="replay"
+        #             "Replays", item_type, data[:5], description=handle_uwu(
+        #     locale.server_description or request.app.config["description"],
+        #     uwu_level,
+        # ), icon="replay"
         #         )
         #     ]
         # elif item_type == "rooms":
         #     data = await request.app.run_blocking(compile_rooms_list, request.app.base_url)
         #     sections: List[RoomItemSection] = [
         #         create_section(
-        #             "Rooms", item_type, data[:5], description=f"{request.app.config['description']}\n{extended_description}", icon="room"
+        #             "Rooms", item_type, data[:5], description=handle_uwu(
+        #     locale.server_description or request.app.config["description"],
+        #     uwu_level,
+        # ), icon="room"
         #         )
         #     ]
         else:
             raise HTTPException(
-                status_code=404, detail=f'Item "{item_type}" not found.'
+                status_code=404, detail=locale.item_type_not_found(item_type)
             )
         data: ServerItemInfo = {
             "sections": sections,
