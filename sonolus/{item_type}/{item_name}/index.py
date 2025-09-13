@@ -52,6 +52,11 @@ def setup():
             )
             # maybe also grab non-static posts lol
         elif item_type == "playlists":
+            session = request.headers.get("Sonolus-Session")
+            if not session:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="Not logged in."
+                )
             data = []
         elif item_type == "levels":
             data = []

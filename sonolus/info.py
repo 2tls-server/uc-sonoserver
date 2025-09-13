@@ -10,19 +10,23 @@ from helpers.data_helpers import (
 
 from typing import List
 
+from locales.locale import Locale
+from helpers.owoify import handle_uwu
+
 router = APIRouter()
 
 
 def setup():
     @router.get("/")
     async def main(request: Request):
+        locale = Locale.get_messages(request.state.localization)
+        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         # Assume logged in
         # We only need to validate the session
         # If it's a request that updates something, or access something private
         logged_in = False
         if request.headers.get("Sonolus-Session"):
             logged_in = True
-        extended_description = ""
 
         # XXX https://wiki.sonolus.com/custom-server-specs/endpoints/get-sonolus-info
         banner_srl = await request.app.run_blocking(compile_banner)
@@ -43,7 +47,10 @@ def setup():
         buttons: List[ServerInfoButton] = [{"type": button} for button in button_list]
         data = {
             "title": request.app.config["name"],
-            "description": f"{request.app.config['description']}\n{extended_description}",
+            "description": handle_uwu(
+                locale.server_description or request.app.config["description"],
+                uwu_level,
+            ),
             "buttons": buttons,
             "configuration": {
                 "options": [

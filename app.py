@@ -65,7 +65,10 @@ VERSION_REGEX = r"^\d+\.\d+\.\d+$"
 
 class SonolusMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        request.state.localization = request.query_params.get("localization", "en")
+        request.state.localization = request.query_params.get(
+            "localization", "en"
+        ).lower()
+        request.state.uwu = request.query_params.get("uwu", "off").lower()
         response = await call_next(request)
         response.headers["Sonolus-Version"] = request.app.config[
             "required-client-version"

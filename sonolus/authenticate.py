@@ -103,7 +103,6 @@ def setup():
             ) as req:
                 response = await req.json()
         try:
-            print(response)
             return {"session": response["session"], "expiration": response["expiry"]}
         except:
             raise HTTPException(
