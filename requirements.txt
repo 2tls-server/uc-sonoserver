@@ -2,5 +2,9 @@ fastapi
 uvicorn
 pyyaml
 git+https://github.com/YumYummity/pjsekai-background-gen-pillow-upd
-ecdsa[gmpy2]
 aiohttp
+
+# VULNERABILITY - this vulnerability can be dismissed
+# We only use ecdsa to VERIFY a sonolus key
+# Therefore it does not apply to us
+ecdsa[gmpy2]

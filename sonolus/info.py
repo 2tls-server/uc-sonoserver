@@ -44,6 +44,20 @@ def setup():
         ]
         if logged_in:
             button_list.append("playlist")
+        options = []
+        if request.state.localization == "en":
+            option = ServerFormOptionsFactory.server_select_option(
+                query="uwu",
+                name="UwU >.<",
+                required=False,
+                default="off",
+                values=[
+                    {"name": "off", "title": "OFF"},
+                    {"name": "uwu", "title": "ON"},
+                ],
+                description="Uwuify your menu (EN ONLY).",
+            )
+            options.append(option)
         buttons: List[ServerInfoButton] = [{"type": button} for button in button_list]
         data = {
             "title": request.app.config["name"],
@@ -52,21 +66,7 @@ def setup():
                 uwu_level,
             ),
             "buttons": buttons,
-            "configuration": {
-                "options": [
-                    ServerFormOptionsFactory.server_select_option(
-                        query="uwu",
-                        name="UwU >.<",
-                        required=False,
-                        default="off",
-                        values=[
-                            {"name": "off", "title": "OFF"},
-                            {"name": "uwu", "title": "ON"},
-                        ],
-                        description="Uwuify your menu (EN ONLY).",
-                    )
-                ]
-            },
+            "configuration": {"options": options},
         }
         if banner_srl:
             data["banner"] = banner_srl
