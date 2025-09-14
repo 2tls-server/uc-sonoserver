@@ -82,7 +82,7 @@ def setup():
                     request.app.api_config["url"] + f"/api/charts/{item_name}/",
                 ) as req:
                     response = await req.json()
-            liked = response.get("liked")
+            liked = response["data"].get("liked")
             item_data = {
                 "name": f"UnCh-{response['data']['id']}",
                 "source": request.app.base_url,
