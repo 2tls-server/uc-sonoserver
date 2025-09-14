@@ -3,6 +3,8 @@ donotload = False
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
+import aiohttp
+
 from helpers.data_compilers import (
     compile_engines_list,
     compile_backgrounds_list,
@@ -33,6 +35,9 @@ def setup():
         locale = Locale.get_messages(request.state.localization)
         uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         searching = False
+        generate_pages = True
+        auth = request.headers.get("Sonolus-Session")
+
         if item_type == "engines":
             data = await request.app.run_blocking(
                 compile_engines_list, request.app.base_url
@@ -61,8 +66,17 @@ def setup():
         # elif item_type == "playlists":
         #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
         elif item_type == "levels":
-            # get from API
-            data = []
+            headers = {request.app.auth_header: request.app.auth}
+            if auth:
+                headers["authorization"] = auth
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.get(
+                    request.app.api_config["url"] + "/api/charts/", params=query_params
+                ) as req:
+                    response = await req.json()
+            data = response["data"]
+            num_pages = response["pageCount"]
+            generate_pages = False
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":
@@ -72,17 +86,22 @@ def setup():
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=locale.item_not_found(item_type),
             )
-        pages = list_to_pages(data, request.app.get_items_per_page(item_type))
-        if len(pages) == 0:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=(
-                    locale.items_not_found(item_type)
-                    if not searching
-                    else locale.items_not_found_search(item_type)
-                ),
-            )
-        page_data = pages[page]
+        if generate_pages:
+            pages = list_to_pages(data, request.app.get_items_per_page(item_type))
+            if len(pages) == 0:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=(
+                        locale.items_not_found(item_type)
+                        if not searching
+                        else locale.items_not_found_search(item_type)
+                    ),
+                )
+            page_data = pages[page]
+        else:
+            page_data = data
         page_data = handle_item_uwu(page_data, uwu_level)
-
-        return {"pageCount": len(pages), "items": page_data}
+        return {
+            "pageCount": len(pages) if generate_pages else num_pages,
+            "items": page_data,
+        }

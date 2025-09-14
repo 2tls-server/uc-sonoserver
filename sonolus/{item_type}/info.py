@@ -1,7 +1,6 @@
 donotload = False
 
 from typing import List
-import random
 
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
@@ -41,6 +40,8 @@ router = APIRouter()
 from locales.locale import Locale
 from helpers.owoify import handle_uwu, handle_item_uwu
 
+import aiohttp
+
 
 def setup():
     @router.get("/")
@@ -52,6 +53,8 @@ def setup():
         uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         banner_srl = await request.app.run_blocking(compile_banner)
         searches = []
+        auth = request.headers.get("Sonolus-Session")
+
         if item_type == "engines":
             data = await request.app.run_blocking(
                 compile_engines_list, request.app.base_url
@@ -158,8 +161,92 @@ def setup():
         #         )
         #     ]
         elif item_type == "levels":
+            headers = {request.app.auth_header: request.app.auth}
+            if auth:
+                headers["authorization"] = auth
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.get(
+                    request.app.api_config["url"] + "/api/charts/",
+                    params={"type": "random"},
+                ) as req:
+                    response = await req.json()
             data = []
-            sections = []
+            for i in response["data"]:
+                leveldata = {
+                    "name": f"UnCh-{i['id']}",
+                    "source": request.app.base_url,
+                    "version": 1,
+                    "rating": i["rating"],
+                    "artists": i["artists"],
+                    "author": i["author_full"],
+                    "title": i["title"],
+                    "tags": [
+                        {
+                            "title": str(i["like_count"]),
+                            "icon": "heart" if i.get("liked") else "heartHollow",
+                        }
+                    ]
+                    + [{"title": tag, "icon": "tag"} for tag in i["tags"]],
+                    "engine": compile_engines_list(request.app.base_url)[0],
+                    "useSkin": {"useDefault": True},
+                    "useEffect": {"useDefault": True},
+                    "useParticle": {"useDefault": True},
+                    "useBackground": {"useDefault": True},  # XXX
+                    "cover": {
+                        "hash": i["jacket_file_hash"],
+                        "url": "/".join(
+                            [
+                                response["asset_base_url"].removesuffix("/"),
+                                i["author"],
+                                i["id"],
+                                i["jacket_file_hash"],
+                            ]
+                        ),
+                    },
+                    "data": {
+                        "hash": i["chart_file_hash"],
+                        "url": "/".join(
+                            [
+                                response["asset_base_url"].removesuffix("/"),
+                                i["author"],
+                                i["id"],
+                                i["chart_file_hash"],
+                            ]
+                        ),
+                    },
+                    "bgm": {
+                        "hash": i["music_file_hash"],
+                        "url": "/".join(
+                            [
+                                response["asset_base_url"].removesuffix("/"),
+                                i["author"],
+                                i["id"],
+                                i["music_file_hash"],
+                            ]
+                        ),
+                    },
+                }
+                if i["preview_file_hash"]:
+                    leveldata["preview"] = {
+                        "hash": i["preview_file_hash"],
+                        "url": "/".join(
+                            [
+                                response["asset_base_url"].removesuffix("/"),
+                                i["author"],
+                                i["id"],
+                                i["preview_file_hash"],
+                            ]
+                        ),
+                    }
+                data.append(leveldata)
+            sections: List[LevelItemSection] = [
+                create_section(
+                    "Random",
+                    item_type,
+                    handle_item_uwu(data, uwu_level),
+                    icon="level",
+                )
+            ]
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         #     sections: List[ReplayItemSection] = [
