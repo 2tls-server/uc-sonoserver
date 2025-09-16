@@ -23,5 +23,12 @@ class ServerAuthenticateRequest(BaseModel):
     userProfile: ServiceUserProfile
 
 
+class ServerAuthenticateExternalRequest(BaseModel):
+    type: str
+    url: str
+    time: int
+    userProfile: ServiceUserProfile
+
+
 class ServiceUserProfileWithType(ServiceUserProfile):
     type: Literal["game", "external"]
