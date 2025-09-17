@@ -247,6 +247,147 @@ def setup():
                     icon="level",
                 )
             ]
+            options = []
+
+            options.append(
+                ServerFormOptionsFactory.server_slider_option(
+                    query="min_rating",
+                    name=locale.search.MIN_RATING,
+                    required=False,
+                    default=0,
+                    min_value=0,
+                    max_value=99,
+                    step=1,
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_slider_option(
+                    query="max_rating",
+                    name=locale.search.MAX_RATING,
+                    required=False,
+                    default=99,
+                    min_value=0,
+                    max_value=99,
+                    step=1,
+                )
+            )
+
+            options.append(
+                ServerFormOptionsFactory.server_text_option(
+                    query="title_includes",
+                    name=locale.search.TITLE_CONTAINS,
+                    required=False,
+                    default="",
+                    placeholder=locale.search.ENTER_TEXT,
+                    limit=100,
+                    shortcuts=[],
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_text_option(
+                    query="description_includes",
+                    name=locale.search.DESCRIPTION_CONTAINS,
+                    required=False,
+                    default="",
+                    placeholder=locale.search.ENTER_TEXT,
+                    limit=200,
+                    shortcuts=[],
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_text_option(
+                    query="artists_includes",
+                    name=locale.search.ARTISTS_CONTAINS,
+                    required=False,
+                    default="",
+                    placeholder=locale.search.ENTER_TEXT,
+                    limit=100,
+                    shortcuts=[],
+                )
+            )
+
+            if auth:
+                options.append(
+                    ServerFormOptionsFactory.server_toggle_option(
+                        query="liked_by",
+                        name=locale.search.ONLY_LEVELS_I_LIKED,
+                        required=False,
+                        default=True,
+                    )
+                )
+
+            options.append(
+                ServerFormOptionsFactory.server_slider_option(
+                    query="min_likes",
+                    name=locale.search.MIN_LIKES,
+                    required=False,
+                    default=0,
+                    min_value=0,
+                    max_value=9999,
+                    step=1,
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_slider_option(
+                    query="max_likes",
+                    name=locale.search.MAX_LIKES,
+                    required=False,
+                    default=9999,
+                    min_value=0,
+                    max_value=9999,
+                    step=1,
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_text_option(
+                    query="tags",
+                    name=locale.search.TAGS_COMMA_SEPARATED,
+                    required=False,
+                    default="",
+                    placeholder=locale.search.ENTER_TAGS,
+                    limit=200,
+                    shortcuts=[],
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_select_option(
+                    query="sort_by",
+                    name=locale.search.SORT_BY,
+                    required=False,
+                    default="created_at",
+                    values=[
+                        {"name": "created_at", "title": locale.search.DATE_CREATED},
+                        {"name": "rating", "title": locale.search.RATING},
+                        {"name": "likes", "title": locale.search.LIKES},
+                        {
+                            "name": "decaying_likes",
+                            "title": locale.search.DECAYING_LIKES,
+                        },
+                        {"name": "abc", "title": locale.search.TITLE_A_Z},
+                    ],
+                    description=locale.search.SORT_BY_DESCRIPTION,
+                )
+            )
+            options.append(
+                ServerFormOptionsFactory.server_select_option(
+                    query="sort_order",
+                    name=locale.search.SORT_ORDER,
+                    required=False,
+                    default="desc",
+                    values=[
+                        {"name": "desc", "title": locale.search.DESCENDING},
+                        {"name": "asc", "title": locale.search.ASCENDING},
+                    ],
+                )
+            )
+
+            search_form = create_server_form(
+                type="advanced",
+                title=locale.search.ADVANCED_SEARCH,
+                require_confirmation=False,
+                options=options,
+            )
+            searches.append(search_form)
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         #     sections: List[ReplayItemSection] = [

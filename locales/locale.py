@@ -3,14 +3,113 @@ from typing import Dict
 
 
 class Loc:
+    class Search:
+        def __init__(self, parent: "Loc"):
+            self._parent = parent
+
+        def _get(self, key: str) -> str:
+            try:
+                return self._parent._data["search"][key]
+            except KeyError:
+                return self._parent._default["search"][key]
+
+        @property
+        def ADVANCED_SEARCH(self) -> str:
+            return self._get("ADVANCED_SEARCH")
+
+        @property
+        def MIN_RATING(self) -> str:
+            return self._get("MIN_RATING")
+
+        @property
+        def MAX_RATING(self) -> str:
+            return self._get("MAX_RATING")
+
+        @property
+        def TITLE_CONTAINS(self) -> str:
+            return self._get("TITLE_CONTAINS")
+
+        @property
+        def DESCRIPTION_CONTAINS(self) -> str:
+            return self._get("DESCRIPTION_CONTAINS")
+
+        @property
+        def ARTISTS_CONTAINS(self) -> str:
+            return self._get("ARTISTS_CONTAINS")
+
+        @property
+        def ONLY_LEVELS_I_LIKED(self) -> str:
+            return self._get("ONLY_LEVELS_I_LIKED")
+
+        @property
+        def MIN_LIKES(self) -> str:
+            return self._get("MIN_LIKES")
+
+        @property
+        def MAX_LIKES(self) -> str:
+            return self._get("MAX_LIKES")
+
+        @property
+        def TAGS_COMMA_SEPARATED(self) -> str:
+            return self._get("TAGS_COMMA_SEPARATED")
+
+        @property
+        def ENTER_TEXT(self) -> str:
+            return self._get("ENTER_TEXT")
+
+        @property
+        def ENTER_TAGS(self) -> str:
+            return self._get("ENTER_TAGS")
+
+        @property
+        def SORT_BY(self) -> str:
+            return self._get("SORT_BY")
+
+        @property
+        def SORT_BY_DESCRIPTION(self) -> str:
+            return self._get("SORT_BY_DESCRIPTION")
+
+        @property
+        def DATE_CREATED(self) -> str:
+            return self._get("DATE_CREATED")
+
+        @property
+        def RATING(self) -> str:
+            return self._get("RATING")
+
+        @property
+        def LIKES(self) -> str:
+            return self._get("LIKES")
+
+        @property
+        def DECAYING_LIKES(self) -> str:
+            return self._get("DECAYING_LIKES")
+
+        @property
+        def TITLE_A_Z(self) -> str:
+            return self._get("TITLE_A_Z")
+
+        @property
+        def SORT_ORDER(self) -> str:
+            return self._get("SORT_ORDER")
+
+        @property
+        def DESCENDING(self) -> str:
+            return self._get("DESCENDING")
+
+        @property
+        def ASCENDING(self) -> str:
+            return self._get("ASCENDING")
+
     def __init__(self, data: dict, default: dict):
         self._data = data
         self._default = default
+        self.search = self.Search(self)
 
     def _get(self, value: str) -> str:
         try:
             return self._data[value]
-        except:
+        except KeyError:
             return self._default[value]
 
     @property

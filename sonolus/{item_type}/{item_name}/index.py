@@ -47,7 +47,7 @@ def setup():
             )
         elif item_type == "backgrounds":
             if item_name.startswith("levelbg-"):
-                level_data = None  # get from api
+                level_data = None  # XXX: get from api
                 data = []
             else:
                 data = await request.app.run_blocking(
@@ -72,14 +72,14 @@ def setup():
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST, detail="Not logged in."
                 )
-            data = []
+            data = []  # XXX: implement
         elif item_type == "levels":
             headers = {request.app.auth_header: request.app.auth}
             if auth:
                 headers["authorization"] = auth
             async with aiohttp.ClientSession(headers=headers) as cs:
                 async with cs.get(
-                    request.app.api_config["url"] + f"/api/charts/{item_name}/",
+                    request.app.api_config["url"] + f"/api/charts/{item_name}/"
                 ) as req:
                     response = await req.json()
             liked = response["data"].get("liked")
