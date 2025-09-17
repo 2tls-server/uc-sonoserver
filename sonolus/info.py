@@ -28,7 +28,6 @@ def setup():
         if request.headers.get("Sonolus-Session"):
             logged_in = True
 
-        # XXX https://wiki.sonolus.com/custom-server-specs/endpoints/get-sonolus-info
         banner_srl = await request.app.run_blocking(compile_banner)
         button_list = [
             "authentication",
