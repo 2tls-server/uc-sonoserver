@@ -202,6 +202,18 @@ def setup():
             options = []
 
             options.append(
+                ServerFormOptionsFactory.server_text_option(
+                    query="keywords",
+                    name="#KEYWORDS",
+                    required=False,
+                    default="",
+                    placeholder=locale.search.ENTER_TEXT,
+                    limit=100,
+                    shortcuts=[],
+                )
+            )
+
+            options.append(
                 ServerFormOptionsFactory.server_slider_option(
                     query="min_rating",
                     name=locale.search.MIN_RATING,

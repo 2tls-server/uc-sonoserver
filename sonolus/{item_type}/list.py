@@ -113,6 +113,7 @@ def setup():
                     "artists_includes": artists_includes,
                     "sort_by": sort_by,
                     "sort_order": sort_order,
+                    "meta_includes": keywords,
                 }
             headers = {request.app.auth_header: request.app.auth}
             if auth:
