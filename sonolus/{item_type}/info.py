@@ -19,6 +19,7 @@ from helpers.datastructs import (
     ServerItemInfo,
     ServerForm,
 )
+from helpers.api_helpers import api_level_to_level
 from helpers.data_helpers import (
     create_section,
     create_server_form,
@@ -169,83 +170,34 @@ def setup():
                     request.app.api_config["url"] + "/api/charts/",
                     params={"type": "random"},
                 ) as req:
-                    response = await req.json()
-            data = []
-            for i in response["data"]:
-                leveldata = {
-                    "name": f"UnCh-{i['id']}",
-                    "source": request.app.base_url,
-                    "version": 1,
-                    "rating": i["rating"],
-                    "artists": i["artists"],
-                    "author": i["author_full"],
-                    "title": i["title"],
-                    "tags": [
-                        {
-                            "title": str(i["like_count"]),
-                            "icon": "heart" if i.get("liked") else "heartHollow",
-                        }
-                    ]
-                    + [{"title": tag, "icon": "tag"} for tag in i["tags"]],
-                    "engine": compile_engines_list(request.app.base_url)[0],
-                    "useSkin": {"useDefault": True},
-                    "useEffect": {"useDefault": True},
-                    "useParticle": {"useDefault": True},
-                    "useBackground": {"useDefault": True},  # XXX
-                    "cover": {
-                        "hash": i["jacket_file_hash"],
-                        "url": "/".join(
-                            [
-                                response["asset_base_url"].removesuffix("/"),
-                                i["author"],
-                                i["id"],
-                                i["jacket_file_hash"],
-                            ]
-                        ),
-                    },
-                    "data": {
-                        "hash": i["chart_file_hash"],
-                        "url": "/".join(
-                            [
-                                response["asset_base_url"].removesuffix("/"),
-                                i["author"],
-                                i["id"],
-                                i["chart_file_hash"],
-                            ]
-                        ),
-                    },
-                    "bgm": {
-                        "hash": i["music_file_hash"],
-                        "url": "/".join(
-                            [
-                                response["asset_base_url"].removesuffix("/"),
-                                i["author"],
-                                i["id"],
-                                i["music_file_hash"],
-                            ]
-                        ),
-                    },
-                }
-                if i["preview_file_hash"]:
-                    leveldata["preview"] = {
-                        "hash": i["preview_file_hash"],
-                        "url": "/".join(
-                            [
-                                response["asset_base_url"].removesuffix("/"),
-                                i["author"],
-                                i["id"],
-                                i["preview_file_hash"],
-                            ]
-                        ),
-                    }
-                data.append(leveldata)
+                    random_response = await req.json()
+                async with cs.get(
+                    request.app.api_config["url"] + "/api/charts/",
+                    params={"type": "advanced", "sort_by": "created_at"},
+                ) as req:
+                    newest_response = await req.json()
+            asset_base_url = random_response["asset_base_url"].removesuffix("/")
+            random = []
+            newest = []
+            for i in random_response["data"]:
+                leveldata = api_level_to_level(request, asset_base_url, i)
+                random.append(leveldata)
+            for i in newest_response["data"][:5]:
+                leveldata = api_level_to_level(request, asset_base_url, i)
+                newest.append(leveldata)
             sections: List[LevelItemSection] = [
                 create_section(
-                    "Random",
+                    "#NEWEST",
                     item_type,
-                    handle_item_uwu(data, uwu_level),
+                    handle_item_uwu(newest, uwu_level),
                     icon="level",
-                )
+                ),
+                create_section(
+                    "#RANDOM",
+                    item_type,
+                    handle_item_uwu(random, uwu_level),
+                    icon="level",
+                ),
             ]
             options = []
 
@@ -312,7 +264,7 @@ def setup():
                         query="liked_by",
                         name=locale.search.ONLY_LEVELS_I_LIKED,
                         required=False,
-                        default=True,
+                        default=False,
                     )
                 )
 

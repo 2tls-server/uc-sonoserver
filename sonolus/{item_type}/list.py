@@ -21,6 +21,7 @@ from helpers.data_compilers import (
 )
 from helpers.paginate import list_to_pages
 from helpers.sonolus_typings import ItemType
+from helpers.api_helpers import api_level_to_level
 
 router = APIRouter()
 
@@ -92,11 +93,13 @@ def setup():
         elif item_type == "levels":
             if type == "quick":
                 params = {
+                    "type": type,
                     "page": page,
                     "meta_includes": keywords,
                 }
             else:
                 params = {
+                    "type": type,
                     "page": page,
                     "min_rating": min_rating,
                     "max_rating": max_rating,
@@ -116,10 +119,20 @@ def setup():
                 headers["authorization"] = auth
             async with aiohttp.ClientSession(headers=headers) as cs:
                 async with cs.get(
-                    request.app.api_config["url"] + "/api/charts/", params=params
+                    request.app.api_config["url"] + "/api/charts/",
+                    params={
+                        k: (int(v) if isinstance(v, bool) else v)
+                        for k, v in params.items()
+                        if v is not None
+                    },
                 ) as req:
                     response = await req.json()
-            data = response["data"]
+            response_data = response["data"]
+            data = []
+            asset_base_url = response["asset_base_url"].removesuffix("/")
+            for item in response_data:
+                item_data = api_level_to_level(request, asset_base_url, item)
+                data.append(item_data)
             num_pages = response["pageCount"]
             generate_pages = False
         # elif item_type == "replays":
@@ -142,8 +155,23 @@ def setup():
                         else locale.items_not_found_search(item_type)
                     ),
                 )
-            page_data = pages[page]
+            try:
+                page_data = pages[page]
+            except KeyError:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="hi stop hitting our api thanks",
+                )
         else:
+            if len(data) == 0:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=(
+                        locale.items_not_found(item_type)
+                        if not searching
+                        else locale.items_not_found_search(item_type)
+                    ),
+                )
             page_data = data
         page_data = handle_item_uwu(page_data, uwu_level)
         return {

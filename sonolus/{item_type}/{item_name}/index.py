@@ -16,6 +16,7 @@ from helpers.data_compilers import (
 from helpers.sonolus_typings import ItemType
 from helpers.datastructs import ServerItemDetails, get_item_type
 from helpers.data_helpers import create_server_form, ServerFormOptionsFactory
+from helpers.api_helpers import api_level_to_level
 
 router = APIRouter()
 
@@ -82,73 +83,9 @@ def setup():
                     request.app.api_config["url"] + f"/api/charts/{item_name}/"
                 ) as req:
                     response = await req.json()
+            asset_base_url = response["asset_base_url"].removesuffix("/")
             liked = response["data"].get("liked")
-            item_data = {
-                "name": f"UnCh-{response['data']['id']}",
-                "source": request.app.base_url,
-                "version": 1,
-                "rating": response["data"]["rating"],
-                "artists": response["data"]["artists"],
-                "author": response["data"]["author_full"],
-                "title": response["data"]["title"],
-                "tags": [
-                    {
-                        "title": str(response["data"]["like_count"]),
-                        "icon": "heart" if liked else "heartHollow",
-                    }
-                ]
-                + [{"title": tag, "icon": "tag"} for tag in response["data"]["tags"]],
-                "engine": compile_engines_list(request.app.base_url)[0],
-                "useSkin": {"useDefault": True},
-                "useEffect": {"useDefault": True},
-                "useParticle": {"useDefault": True},
-                "useBackground": {"useDefault": True},  # XXX
-                "cover": {
-                    "hash": response["data"]["jacket_file_hash"],
-                    "url": "/".join(
-                        [
-                            response["asset_base_url"].removesuffix("/"),
-                            response["data"]["author"],
-                            response["data"]["id"],
-                            response["data"]["jacket_file_hash"],
-                        ]
-                    ),
-                },
-                "data": {
-                    "hash": response["data"]["chart_file_hash"],
-                    "url": "/".join(
-                        [
-                            response["asset_base_url"].removesuffix("/"),
-                            response["data"]["author"],
-                            response["data"]["id"],
-                            response["data"]["chart_file_hash"],
-                        ]
-                    ),
-                },
-                "bgm": {
-                    "hash": response["data"]["music_file_hash"],
-                    "url": "/".join(
-                        [
-                            response["asset_base_url"].removesuffix("/"),
-                            response["data"]["author"],
-                            response["data"]["id"],
-                            response["data"]["music_file_hash"],
-                        ]
-                    ),
-                },
-            }
-            if response["data"]["preview_file_hash"]:
-                item_data["preview"] = {
-                    "hash": response["data"]["preview_file_hash"],
-                    "url": "/".join(
-                        [
-                            response["asset_base_url"].removesuffix("/"),
-                            response["data"]["author"],
-                            response["data"]["id"],
-                            response["data"]["preview_file_hash"],
-                        ]
-                    ),
-                }
+            item_data = api_level_to_level(request, asset_base_url, response["data"])
             if auth:
                 if liked:
                     actions.append(
