@@ -11,6 +11,7 @@
     "unknown_error": "Unknown error!",
     "you": "You",
     "search": {
+        "FILTERS": "Filters (Page {page}/{pageCount})",
         "ADVANCED_SEARCH": "Advanced Search",
         "MIN_RATING": "Minimum Rating",
         "MAX_RATING": "Maximum Rating",

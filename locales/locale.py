@@ -49,6 +49,11 @@ class Loc:
             except KeyError:
                 return self._parent._default["search"][key]
 
+        def FILTERS(self, page: int, max_page: int) -> str:
+            return self._get("FILTERS").format(
+                page=f"{page:,}", pageCount=f"{max_page:,}"
+            )
+
         @property
         def VISIBILITY(self) -> str:
             return self._get("VISIBILITY")

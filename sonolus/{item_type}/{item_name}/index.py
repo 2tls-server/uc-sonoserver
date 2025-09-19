@@ -434,7 +434,7 @@ def setup():
             actions.append(
                 create_server_form(
                     type="filter",
-                    title=f"Filters (Page {page}/{pageCount})",
+                    title=locale.search.FILTERS(page, pageCount),
                     require_confirmation=False,
                     options=[
                         ServerFormOptionsFactory.server_slider_option(
