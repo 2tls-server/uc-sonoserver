@@ -132,6 +132,11 @@ class Loc:
         except KeyError:
             return self._default[value]
 
+    def invalid_page(self, page: int, max_page: int) -> str:
+        return self._get("invalid_page").format(
+            page=f"{page:,}", max_page=f"{max_page:,}"
+        )
+
     @property
     def server_description(self) -> str:
         return self._get("server_description")

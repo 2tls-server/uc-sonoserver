@@ -1,5 +1,6 @@
 donotload = False
 
+import base64
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
@@ -8,7 +9,7 @@ from helpers.datastructs import ServerItemDetails
 
 from pydantic import BaseModel
 
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlencode
 
 router = APIRouter()
 
@@ -66,11 +67,39 @@ def setup():
                             status_code=req.status, detail=locale.unknown_error
                         )
             resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
-        elif item_type == "playlists" and item_name == "uploaded":
+        elif item_type == "playlists" and item_name.startswith("uploaded"):
+            old_values = item_name.split("_", 1)
+            if len(data.values) > 500 or len(item_name) > 500:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="why so long"
+                )
+            if len(old_values) == 1:
+                old_values = ""
+            else:
+                try:
+                    old_values = base64.urlsafe_b64decode(
+                        old_values[1].encode()
+                    ).decode()
+                except:
+                    old_values = ""
+            new_values = parse_qs(data.values)
+            if old_values:
+                old_values_list = parse_qs(old_values)
+                for key in old_values_list:
+                    if key in new_values:
+                        old_values_list[key] = new_values[key]
+                    else:
+                        old_values_list[key] = old_values_list[key]
+                for key in new_values:
+                    if key not in old_values_list:
+                        old_values_list[key] = new_values[key]
+                updated_old_values = urlencode(old_values_list, doseq=True)
+            else:
+                updated_old_values = urlencode(new_values, doseq=True)
             resp = {
                 "key": "",
                 "hashes": [],
-                "shouldNavigateToItem": f"uploaded_{data.values}",
+                "shouldNavigateToItem": f"uploaded_{base64.urlsafe_b64encode(updated_old_values.encode()).decode()}",
             }
         else:
             raise HTTPException(

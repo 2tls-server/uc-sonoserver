@@ -191,12 +191,10 @@ app.add_event_handler("startup", startup_event)
 
 async def start_fastapi(args):
     config_server = uvicorn.Config(
-        "app:app",
-        host="0.0.0.0",
-        port=config["server"]["port"],
-        workers=8,
-        # log_level="critical",
+        "app:app", host="0.0.0.0", port=config["server"]["port"], workers=11
     )
+    if not debug:
+        config_server.log_level = "critical"
     server = uvicorn.Server(config_server)
     await server.serve()
 

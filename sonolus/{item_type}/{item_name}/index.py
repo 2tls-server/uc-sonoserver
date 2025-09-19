@@ -1,5 +1,7 @@
 donotload = False
 
+import base64
+
 from urllib.parse import parse_qs
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
@@ -78,11 +80,11 @@ def setup():
             if item_name == "uploaded":
                 item_name = "uploaded_page=1"
             parts = item_name.split("_", 1)
-            if parts[0] != "uploaded" or len(parts) != 2:
+            if parts[0] != "uploaded" or len(parts) != 2 or len(item_name) > 500:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST, detail="huh"
                 )
-            parsed = parse_qs(parts[1])
+            parsed = parse_qs(base64.b64decode(parts[1].encode()).decode())
             flattened_data = {k: v[0] for k, v in parsed.items()}
             headers = {request.app.auth_header: request.app.auth}
             headers["authorization"] = auth
@@ -211,10 +213,10 @@ def setup():
                     detail=f"Invalid value for sort_order. Allowed values are: {', '.join(allowed_sort_order)}.",
                 )
             params["sort_order"] = sort_order
-            level_status = flattened_data.get("level_status", "ALL")
+            level_status = flattened_data.get("status", "ALL")
             if level_status not in ["ALL", "PUBLIC_MINE", "UNLISTED", "PRIVATE"]:
                 raise HTTPException(status_code=400, detail="Invalid level_status.")
-            params["level_status"] = level_status
+            params["status"] = level_status
             keywords = flattened_data.get("keywords")
             if keywords is not None:
                 if not isinstance(keywords, str):
@@ -240,11 +242,22 @@ def setup():
                 item_data = api_level_to_level(request, asset_base_url, level)
                 levels.append(item_data)
             pageCount = response["pageCount"]
+            if page > pageCount or page < 0:
+                raise HTTPException(
+                    status_code=400, detail=locale.invalid_page(page, pageCount)
+                )
+            elif pageCount == 0:
+                raise HTTPException(
+                    status_code=400, detail=locale.items_not_found_search("uploaded")
+                )
             item_data = (
                 await request.app.run_blocking(
                     compile_playlists_list, request.app.base_url
                 )
             )[0]
+            item_data["name"] = (
+                f"uploaded_{base64.urlsafe_b64encode(parts[1].encode()).decode()}"
+            )
             item_data["levels"] = levels
             options = []
             options.append(
@@ -252,7 +265,7 @@ def setup():
                     query="status",
                     name=locale.search.VISIBILITY,
                     required=False,
-                    default="ALL",
+                    default=level_status or "ALL",
                     values=[
                         {"name": "ALL", "title": locale.search.VISIBILITY_ALL},
                         {
@@ -272,7 +285,7 @@ def setup():
                     query="keywords",
                     name="#KEYWORDS",
                     required=False,
-                    default="",
+                    default=keywords or "",
                     placeholder=locale.search.ENTER_TEXT,
                     limit=100,
                     shortcuts=[],
@@ -283,7 +296,7 @@ def setup():
                     query="min_rating",
                     name=locale.search.MIN_RATING,
                     required=False,
-                    default=0,
+                    default=min_rating or 0,
                     min_value=0,
                     max_value=99,
                     step=1,
@@ -294,7 +307,7 @@ def setup():
                     query="max_rating",
                     name=locale.search.MAX_RATING,
                     required=False,
-                    default=99,
+                    default=max_rating or 99,
                     min_value=0,
                     max_value=99,
                     step=1,
@@ -305,7 +318,7 @@ def setup():
                     query="title_includes",
                     name=locale.search.TITLE_CONTAINS,
                     required=False,
-                    default="",
+                    default=title_includes or "",
                     placeholder=locale.search.ENTER_TEXT,
                     limit=100,
                     shortcuts=[],
@@ -316,7 +329,7 @@ def setup():
                     query="description_includes",
                     name=locale.search.DESCRIPTION_CONTAINS,
                     required=False,
-                    default="",
+                    default=description_includes or "",
                     placeholder=locale.search.ENTER_TEXT,
                     limit=200,
                     shortcuts=[],
@@ -327,7 +340,7 @@ def setup():
                     query="artists_includes",
                     name=locale.search.ARTISTS_CONTAINS,
                     required=False,
-                    default="",
+                    default=artists_includes or "",
                     placeholder=locale.search.ENTER_TEXT,
                     limit=100,
                     shortcuts=[],
@@ -339,7 +352,7 @@ def setup():
                         query="liked_by",
                         name=locale.search.ONLY_LEVELS_I_LIKED,
                         required=False,
-                        default=False,
+                        default=liked_by,
                     )
                 )
             options.append(
@@ -347,7 +360,7 @@ def setup():
                     query="min_likes",
                     name=locale.search.MIN_LIKES,
                     required=False,
-                    default=0,
+                    default=min_likes or 0,
                     min_value=0,
                     max_value=9999,
                     step=1,
@@ -358,7 +371,7 @@ def setup():
                     query="max_likes",
                     name=locale.search.MAX_LIKES,
                     required=False,
-                    default=9999,
+                    default=max_likes or 9999,
                     min_value=0,
                     max_value=9999,
                     step=1,
@@ -369,7 +382,7 @@ def setup():
                     query="tags",
                     name=locale.search.TAGS_COMMA_SEPARATED,
                     required=False,
-                    default="",
+                    default=tags or "",
                     placeholder=locale.search.ENTER_TAGS,
                     limit=200,
                     shortcuts=[],
@@ -380,7 +393,7 @@ def setup():
                     query="sort_by",
                     name=locale.search.SORT_BY,
                     required=False,
-                    default="created_at",
+                    default=sort_by or "created_at",
                     values=[
                         {"name": "created_at", "title": locale.search.DATE_CREATED},
                         {"name": "rating", "title": locale.search.RATING},
@@ -399,7 +412,7 @@ def setup():
                     query="sort_order",
                     name=locale.search.SORT_ORDER,
                     required=False,
-                    default="desc",
+                    default=sort_order or "desc",
                     values=[
                         {"name": "desc", "title": locale.search.DESCENDING},
                         {"name": "asc", "title": locale.search.ASCENDING},
@@ -408,7 +421,7 @@ def setup():
             )
             actions.append(
                 create_server_form(
-                    type="page",
+                    type="filter",
                     title=f"Filters (Page {page}/{pageCount})",
                     require_confirmation=False,
                     options=[

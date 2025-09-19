@@ -4,6 +4,7 @@
     "item_type_not_found": "Item \"{item}\" not found.",
     "items_not_found": "Could not find any {item}.",
     "items_not_found_search": "Could not find any {item} matching your search.",
+    "invalid_page": "Page {page} does not exist! There are {max_page} pages.",
     "not_logged_in": "You are not logged in!",
     "not_found": "Not found.",
     "unknown_error": "Unknown error!",
