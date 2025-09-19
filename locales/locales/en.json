@@ -29,6 +29,11 @@
         "TITLE_A_Z": "Title (A-Z)",
         "SORT_ORDER": "Sort Order",
         "DESCENDING": "Descending",
-        "ASCENDING": "Ascending"
+        "ASCENDING": "Ascending",
+        "VISIBILITY": "Visibility",
+        "VISIBILITY_ALL": "All",
+        "VISIBILITY_PUBLIC": "Public",
+        "VISIBILITY_UNLISTED": "Unlisted",
+        "VISIBILITY_PRIVATE": "Private"
     }
 }

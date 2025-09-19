@@ -11,7 +11,7 @@ from helpers.datastructs import (
     EffectItem,
     ParticleItem,
     PostItem,
-    LevelItem,
+    PlaylistItem,
 )
 
 from helpers.repository_map import repo
@@ -24,6 +24,7 @@ cached = {
     "backgrounds": None,
     "banner": None,
     "static_posts": None,
+    "playlists": None,
 }
 
 
@@ -46,6 +47,38 @@ def compile_banner() -> Optional[SRL]:
         hash = repo.add_file(path)
         return repo.get_srl(hash)
     return None
+
+
+def compile_playlists_list(source: str = None) -> List[PlaylistItem]:
+    if cached["playlists"]:
+        return cached["playlists"]
+    compiled_data_list = []
+    for playlist in os.listdir("files/playlists"):
+        if not os.path.isdir(os.path.join("files", "playlists", playlist)):
+            continue
+        compiled_data: PlaylistItem = {"tags": [], "levels": []}
+        compiled_data["name"] = playlist
+        if source:
+            compiled_data["source"] = source
+        with open(
+            f"files/playlists/{playlist}/playlist.json", "r", encoding="utf8"
+        ) as f:
+            post_data: dict = json.load(f)
+        if not post_data.get("enabled", True):
+            continue
+        item_keys = ["version", "title", "subtitle", "author"]
+        for key in item_keys:
+            compiled_data[key] = post_data[key]
+        data_files = {"thumbnail": "thumbnail.png"}
+        for key, file in data_files.items():
+            hash = repo.add_file(
+                f"files/playlists/{playlist}/{file}", error_on_file_nonexistent=False
+            )
+            if hash:
+                compiled_data[key] = repo.get_srl(hash)
+        compiled_data_list.append(compiled_data)
+    cached["playlists"] = compiled_data_list
+    return compiled_data_list
 
 
 def compile_static_posts_list(source: str = None) -> List[PostItem]:

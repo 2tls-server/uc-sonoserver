@@ -65,11 +65,17 @@ def setup():
                         raise HTTPException(
                             status_code=req.status, detail=locale.unknown_error
                         )
+            resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
+        elif item_type == "playlists" and item_name == "uploaded":
+            resp = {
+                "key": "",
+                "hashes": [],
+                "shouldNavigateToItem": f"uploaded_{data.values}",
+            }
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=locale.item_not_found(item_type),
+                detail=locale.item_not_found(item_type, item_name),
             )
 
-        resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
         return resp

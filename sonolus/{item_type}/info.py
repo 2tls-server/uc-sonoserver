@@ -34,6 +34,7 @@ from helpers.data_compilers import (
     compile_skins_list,
     compile_static_posts_list,
     sort_posts_by_newest,
+    compile_playlists_list,
 )
 
 router = APIRouter()
@@ -151,16 +152,22 @@ def setup():
                     icon="post",
                 )
             ]
-        # elif item_type == "playlists":
-        #     data = await request.app.run_blocking(compile_playlists_list, request.app.base_url)
-        #     sections: List[PlaylistItemSection] = [
-        #         create_section(
-        #             "Playlists", item_type, data[:5], description=handle_uwu(
-        #     locale.server_description or request.app.config["description"],
-        #     uwu_level,
-        # ), icon="playlist"
-        #         )
-        #     ]
+        elif item_type == "playlists":
+            data = await request.app.run_blocking(
+                compile_playlists_list, request.app.base_url
+            )
+            sections: List[PlaylistItemSection] = [
+                create_section(
+                    "Playlists",
+                    item_type,
+                    data[:1],
+                    description=handle_uwu(
+                        locale.server_description or request.app.config["description"],
+                        uwu_level,
+                    ),
+                    icon="playlist",
+                )
+            ]
         elif item_type == "levels":
             headers = {request.app.auth_header: request.app.auth}
             if auth:
@@ -200,7 +207,6 @@ def setup():
                 ),
             ]
             options = []
-
             options.append(
                 ServerFormOptionsFactory.server_text_option(
                     query="keywords",
@@ -235,7 +241,6 @@ def setup():
                     step=1,
                 )
             )
-
             options.append(
                 ServerFormOptionsFactory.server_text_option(
                     query="title_includes",
@@ -269,7 +274,6 @@ def setup():
                     shortcuts=[],
                 )
             )
-
             if auth:
                 options.append(
                     ServerFormOptionsFactory.server_toggle_option(
@@ -344,7 +348,6 @@ def setup():
                     ],
                 )
             )
-
             search_form = create_server_form(
                 type="advanced",
                 title=locale.search.ADVANCED_SEARCH,

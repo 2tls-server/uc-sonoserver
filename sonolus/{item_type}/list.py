@@ -143,7 +143,7 @@ def setup():
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=locale.item_not_found(item_type),
+                detail=locale.item_type_not_found(item_type),
             )
         if generate_pages:
             pages = list_to_pages(data, request.app.get_items_per_page(item_type))

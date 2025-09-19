@@ -14,6 +14,26 @@ class Loc:
                 return self._parent._default["search"][key]
 
         @property
+        def VISIBILITY(self) -> str:
+            return self._get("VISIBILITY")
+
+        @property
+        def VISIBILITY_ALL(self) -> str:
+            return self._get("VISIBILITY_ALL")
+
+        @property
+        def VISIBILITY_PUBLIC(self) -> str:
+            return self._get("VISIBILITY_PUBLIC")
+
+        @property
+        def VISIBILITY_UNLISTED(self) -> str:
+            return self._get("VISIBILITY_UNLISTED")
+
+        @property
+        def VISIBILITY_PRIVATE(self) -> str:
+            return self._get("VISIBILITY_PRIVATE")
+
+        @property
         def ADVANCED_SEARCH(self) -> str:
             return self._get("ADVANCED_SEARCH")
 
