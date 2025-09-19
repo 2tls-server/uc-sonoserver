@@ -244,7 +244,12 @@ def setup():
             pageCount = response["pageCount"]
             if page > pageCount or page < 0:
                 raise HTTPException(
-                    status_code=400, detail=locale.invalid_page(page, pageCount)
+                    status_code=400,
+                    detail=(
+                        locale.invalid_page_plural(page, pageCount)
+                        if pageCount != 1
+                        else locale.invalid_page_singular(page, pageCount)
+                    ),
                 )
             elif pageCount == 0:
                 raise HTTPException(

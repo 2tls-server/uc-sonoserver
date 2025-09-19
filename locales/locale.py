@@ -132,8 +132,13 @@ class Loc:
         except KeyError:
             return self._default[value]
 
-    def invalid_page(self, page: int, max_page: int) -> str:
-        return self._get("invalid_page").format(
+    def invalid_page_plural(self, page: int, max_page: int) -> str:
+        return self._get("invalid_page_plural").format(
+            page=f"{page:,}", max_page=f"{max_page:,}"
+        )
+
+    def invalid_page_singular(self, page: int, max_page: int) -> str:
+        return self._get("invalid_page_singular").format(
             page=f"{page:,}", max_page=f"{max_page:,}"
         )
 
