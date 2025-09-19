@@ -32,6 +32,34 @@ class Loc:
                 return self._parent._default["background"][key]
 
         @property
+        def UPLOADED(self) -> str:
+            return self._get("UPLOADED")
+
+        @property
+        def USEBACKGROUNDDESC(self) -> str:
+            return self._get("USEBACKGROUNDDESC")
+
+        @property
+        def USEBACKGROUND(self) -> str:
+            return self._get("USEBACKGROUND")
+
+        @property
+        def V1(self) -> str:
+            return self._get("V1")
+
+        @property
+        def V3(self) -> str:
+            return self._get("V3")
+
+        @property
+        def DEF_OR_V1(self) -> str:
+            return self._get("DEF_OR_V1")
+
+        @property
+        def DEF_OR_V3(self) -> str:
+            return self._get("DEF_OR_V3")
+
+        @property
         def BACKGROUNDSELECT(self) -> str:
             return self._get("BACKGROUNDSELECT")
 

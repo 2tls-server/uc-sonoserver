@@ -1,5 +1,8 @@
 donotload = False
 
+import asyncio
+import time
+
 from fastapi import APIRouter, Request, Query
 from fastapi import HTTPException, status
 
@@ -53,16 +56,14 @@ def setup():
         ),  # will only ever be PUBLIC here. anything else, go to playlists
         keywords: Optional[str] = Query(None),
     ):
-        query_params = dict(request.query_params)
-        for item in request.app.remove_config_queries:
-            query_params.pop(item, None)
+        query_params = request.state.query_params
         try:
             locale = Locale.get_messages(request.state.localization)
         except AssertionError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
             )
-        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
+        uwu_level = request.state.uwu
         searching = False
         generate_pages = True
         auth = request.headers.get("Sonolus-Session")
@@ -147,11 +148,19 @@ def setup():
                     status_code=400, detail=locale.items_not_found_search(item_type)
                 )
             response_data = response["data"]
-            data = []
             asset_base_url = response["asset_base_url"].removesuffix("/")
-            for item in response_data:
-                item_data = api_level_to_level(request, asset_base_url, item)
-                data.append(item_data)
+            data = await asyncio.gather(
+                *[
+                    request.app.run_blocking(
+                        api_level_to_level,
+                        request,
+                        asset_base_url,
+                        item,
+                        request.state.levelbg,
+                    )
+                    for item in response_data
+                ]
+            )
             num_pages = response["pageCount"]
             generate_pages = False
         # elif item_type == "replays":

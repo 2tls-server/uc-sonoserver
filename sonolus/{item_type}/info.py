@@ -1,5 +1,7 @@
 donotload = False
 
+import asyncio
+
 from typing import List
 
 from fastapi import APIRouter, Request
@@ -48,16 +50,14 @@ import aiohttp
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType):
-        query_params = dict(request.query_params)
-        for item in request.app.remove_config_queries:
-            query_params.pop(item, None)
+        query_params = request.state.query_params
         try:
             locale = Locale.get_messages(request.state.localization)
         except AssertionError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
             )
-        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
+        uwu_level = request.state.uwu
         banner_srl = await request.app.run_blocking(compile_banner)
         searches = []
         auth = request.headers.get("Sonolus-Session")
@@ -191,14 +191,30 @@ def setup():
                 ) as req:
                     newest_response = await req.json()
             asset_base_url = random_response["asset_base_url"].removesuffix("/")
-            random = []
-            newest = []
-            for i in random_response["data"]:
-                leveldata = api_level_to_level(request, asset_base_url, i)
-                random.append(leveldata)
-            for i in newest_response["data"][:5]:
-                leveldata = api_level_to_level(request, asset_base_url, i)
-                newest.append(leveldata)
+            random = await asyncio.gather(
+                *[
+                    request.app.run_blocking(
+                        api_level_to_level,
+                        request,
+                        asset_base_url,
+                        i,
+                        request.state.levelbg,
+                    )
+                    for i in random_response["data"]
+                ]
+            )
+            newest = await asyncio.gather(
+                *[
+                    request.app.run_blocking(
+                        api_level_to_level,
+                        request,
+                        asset_base_url,
+                        i,
+                        request.state.levelbg,
+                    )
+                    for i in newest_response["data"][:5]
+                ]
+            )
             sections: List[LevelItemSection] = [
                 create_section(
                     "#NEWEST",

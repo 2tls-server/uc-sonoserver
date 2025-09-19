@@ -42,7 +42,14 @@
     },
     "background": {
         "BACKGROUNDSELECT": "Background Selection",
-        "BACKGROUNDSELECTSUB": "Please select a background in Configuration."
+        "BACKGROUNDSELECTSUB": "Please select a background in Configuration.",
+        "USEBACKGROUNDDESC": "Select a background to use! Uploaded means the charter uploaded background, if exists.",
+        "USEBACKGROUND": "Select Level Background",
+        "V1": "PJSK V1",
+        "V3": "PJSK V3",
+        "DEF_OR_V1": "Uploaded OR PJSK V1",
+        "DEF_OR_V3": "Uploaded OR PJSK V3",
+        "UPLOADED": "User Uploaded Background"
     },
     "playlist": {
         "UPLOADED": "Your Uploaded Charts",

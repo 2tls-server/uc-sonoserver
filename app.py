@@ -35,7 +35,7 @@ class SonolusFastAPI(FastAPI):
         self.auth = self.api_config["auth"]
         self.auth_header = self.api_config["auth-header"]
 
-        self.remove_config_queries = ["localization", "page", "uwu"]
+        self.remove_config_queries = ["localization", "page", "uwu", "levelbg"]
 
         self.repository = repo
 
@@ -68,7 +68,30 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.localization = request.query_params.get(
             "localization", "en"
         ).lower()
-        request.state.uwu = request.query_params.get("uwu", "off").lower()
+        request.state.uwu = (
+            request.query_params.get("uwu", "off").lower()
+            if request.state.localization == "en"
+            else "off"
+        )
+        request.state.levelbg = request.query_params.get(
+            "levelbg", "default_or_v3"
+        ).lower()
+        try:
+            assert request.state.levelbg in [
+                "default_or_v3",
+                "default_or_v1",
+                "v1",
+                "v3",
+            ]
+            assert request.state.uwu in ["off", "uwu", "owo", "uvu"]
+        except AssertionError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="invalid query params"
+            )
+        query_params = dict(request.query_params)
+        for item in request.app.remove_config_queries:
+            query_params.pop(item, None)
+        request.state.query_params = query_params
         response = await call_next(request)
         response.headers["Sonolus-Version"] = request.app.config[
             "required-client-version"

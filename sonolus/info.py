@@ -25,7 +25,7 @@ def setup():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
             )
-        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
+        uwu_level = request.state.uwu
         # Assume logged in
         # We only need to validate the session
         # If it's a request that updates something, or access something private
@@ -64,6 +64,21 @@ def setup():
                 description="Uwuify your menu (EN ONLY).",
             )
             options.append(option)
+        options.append(
+            ServerFormOptionsFactory.server_select_option(
+                query="levelbg",
+                name=locale.background.USEBACKGROUND,
+                required=False,
+                default="default_or_v3",
+                values=[
+                    {"name": "default_or_v3", "title": locale.background.DEF_OR_V3},
+                    {"name": "v3", "title": locale.background.V3},
+                    {"name": "default_or_v1", "title": locale.background.DEF_OR_V1},
+                    {"name": "v1", "title": locale.background.V1},
+                ],
+                description=locale.background.USEBACKGROUNDDESC,
+            )
+        )
         buttons: List[ServerInfoButton] = [{"type": button} for button in button_list]
         data = {
             "title": request.app.config["name"],

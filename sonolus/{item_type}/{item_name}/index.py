@@ -1,6 +1,6 @@
 donotload = False
 
-import base64
+import base64, asyncio
 
 from urllib.parse import parse_qs
 from fastapi import APIRouter, Request
@@ -33,16 +33,14 @@ import aiohttp
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType, item_name: str):
-        query_params = dict(request.query_params)
-        for item in request.app.remove_config_queries:
-            query_params.pop(item, None)
+        query_params = request.state.query_params
         try:
             locale = Locale.get_messages(request.state.localization)
         except AssertionError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
             )
-        uwu_level = request.state.uwu if request.state.localization == "en" else "off"
+        uwu_level = request.state.uwu
         item_data = None
         auth = request.headers.get("Sonolus-Session")
         actions = []
@@ -242,10 +240,18 @@ def setup():
                 ) as req:
                     response = await req.json()
             asset_base_url = response["asset_base_url"].removesuffix("/")
-            levels = []
-            for level in response["data"]:
-                item_data = api_level_to_level(request, asset_base_url, level)
-                levels.append(item_data)
+            levels = await asyncio.gather(
+                *[
+                    request.app.run_blocking(
+                        api_level_to_level,
+                        request,
+                        asset_base_url,
+                        level,
+                        request.state.levelbg,
+                    )
+                    for level in response["data"]
+                ]
+            )
             pageCount = response["pageCount"]
             if page > pageCount or page < 0:
                 raise HTTPException(
@@ -462,7 +468,13 @@ def setup():
                     response = await req.json()
             asset_base_url = response["asset_base_url"].removesuffix("/")
             liked = response["data"].get("liked")
-            item_data = api_level_to_level(request, asset_base_url, response["data"])
+            item_data = await request.app.run_blocking(
+                api_level_to_level,
+                request,
+                asset_base_url,
+                response["data"],
+                request.state.levelbg,
+            )
             if auth:
                 if liked:
                     actions.append(
