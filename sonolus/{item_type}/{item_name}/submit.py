@@ -59,7 +59,8 @@ def setup():
                 )
             async with aiohttp.ClientSession(headers=headers) as cs:
                 async with cs.post(
-                    request.app.api_config["url"] + f"/api/charts/{item_name}/like/",
+                    request.app.api_config["url"]
+                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/like/",
                     json={"type": type},
                 ) as req:
                     if req.status != 200:

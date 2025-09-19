@@ -78,7 +78,7 @@ def setup():
                     status_code=status.HTTP_400_BAD_REQUEST, detail=locale.not_logged_in
                 )
             if item_name == "uploaded":
-                item_name = "uploaded_page=1"
+                item_name = "uploaded_cGFnZT0x"  # page=1
             parts = item_name.split("_", 1)
             if parts[0] != "uploaded" or len(parts) != 2 or len(item_name) > 500:
                 raise HTTPException(
@@ -254,7 +254,7 @@ def setup():
                 await request.app.run_blocking(
                     compile_playlists_list, request.app.base_url
                 )
-            )[0]
+            )[0].copy()
             item_data["name"] = (
                 f"uploaded_{base64.urlsafe_b64encode(parts[1].encode()).decode()}"
             )
@@ -444,7 +444,8 @@ def setup():
                 headers["authorization"] = auth
             async with aiohttp.ClientSession(headers=headers) as cs:
                 async with cs.get(
-                    request.app.api_config["url"] + f"/api/charts/{item_name}/"
+                    request.app.api_config["url"]
+                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/"
                 ) as req:
                     response = await req.json()
             asset_base_url = response["asset_base_url"].removesuffix("/")
