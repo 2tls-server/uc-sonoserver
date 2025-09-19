@@ -63,7 +63,7 @@ def setup():
             )
             sections: List[EngineItemSection] = [
                 create_section(
-                    "Engines",
+                    "#ENGINE",
                     item_type,
                     handle_item_uwu(data[:5], uwu_level),
                     description=handle_uwu(
@@ -79,7 +79,7 @@ def setup():
             )
             sections: List[SkinItemSection] = [
                 create_section(
-                    "Skins",
+                    "#SKIN",
                     item_type,
                     handle_item_uwu(data[:5], uwu_level),
                     description=handle_uwu(
@@ -95,7 +95,7 @@ def setup():
             )
             sections: List[BackgroundItemSection] = [
                 create_section(
-                    "Backgrounds",
+                    "#BACKGROUND",
                     item_type,
                     handle_item_uwu(data[:5], uwu_level),
                     description=handle_uwu(
@@ -111,7 +111,7 @@ def setup():
             )
             sections: List[EffectItemSection] = [
                 create_section(
-                    "Effects",
+                    "#EFFECT",
                     item_type,
                     handle_item_uwu(data[:5], uwu_level),
                     description=handle_uwu(
@@ -127,7 +127,7 @@ def setup():
             )
             sections: List[ParticleItemSection] = [
                 create_section(
-                    "Particles",
+                    "#PARTICLE",
                     item_type,
                     handle_item_uwu(data[:5], uwu_level),
                     description=handle_uwu(
@@ -146,7 +146,7 @@ def setup():
             data = sort_posts_by_newest(data)
             sections: List[PostItemSection] = [
                 create_section(
-                    "Newest Posts",
+                    "#NEWEST",
                     item_type,
                     handle_item_uwu(data[:5], uwu_level),
                     icon="post",
@@ -158,7 +158,7 @@ def setup():
             )
             sections: List[PlaylistItemSection] = [
                 create_section(
-                    "Playlists",
+                    "#PLAYLIST",
                     item_type,
                     data[:1],
                     description=handle_uwu(
