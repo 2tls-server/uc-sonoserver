@@ -9,6 +9,7 @@
     "not_logged_in": "You are not logged in!",
     "not_found": "Not found.",
     "unknown_error": "Unknown error!",
+    "you": "You",
     "search": {
         "ADVANCED_SEARCH": "Advanced Search",
         "MIN_RATING": "Minimum Rating",
@@ -37,5 +38,13 @@
         "VISIBILITY_PUBLIC": "Public",
         "VISIBILITY_UNLISTED": "Unlisted",
         "VISIBILITY_PRIVATE": "Private"
+    },
+    "background": {
+        "BACKGROUNDSELECT": "Background Selection",
+        "BACKGROUNDSELECTSUB": "Please select a background in Configuration."
+    },
+    "playlist": {
+        "UPLOADED": "Your Uploaded Charts",
+        "UPLOADEDSUB": "View all your uploaded charts."
     }
 }

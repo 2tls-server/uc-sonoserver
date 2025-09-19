@@ -17,7 +17,9 @@ def api_level_to_level(request, asset_base_url: str, i: dict) -> dict:
             }
         ]
         + [{"title": tag, "icon": "tag"} for tag in i["tags"]],
-        "engine": compile_engines_list(request.app.base_url)[0],
+        "engine": compile_engines_list(
+            request.app.base_url, request.state.localization
+        )[0],
         "useSkin": {"useDefault": True},
         "useEffect": {"useDefault": True},
         "useParticle": {"useDefault": True},

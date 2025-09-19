@@ -3,6 +3,42 @@ from typing import Dict
 
 
 class Loc:
+    class Playlist:
+        def __init__(self, parent: "Loc"):
+            self._parent = parent
+
+        def _get(self, key: str) -> str:
+            try:
+                return self._parent._data["playlist"][key]
+            except KeyError:
+                return self._parent._default["playlist"][key]
+
+        @property
+        def UPLOADED(self) -> str:
+            return self._get("UPLOADED")
+
+        @property
+        def UPLOADEDSUB(self) -> str:
+            return self._get("UPLOADEDSUB")
+
+    class Background:
+        def __init__(self, parent: "Loc"):
+            self._parent = parent
+
+        def _get(self, key: str) -> str:
+            try:
+                return self._parent._data["background"][key]
+            except KeyError:
+                return self._parent._default["background"][key]
+
+        @property
+        def BACKGROUNDSELECT(self) -> str:
+            return self._get("BACKGROUNDSELECT")
+
+        @property
+        def BACKGROUNDSELECTSUB(self) -> str:
+            return self._get("BACKGROUNDSELECTSUB")
+
     class Search:
         def __init__(self, parent: "Loc"):
             self._parent = parent
@@ -125,6 +161,8 @@ class Loc:
         self._data = data
         self._default = default
         self.search = self.Search(self)
+        self.playlist = self.Playlist(self)
+        self.background = self.Background(self)
 
     def _get(self, value: str) -> str:
         try:
@@ -170,6 +208,10 @@ class Loc:
     def unknown_error(self) -> str:
         return self._get("unknown_error")
 
+    @property
+    def you(self) -> str:
+        return self._get("you")
+
 
 class LocaleManager:
     def __init__(self, default_locale: str):
@@ -202,7 +244,24 @@ class LocaleManager:
         except FileNotFoundError:
             return self._default_locale
 
+    def assert_supported(self, locale: str):
+        assert locale in [
+            "el",
+            "en",
+            "es",
+            "fr",
+            "id",
+            "it",
+            "ja",
+            "ko",
+            "ru",
+            "tr",
+            "zh-cn",
+            "zh-TW",
+        ]
+
     def get_messages(self, locale: str) -> Loc:
+        self.assert_supported(locale)
         locale_class = self.load_locale(locale)
         return locale_class
 

@@ -33,7 +33,12 @@ def setup():
         query_params = dict(request.query_params)
         for item in request.app.remove_config_queries:
             query_params.pop(item, None)
-        locale = Locale.get_messages(request.state.localization)
+        try:
+            locale = Locale.get_messages(request.state.localization)
+        except AssertionError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
+            )
         uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         item_data = None
         auth = request.headers.get("Sonolus-Session")

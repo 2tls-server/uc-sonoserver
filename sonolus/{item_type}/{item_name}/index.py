@@ -36,7 +36,12 @@ def setup():
         query_params = dict(request.query_params)
         for item in request.app.remove_config_queries:
             query_params.pop(item, None)
-        locale = Locale.get_messages(request.state.localization)
+        try:
+            locale = Locale.get_messages(request.state.localization)
+        except AssertionError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
+            )
         uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         item_data = None
         auth = request.headers.get("Sonolus-Session")
@@ -44,20 +49,20 @@ def setup():
 
         if item_type == "engines":
             data = await request.app.run_blocking(
-                compile_engines_list, request.app.base_url
+                compile_engines_list, request.app.base_url, request.state.localization
             )
         elif item_type == "skins":
             data = await request.app.run_blocking(
                 compile_skins_list, request.app.base_url
             )
         elif item_type == "backgrounds":
-            if item_name.startswith("levelbg-"):
-                level_data = None  # XXX: get from api
-                data = []
-            else:
-                data = await request.app.run_blocking(
-                    compile_backgrounds_list, request.app.base_url
+            item_data = (
+                await request.app.run_blocking(
+                    compile_backgrounds_list,
+                    request.app.base_url,
+                    request.state.localization,
                 )
+            )[0]
         elif item_type == "effects":
             data = await request.app.run_blocking(
                 compile_effects_list, request.app.base_url
@@ -257,7 +262,9 @@ def setup():
                 )
             item_data = (
                 await request.app.run_blocking(
-                    compile_playlists_list, request.app.base_url
+                    compile_playlists_list,
+                    request.app.base_url,
+                    request.state.localization,
                 )
             )[0].copy()
             item_data["name"] = (

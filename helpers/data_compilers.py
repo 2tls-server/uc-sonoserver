@@ -16,15 +16,14 @@ from helpers.datastructs import (
 
 from helpers.repository_map import repo
 
+from locales.locale import Locale
+
 cached = {
-    "engines": None,
     "skins": None,
     "effects": None,
     "particles": None,
-    "backgrounds": None,
     "banner": None,
     "static_posts": None,
-    "playlists": None,
 }
 
 
@@ -49,9 +48,12 @@ def compile_banner() -> Optional[SRL]:
     return None
 
 
-def compile_playlists_list(source: str = None) -> List[PlaylistItem]:
-    if cached["playlists"]:
-        return cached["playlists"]
+def compile_playlists_list(
+    source: str = None, locale: str = "en"
+) -> List[PlaylistItem]:
+    loc = Locale.get_messages(locale)
+    if cached.get(f"playlists_{locale}"):
+        return cached[f"playlists_{locale}"]
     compiled_data_list = []
     for playlist in os.listdir("files/playlists"):
         if not os.path.isdir(os.path.join("files", "playlists", playlist)):
@@ -68,7 +70,14 @@ def compile_playlists_list(source: str = None) -> List[PlaylistItem]:
             continue
         item_keys = ["version", "title", "subtitle", "author"]
         for key in item_keys:
-            compiled_data[key] = post_data[key]
+            k_value = post_data[key]
+            if type(k_value) == str:
+                k_value = (
+                    k_value.replace("#YOU", loc.you)
+                    .replace("#UPLOADEDSUB", loc.playlist.UPLOADEDSUB)
+                    .replace("#UPLOADED", loc.playlist.UPLOADED)
+                )
+            compiled_data[key] = k_value
         data_files = {"thumbnail": "thumbnail.png"}
         for key, file in data_files.items():
             hash = repo.add_file(
@@ -77,7 +86,7 @@ def compile_playlists_list(source: str = None) -> List[PlaylistItem]:
             if hash:
                 compiled_data[key] = repo.get_srl(hash)
         compiled_data_list.append(compiled_data)
-    cached["playlists"] = compiled_data_list
+    cached[f"playlists_{locale}"] = compiled_data_list
     return compiled_data_list
 
 
@@ -142,9 +151,12 @@ def compile_effects_list(source: str = None) -> List[EffectItem]:
     return compiled_data_list
 
 
-def compile_backgrounds_list(source: str = None) -> List[BackgroundItem]:
-    if cached["backgrounds"]:
-        return cached["backgrounds"]
+def compile_backgrounds_list(
+    source: str = None, locale: str = "en"
+) -> List[BackgroundItem]:
+    loc = Locale.get_messages(locale)
+    if cached.get(f"backgrounds_{locale}"):
+        return cached[f"backgrounds_{locale}"]
     compiled_data_list = []
     for background in os.listdir("files/backgrounds"):
         if not os.path.isdir(os.path.join("files", "backgrounds", background)):
@@ -161,7 +173,12 @@ def compile_backgrounds_list(source: str = None) -> List[BackgroundItem]:
             continue
         item_keys = ["version", "title", "subtitle", "author"]
         for key in item_keys:
-            compiled_data[key] = background_data[key]
+            d_value = background_data[key]
+            if type(d_value) == str:
+                d_value = d_value.replace(
+                    "#BACKGROUNDSELECTSUB", loc.background.BACKGROUNDSELECTSUB
+                ).replace("#BACKGROUNDSELECT", loc.background.BACKGROUNDSELECT)
+            compiled_data[key] = d_value
         data_files = {
             "thumbnail": "thumbnail.png",
             "data": "data",
@@ -172,7 +189,7 @@ def compile_backgrounds_list(source: str = None) -> List[BackgroundItem]:
             hash = repo.add_file(f"files/backgrounds/{background}/{file}")
             compiled_data[key] = repo.get_srl(hash)
         compiled_data_list.append(compiled_data)
-    cached["backgrounds"] = compiled_data_list
+    cached[f"backgrounds_{locale}"] = compiled_data_list
     return compiled_data_list
 
 
@@ -240,9 +257,9 @@ def compile_skins_list(source: str = None) -> List[SkinItem]:
     return compiled_data_list
 
 
-def compile_engines_list(source: str = None) -> List[EngineItem]:
-    if cached["engines"]:
-        return cached["engines"]
+def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineItem]:
+    if cached.get(f"engines_{locale}"):
+        return cached[f"engines_{locale}"]
     compiled_data_list = []
     for engine in os.listdir("files/engines"):
         if not os.path.isdir(os.path.join("files", "engines", engine)):
@@ -294,7 +311,7 @@ def compile_engines_list(source: str = None) -> List[EngineItem]:
             if particle["name"] == engine_data["particle_name"]
         )
         compiled_data["particle"] = particle_data
-        backgrounds = compile_backgrounds_list(source)
+        backgrounds = compile_backgrounds_list(source, locale)
         background_data = next(
             background
             for background in backgrounds
@@ -302,5 +319,5 @@ def compile_engines_list(source: str = None) -> List[EngineItem]:
         )
         compiled_data["background"] = background_data
         compiled_data_list.append(compiled_data)
-    cached["engines"] = compiled_data_list
+    cached[f"engines_{locale}"] = compiled_data_list
     return compiled_data_list

@@ -51,7 +51,12 @@ def setup():
         query_params = dict(request.query_params)
         for item in request.app.remove_config_queries:
             query_params.pop(item, None)
-        locale = Locale.get_messages(request.state.localization)
+        try:
+            locale = Locale.get_messages(request.state.localization)
+        except AssertionError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
+            )
         uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         banner_srl = await request.app.run_blocking(compile_banner)
         searches = []
@@ -59,7 +64,7 @@ def setup():
 
         if item_type == "engines":
             data = await request.app.run_blocking(
-                compile_engines_list, request.app.base_url
+                compile_engines_list, request.app.base_url, request.state.localization
             )
             sections: List[EngineItemSection] = [
                 create_section(
@@ -91,7 +96,9 @@ def setup():
             ]
         elif item_type == "backgrounds":
             data = await request.app.run_blocking(
-                compile_backgrounds_list, request.app.base_url
+                compile_backgrounds_list,
+                request.app.base_url,
+                request.state.localization,
             )
             sections: List[BackgroundItemSection] = [
                 create_section(
@@ -154,7 +161,7 @@ def setup():
             ]
         elif item_type == "playlists":
             data = await request.app.run_blocking(
-                compile_playlists_list, request.app.base_url
+                compile_playlists_list, request.app.base_url, request.state.localization
             )
             sections: List[PlaylistItemSection] = [
                 create_section(

@@ -1,6 +1,6 @@
 donotload = False
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException, status
 
 from helpers.data_compilers import compile_banner
 from helpers.datastructs import ServerInfoButton
@@ -19,7 +19,12 @@ router = APIRouter()
 def setup():
     @router.get("/")
     async def main(request: Request):
-        locale = Locale.get_messages(request.state.localization)
+        try:
+            locale = Locale.get_messages(request.state.localization)
+        except AssertionError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
+            )
         uwu_level = request.state.uwu if request.state.localization == "en" else "off"
         # Assume logged in
         # We only need to validate the session
