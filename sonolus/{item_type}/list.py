@@ -128,6 +128,20 @@ def setup():
                     },
                 ) as req:
                     response = await req.json()
+            pageCount = response["pageCount"]
+            if page > pageCount or page < 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        locale.invalid_page_plural(page, pageCount)
+                        if pageCount != 1
+                        else locale.invalid_page_singular(page, pageCount)
+                    ),
+                )
+            elif pageCount == 0:
+                raise HTTPException(
+                    status_code=400, detail=locale.items_not_found_search(item_type)
+                )
             response_data = response["data"]
             data = []
             asset_base_url = response["asset_base_url"].removesuffix("/")
