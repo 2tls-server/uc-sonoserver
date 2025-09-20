@@ -4,14 +4,12 @@ from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
 from helpers.sonolus_typings import ItemType
-from helpers.datastructs import ServerItemCommunityComment, get_item_type
-from helpers.data_helpers import create_server_form, ServerFormOptionsFactory
-from helpers.api_helpers import api_level_to_level
+from helpers.data_helpers import create_server_form
 
 router = APIRouter()
 
 from locales.locale import Locale
-from helpers.owoify import handle_item_uwu
+from helpers.owoify import handle_uwu
 
 import aiohttp
 
@@ -62,9 +60,9 @@ def setup():
                 formatted_comments.append(
                     {
                         "name": str(comment["id"]),
-                        "author": comment["username"],
+                        "author": handle_uwu(comment["username"], uwu_level),
                         "time": comment["created_at"],
-                        "content": comment["content"],
+                        "content": handle_uwu(comment["content"], uwu_level),
                         "actions": (
                             [commentDeleteAction]
                             if (comment["owner"] or response.get("mod"))
