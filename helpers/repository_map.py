@@ -7,12 +7,14 @@ from pathlib import Path
 from io import BytesIO
 from zipfile import ZipFile
 import os
+import functools
 
 
 class Repository:
     def __init__(self):
         self._map = {}
 
+    @functools.lru_cache(maxsize=None)
     def _read_from_zip_chain(self, parts: list[str]) -> bytes:
         """
         Recursively reads a file through a chain of ZIPs.
@@ -75,7 +77,7 @@ class Repository:
 
     def get_hash_from_file_path(self, file: os.PathLike) -> Optional[str]:
         input_path = os.path.abspath(file)
-        for sha1, data in self._map.items():
+        for sha1, data in self._map.copy().items():
             if type(data["file"]) != str:
                 continue
             stored_path = os.path.abspath(data["file"])
@@ -105,6 +107,7 @@ class Repository:
             file_data = file
         return file_data
 
+    @functools.lru_cache(maxsize=None)
     def get_srl(self, hash: str) -> Optional[SRL]:
         if hash in self._map.keys():
             return {"hash": hash, "url": f"/sonolus/repository/{hash}"}
