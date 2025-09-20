@@ -141,6 +141,7 @@ def extract_engine(scp_path: Path, out_root: Path):
             "previewData",
             "tutorialData",
             "configuration",
+            "rom",  # rom is optional actually, but very important for the engines that do have it
         ]
         for key in top_keys:
             if key in engine:

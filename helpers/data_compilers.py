@@ -290,10 +290,12 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
             "watchData": "watchData",
             "previewData": "previewData",
             "tutorialData": "tutorialData",
+            "rom": "rom",
         }
         for key, file in data_files.items():
-            hash = repo.add_file(f"files/engines/{engine}/{file}")
-            compiled_data[key] = repo.get_srl(hash)
+            if os.path.exists(file):
+                hash = repo.add_file(f"files/engines/{engine}/{file}")
+                compiled_data[key] = repo.get_srl(hash)
         skins = compile_skins_list(source)
         skin_data = next(
             skin for skin in skins if skin["name"] == engine_data["skin_name"]
