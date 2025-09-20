@@ -522,6 +522,14 @@ class ServerItemInfo(TypedDict):
     banner: Optional[SRL]
 
 
+class ServerItemCommunityComment(TypedDict):
+    name: str
+    author: str
+    time: int  # ms epoch
+    content: str
+    actions: List[ServerForm]
+
+
 # endregion
 
 

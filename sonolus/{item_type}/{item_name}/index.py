@@ -38,6 +38,7 @@ def setup():
         except AssertionError as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         uwu_level = request.state.uwu
+        community = False
         uwu_handled = False
         item_data = None
         auth = request.headers.get("Sonolus-Session")
@@ -455,6 +456,7 @@ def setup():
                 )
             )
         elif item_type == "levels":
+            community = True
             headers = {request.app.auth_header: request.app.auth}
             if auth:
                 headers["authorization"] = auth
@@ -516,8 +518,8 @@ def setup():
                 }
                 current = response["data"]["status"]
                 vis_values = []
-                for status, meta in VISIBILITIES.items():
-                    vis_values.append({"name": status, "title": meta["title"]})
+                for s, meta in VISIBILITIES.items():
+                    vis_values.append({"name": s, "title": meta["title"]})
                 the_option = ServerFormOptionsFactory.server_select_option(
                     query="visibility",
                     name=locale.search.VISIBILITY,
@@ -568,7 +570,7 @@ def setup():
         detail: ServerItemDetails[T] = {
             "item": data,
             "actions": actions,
-            "hasCommunity": False,
+            "hasCommunity": community,
             "leaderboards": [],
             "sections": [],
         }
