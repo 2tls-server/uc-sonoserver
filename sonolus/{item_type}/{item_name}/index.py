@@ -33,7 +33,6 @@ import aiohttp
 def setup():
     @router.get("/")
     async def main(request: Request, item_type: ItemType, item_name: str):
-        query_params = request.state.query_params
         try:
             locale = Locale.get_messages(request.state.localization)
         except AssertionError:
@@ -41,6 +40,7 @@ def setup():
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
             )
         uwu_level = request.state.uwu
+        uwu_handled = False
         item_data = None
         auth = request.headers.get("Sonolus-Session")
         actions = []
@@ -468,12 +468,13 @@ def setup():
                     response = await req.json()
             asset_base_url = response["asset_base_url"].removesuffix("/")
             liked = response["data"].get("liked")
-            item_data = await request.app.run_blocking(
+            item_data, desc = await request.app.run_blocking(
                 api_level_to_level,
                 request,
                 asset_base_url,
                 response["data"],
                 request.state.levelbg,
+                include_description=True,
             )
             if auth:
                 if liked:
@@ -533,6 +534,14 @@ def setup():
                     options=[the_option],
                 )
                 actions.append(the_action)
+            if response.get("mod"):
+                if desc:
+                    desc = locale.is_mod + f"\n{'-'*10}\n" + desc
+                else:
+                    desc = locale.is_mod + f"\n{'-'*10}\n" + "No description"
+            if desc:
+                item_data["description"] = desc
+            uwu_handled = True
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":
@@ -553,7 +562,10 @@ def setup():
                 )
 
         T = get_item_type(item_type)
-        data = handle_item_uwu([item_data], uwu_level)[0]
+        if uwu_handled:
+            data = item_data
+        else:
+            data = handle_item_uwu([item_data], uwu_level)[0]
         detail: ServerItemDetails[T] = {
             "item": data,
             "actions": actions,

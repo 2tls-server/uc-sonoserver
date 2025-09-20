@@ -11,6 +11,7 @@
     "unknown_error": "Unknown error!",
     "you": "You",
     "not_mod": "You are not a moderator!",
+    "is_mod": "You are a moderator!",
     "search": {
         "FILTERS": "Filters (Page {page}/{pageCount})",
         "ADVANCED_SEARCH": "Advanced Search",

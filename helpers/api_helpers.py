@@ -4,7 +4,13 @@ from locales.locale import Locale
 from helpers.owoify import handle_uwu
 
 
-def api_level_to_level(request, asset_base_url: str, i: dict, bgtype: str) -> dict:
+def api_level_to_level(
+    request,
+    asset_base_url: str,
+    i: dict,
+    bgtype: str,
+    include_description: bool = False,
+) -> dict | tuple:
     loc = Locale.get_messages(request.state.localization)
 
     @lru_cache(maxsize=None)
@@ -86,4 +92,10 @@ def api_level_to_level(request, asset_base_url: str, i: dict, bgtype: str) -> di
             "url": make_url(i["preview_file_hash"]),
         }
 
-    return leveldata
+    if not include_description:
+        return leveldata
+    else:
+        desc = i.get("description")
+        if desc:
+            desc = handle_uwu(desc, request.state.uwu)
+        return leveldata, desc

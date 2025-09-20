@@ -218,6 +218,10 @@ class Loc:
         return self._get("not_mod")
 
     @property
+    def is_mod(self) -> str:
+        return self._get("is_mod")
+
+    @property
     def server_description(self) -> str:
         return self._get("server_description")
 
