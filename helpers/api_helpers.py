@@ -10,6 +10,7 @@ def api_level_to_level(
     i: dict,
     bgtype: str,
     include_description: bool = False,
+    disable_replace_missing_preview: bool = False,
 ) -> dict | tuple:
     loc = Locale.get_messages(request.state.localization)
 
@@ -90,6 +91,11 @@ def api_level_to_level(
         leveldata["preview"] = {
             "hash": i["preview_file_hash"],
             "url": make_url(i["preview_file_hash"]),
+        }
+    elif not disable_replace_missing_preview:
+        leveldata["preview"] = {
+            "hash": i["music_file_hash"],
+            "url": make_url(i["music_file_hash"]),
         }
 
     if not include_description:
