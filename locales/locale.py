@@ -302,6 +302,8 @@ class LocaleManager:
         ]
 
     def get_messages(self, locale: str) -> Loc:
+        if locale.startswith("es"):
+            locale = "es"
         self.assert_supported(locale)
         locale_class = self.load_locale(locale)
         return locale_class
