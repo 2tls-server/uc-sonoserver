@@ -468,6 +468,7 @@ def setup():
                     response = await req.json()
             asset_base_url = response["asset_base_url"].removesuffix("/")
             liked = response["data"].get("liked")
+            like_count = response["data"]["like_count"]
             item_data, desc = await request.app.run_blocking(
                 api_level_to_level,
                 request,
@@ -481,7 +482,7 @@ def setup():
                     actions.append(
                         create_server_form(
                             type="unlike",
-                            title="Unlike",
+                            title=f"Unlike ({like_count:,})",
                             icon="heart",
                             require_confirmation=False,
                             options=[],
@@ -491,7 +492,7 @@ def setup():
                     actions.append(
                         create_server_form(
                             type="like",
-                            title="Like",
+                            title=f"Like ({like_count:,})",
                             icon="heartHollow",
                             require_confirmation=False,
                             options=[],
