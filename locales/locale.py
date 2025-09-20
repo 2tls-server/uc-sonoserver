@@ -286,7 +286,7 @@ class LocaleManager:
             return self._default_locale
 
     def assert_supported(self, locale: str):
-        assert locale in [
+        supported = [
             "el",
             "en",
             "es",
@@ -300,10 +300,10 @@ class LocaleManager:
             "zh-cn",
             "zh-TW",
         ]
+        if locale not in supported:
+            raise AssertionError(f"Locale '{locale}' is not supported.")
 
     def get_messages(self, locale: str) -> Loc:
-        if locale.startswith("es"):
-            locale = "es"
         self.assert_supported(locale)
         locale_class = self.load_locale(locale)
         return locale_class

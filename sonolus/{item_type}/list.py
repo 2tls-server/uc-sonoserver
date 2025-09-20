@@ -59,10 +59,8 @@ def setup():
         query_params = request.state.query_params
         try:
             locale = Locale.get_messages(request.state.localization)
-        except AssertionError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
-            )
+        except AssertionError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         uwu_level = request.state.uwu
         searching = False
         generate_pages = True

@@ -35,10 +35,8 @@ def setup():
     async def main(request: Request, item_type: ItemType, item_name: str):
         try:
             locale = Locale.get_messages(request.state.localization)
-        except AssertionError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported locale"
-            )
+        except AssertionError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         uwu_level = request.state.uwu
         uwu_handled = False
         item_data = None
