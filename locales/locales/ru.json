@@ -4,10 +4,16 @@
   "item_type_not_found": "Предмет \"{item}\" не найден.",
   "items_not_found": "Не удалось найти любой {item}.",
   "items_not_found_search": "Не удалось найти любой {item} подходящий по вашему запросу.",
+  "invalid_page_plural": "Страница {page} не существует! Всего есть {max_page} страниц.",
+  "invalid_page_singular": "Страница {page} не существует! Всего есть {max_page} страница.",
   "not_logged_in": "Вы не вошли в аккаунт!",
   "not_found": "Не найдено.",
   "unknown_error": "Неизвестная ошибка!",
+  "you": "Вы",
+  "not_mod": "Вы не модератор!",
+  "is_mod": "Вы модератор!",
   "search": {
+    "FILTERS": "Фильтры (Страница {page}/{pageCount})",
     "ADVANCED_SEARCH": "Продвинутый Поиск",
     "MIN_RATING": "Мин. Рейтинг",
     "MAX_RATING": "Макс. Рейтинг",
@@ -29,6 +35,26 @@
     "TITLE_A_Z": "Названиям (A-Z)",
     "SORT_ORDER": "Порядок Сортировки",
     "DESCENDING": "Вниз",
-    "ASCENDING": "Вверх"
+    "ASCENDING": "Вверх",
+    "VISIBILITY": "Видимость",
+    "VISIBILITY_ALL": "Все",
+    "VISIBILITY_PUBLIC": "Публичные",
+    "VISIBILITY_UNLISTED": "Не указанные",
+    "VISIBILITY_PRIVATE": "Приватные"
+  },
+  "background": {
+    "BACKGROUNDSELECT": "Выбор Заднего фона",
+    "BACKGROUNDSELECTSUB": "Пожалуйста выберите задний фон в Конфигурации.",
+    "USEBACKGROUNDDESC": "Выберите задний фон чтобы его использовать! Опубликованный означает что чартер опубликовал задний фон, если существует.",
+    "USEBACKGROUND": "Выбрать Задний фон Уровня",
+    "V1": "PJSK V1",
+    "V3": "PJSK V3",
+    "DEF_OR_V1": "Опубликованный ИЛИ ЖЕ PJSK V1",
+    "DEF_OR_V3": "Опубликованный ИЛИ ЖЕ PJSK V3",
+    "UPLOADED": "Пользователь Загрузил Задний фон"
+  },
+  "playlist": {
+    "UPLOADED": "Ваши Опубликованные Чарты",
+    "UPLOADEDSUB": "Посмотрите все ваши опубликованные чарты."
   }
 }
