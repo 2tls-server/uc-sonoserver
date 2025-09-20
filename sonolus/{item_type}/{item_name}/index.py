@@ -496,6 +496,16 @@ def setup():
                             options=[],
                         )
                     )
+            if response.get("mod"):
+                actions.append(
+                    create_server_form(
+                        type="delete",
+                        title="Delete",
+                        icon="delete",
+                        require_confirmation=True,
+                        options=[],
+                    )
+                )
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":

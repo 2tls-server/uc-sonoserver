@@ -10,6 +10,7 @@
     "not_found": "Not found.",
     "unknown_error": "Unknown error!",
     "you": "You",
+    "not_mod": "You are not a moderator!",
     "search": {
         "FILTERS": "Filters (Page {page}/{pageCount})",
         "ADVANCED_SEARCH": "Advanced Search",

@@ -56,21 +56,33 @@ def setup():
                 )
             # parse data.values, www-form
             type = flattened_data.get("type")
-            if type not in ["like", "unlike"]:
+            if type not in ["like", "unlike", "delete"]:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail=locale.not_found
                 )
-            async with aiohttp.ClientSession(headers=headers) as cs:
-                async with cs.post(
-                    request.app.api_config["url"]
-                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/like/",
-                    json={"type": type},
-                ) as req:
-                    if req.status != 200:
-                        raise HTTPException(
-                            status_code=req.status, detail=locale.unknown_error
-                        )
-            resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
+            if type in ["like", "unlike"]:
+                async with aiohttp.ClientSession(headers=headers) as cs:
+                    async with cs.post(
+                        request.app.api_config["url"]
+                        + f"/api/charts/{item_name.removeprefix('UnCh-')}/like/",
+                        json={"type": type},
+                    ) as req:
+                        if req.status != 200:
+                            raise HTTPException(
+                                status_code=req.status, detail=locale.unknown_error
+                            )
+                resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
+            elif type in ["delete"]:
+                async with aiohttp.ClientSession(headers=headers) as cs:
+                    async with cs.delete(
+                        request.app.api_config["url"]
+                        + f"/api/charts/{item_name.removeprefix('UnCh-')}/delete/"
+                    ) as req:
+                        if req.status != 200:
+                            raise HTTPException(
+                                status_code=req.status, detail=locale.not_mod
+                            )
+                resp = {"key": "", "hashes": [], "shouldRemoveItem": True}
         elif item_type == "playlists" and item_name.startswith("uploaded"):
             old_values = item_name.split("_", 1)
             if len(data.values) > 500 or len(item_name) > 500:

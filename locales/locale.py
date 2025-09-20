@@ -214,6 +214,10 @@ class Loc:
         )
 
     @property
+    def not_mod(self) -> str:
+        return self._get("not_mod")
+
+    @property
     def server_description(self) -> str:
         return self._get("server_description")
 
