@@ -297,6 +297,7 @@ class LocaleManager:
             "ko",
             "ru",
             "tr",
+            "pt",
             "zh-cn",
             "zh-TW",
         ]
