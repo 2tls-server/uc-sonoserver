@@ -293,7 +293,7 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
             "rom": "rom",
         }
         for key, file in data_files.items():
-            if os.path.exists(file):
+            if os.path.exists(f"files/engines/{engine}/{file}"):
                 hash = repo.add_file(f"files/engines/{engine}/{file}")
                 compiled_data[key] = repo.get_srl(hash)
         skins = compile_skins_list(source)

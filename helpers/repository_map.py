@@ -44,7 +44,7 @@ class Repository:
                 return None
         hash = self.get_hash_from_file_path(file)
         if hash:
-            del self._map[hash]
+            self._map.pop(hash, 0)
         if "|" in str(file):
             file_data = self._read_from_zip_chain(str(file).split("|"))
             sha1 = calculate_sha1(file_data)
