@@ -18,7 +18,7 @@ import uvicorn
 
 from helpers.repository_map import repo
 
-debug = False
+debug = True
 
 
 class SonolusFastAPI(FastAPI):

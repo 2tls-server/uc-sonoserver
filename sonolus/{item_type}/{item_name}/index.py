@@ -496,16 +496,43 @@ def setup():
                             options=[],
                         )
                     )
-            if response.get("mod"):
+            if response.get("mod") or response.get("owner"):
                 actions.append(
                     create_server_form(
                         type="delete",
-                        title="Delete",
+                        title="#DELETE",
                         icon="delete",
                         require_confirmation=True,
                         options=[],
                     )
                 )
+                VISIBILITIES = {
+                    "PUBLIC": {"title": "#PUBLIC", "icon": "globe"},
+                    "PRIVATE": {"title": "#PRIVATE", "icon": "lock"},
+                    "UNLISTED": {
+                        "title": locale.search.VISIBILITY_UNLISTED,
+                        "icon": "envelopeOpen",
+                    },
+                }
+                current = response["data"]["status"]
+                vis_values = []
+                for status, meta in VISIBILITIES.items():
+                    vis_values.append({"name": status, "title": meta["title"]})
+                the_option = ServerFormOptionsFactory.server_select_option(
+                    query="visibility",
+                    name=locale.search.VISIBILITY,
+                    required=True,
+                    default=current,
+                    values=vis_values,
+                )
+                the_action = create_server_form(
+                    type="visibility",
+                    title=locale.search.VISIBILITY,
+                    icon=VISIBILITIES[current]["icon"],
+                    require_confirmation=True,
+                    options=[the_option],
+                )
+                actions.append(the_action)
         # elif item_type == "replays":
         #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)
         # elif item_type == "rooms":
