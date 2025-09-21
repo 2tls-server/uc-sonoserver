@@ -92,7 +92,8 @@ def setup():
                         + f"/api/accounts/session/account/",
                     ) as req:
                         response = await req.json()
-                desc += "\n" + ("-" * 20) + "\n"
+                desc += "\n\n" + locale.welcome(response["sonolus_username"])
+                desc += "\n\n" + ("-" * 40) + "\n"
                 if response.get("mod") or response.get("admin"):
                     if response.get("admin"):
                         desc += f"\n{locale.is_admin}\n{locale.admin_powers}\n{locale.mod_powers}"
