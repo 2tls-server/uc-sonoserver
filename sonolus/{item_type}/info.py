@@ -175,16 +175,30 @@ async def main(request: Request, item_type: ItemType):
         async with aiohttp.ClientSession(headers=headers) as cs:
             url = request.app.api_config["url"] + "/api/charts/"
             tasks = [
-                cs.get(url, params={"type": "random", "staff_pick": staff_pick}),
+                cs.get(
+                    url,
+                    params={
+                        "type": "random",
+                        "staff_pick": {"off": 0, "true": 1, "false": 0}[staff_pick],
+                    },
+                ),
                 cs.get(
                     url,
                     params={
                         "type": "advanced",
                         "sort_by": "created_at",
-                        "staff_pick": staff_pick,
+                        "staff_pick": {"off": 0, "true": 1, "false": 0}[staff_pick],
                     },
                 ),
-                cs.get(url, params={"type": "random", "staff_pick": "true"}),
+                cs.get(
+                    url,
+                    params={
+                        "type": "random",
+                        "staff_pick": {"off": 0, "true": 1, "false": 0}[
+                            ("true" if staff_pick in ["off", "false"] else "false")
+                        ],
+                    },
+                ),
             ]
             responses = await asyncio.gather(*tasks)
 
@@ -225,11 +239,19 @@ async def main(request: Request, item_type: ItemType):
         )
         sections: List[LevelItemSection] = [
             create_section(
-                locale.random_staff_pick,
+                (
+                    locale.random_staff_pick
+                    if staff_pick in ["off", "false"]
+                    else locale.random_non_staff_pick
+                ),
                 item_type,
                 handle_item_uwu([random_staff_pick], uwu_level),
                 icon="trophy",
-                description=locale.staff_pick_desc,
+                description=(
+                    locale.staff_pick_desc
+                    if staff_pick in ["off", "false"]
+                    else locale.non_staff_pick_desc
+                ),
             ),
             create_section(
                 "#NEWEST",

@@ -290,6 +290,10 @@ class Loc:
         return self._get("staff_pick_desc")
 
     @property
+    def non_staff_pick_desc(self) -> str:
+        return self._get("non_staff_pick_desc")
+
+    @property
     def staff_pick_notice(self) -> str:
         return self._get("staff_pick_notice")
 
@@ -308,6 +312,10 @@ class Loc:
     @property
     def random_staff_pick(self) -> str:
         return self._get("random_staff_pick")
+
+    @property
+    def random_non_staff_pick(self) -> str:
+        return self._get("random_non_staff_pick")
 
     @property
     def mod_powers(self) -> str:
