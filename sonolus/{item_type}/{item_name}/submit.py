@@ -47,7 +47,14 @@ async def main(
             )
         # parse data.values, www-form
         type = flattened_data.get("type")
-        if type not in ["like", "unlike", "delete", "visibility", "staff_pick_add", "staff_pick_delete"]:
+        if type not in [
+            "like",
+            "unlike",
+            "delete",
+            "visibility",
+            "staff_pick_add",
+            "staff_pick_delete",
+        ]:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail=locale.not_found
             )

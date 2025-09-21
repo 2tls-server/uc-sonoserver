@@ -98,7 +98,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
         else:
             page = 1
         staff_pick = flattened_data.get("staff_pick", "off")
-        if level_status not in ["off", "default", "true", "false"]:
+        if staff_pick not in ["off", "default", "true", "false"]:
             raise HTTPException(status_code=400, detail="Invalid staff_pick.")
         params["staff_pick"] = {"off": None, "true": True, "false": False}[
             (
@@ -635,7 +635,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                                     name="#CONFIRM",
                                     required=True,
                                     default=False,
-                                    description=locale.staff_pick_confirm
+                                    description=locale.staff_pick_confirm,
                                 )
                             ],
                         )
@@ -653,7 +653,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                                     name="#CONFIRM",
                                     required=True,
                                     default=False,
-                                    description=locale.staff_pick_confirm
+                                    description=locale.staff_pick_confirm,
                                 )
                             ],
                         )

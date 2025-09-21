@@ -268,7 +268,7 @@ class Loc:
     @property
     def is_admin(self) -> str:
         return self._get("is_admin")
-    
+
     @property
     def not_admin_or_owner(self) -> str:
         return self._get("not_admin_or_owner")
