@@ -67,7 +67,11 @@ def api_level_to_level(
                 {
                     "title": str(i["like_count"]),
                     "icon": "heart" if i.get("liked") else "heartHollow",
-                }
+                },
+                {
+                    "title": str(i["comment_count"]),
+                    "icon": "comment",
+                },
             ]
             + [
                 {"title": handle_uwu(tag, request.state.uwu), "icon": "tag"}
