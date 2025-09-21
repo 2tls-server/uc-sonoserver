@@ -173,25 +173,24 @@ async def main(request: Request, item_type: ItemType):
         if auth:
             headers["authorization"] = auth
         async with aiohttp.ClientSession(headers=headers) as cs:
-            async with cs.get(
-                request.app.api_config["url"] + "/api/charts/",
-                params={"type": "random", "staff_pick": staff_pick},
-            ) as req:
-                random_response = await req.json()
-            async with cs.get(
-                request.app.api_config["url"] + "/api/charts/",
-                params={
-                    "type": "advanced",
-                    "sort_by": "created_at",
-                    "staff_pick": staff_pick,
-                },
-            ) as req:
-                newest_response = await req.json()
-            async with cs.get(
-                request.app.api_config["url"] + "/api/charts/",
-                params={"type": "random", "staff_pick": "true"},
-            ) as req:
-                staffpick_req = await req.json()
+            url = request.app.api_config["url"] + "/api/charts/"
+            tasks = [
+                cs.get(url, params={"type": "random", "staff_pick": staff_pick}),
+                cs.get(
+                    url,
+                    params={
+                        "type": "advanced",
+                        "sort_by": "created_at",
+                        "staff_pick": staff_pick,
+                    },
+                ),
+                cs.get(url, params={"type": "random", "staff_pick": "true"}),
+            ]
+            responses = await asyncio.gather(*tasks)
+
+            random_response, newest_response, staffpick_req = await asyncio.gather(
+                *[resp.json() for resp in responses]
+            )
         asset_base_url = random_response["asset_base_url"].removesuffix("/")
         random_staff_pick = await request.app.run_blocking(
             api_level_to_level,
