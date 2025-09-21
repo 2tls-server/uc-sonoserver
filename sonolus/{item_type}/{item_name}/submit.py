@@ -31,9 +31,7 @@ async def main(
     except AssertionError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     uwu_level = request.state.uwu
-    item_data = None
     auth = request.headers.get("Sonolus-Session")
-    actions = []
 
     parsed = parse_qs(data.values)
     flattened_data = {k: v[0] for k, v in parsed.items()}
@@ -49,7 +47,7 @@ async def main(
             )
         # parse data.values, www-form
         type = flattened_data.get("type")
-        if type not in ["like", "unlike", "delete", "visibility"]:
+        if type not in ["like", "unlike", "delete", "visibility", "staff_pick_add", "staff_pick_delete"]:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail=locale.not_found
             )
@@ -73,7 +71,7 @@ async def main(
                 ) as req:
                     if req.status != 200:
                         raise HTTPException(
-                            status_code=req.status, detail=locale.not_admin
+                            status_code=req.status, detail=locale.not_admin_or_owner
                         )
             resp = {"key": "", "hashes": [], "shouldRemoveItem": True}
         elif type in ["visibility"]:
@@ -82,6 +80,18 @@ async def main(
                     request.app.api_config["url"]
                     + f"/api/charts/{item_name.removeprefix('UnCh-')}/visibility/",
                     json={"status": flattened_data.get("visibility")},
+                ) as req:
+                    if req.status != 200:
+                        raise HTTPException(
+                            status_code=req.status, detail=locale.not_mod_or_owner
+                        )
+            resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
+        elif type in ["staff_pick_add", "staff_pick_delete"]:
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.patch(
+                    request.app.api_config["url"]
+                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/stpick/",
+                    json={"value": True if type == "staff_pick_add" else False},
                 ) as req:
                     if req.status != 200:
                         raise HTTPException(

@@ -254,6 +254,10 @@ class Loc:
         return self._get("not_mod")
 
     @property
+    def not_mod_or_owner(self) -> str:
+        return self._get("not_mod_or_owner")
+
+    @property
     def is_mod(self) -> str:
         return self._get("is_mod")
 
@@ -264,6 +268,10 @@ class Loc:
     @property
     def is_admin(self) -> str:
         return self._get("is_admin")
+    
+    @property
+    def not_admin_or_owner(self) -> str:
+        return self._get("not_admin_or_owner")
 
     @property
     def staff_pick(self) -> str:
@@ -284,6 +292,18 @@ class Loc:
     @property
     def staff_pick_notice(self) -> str:
         return self._get("staff_pick_notice")
+
+    @property
+    def staff_pick_confirm(self) -> str:
+        return self._get("staff_pick_confirm")
+
+    @property
+    def staff_pick_add(self) -> str:
+        return self._get("staff_pick_add")
+
+    @property
+    def staff_pick_remove(self) -> str:
+        return self._get("staff_pick_remove")
 
     @property
     def mod_powers(self) -> str:

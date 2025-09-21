@@ -621,6 +621,43 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 options=[the_option],
             )
             actions.append(the_action)
+            if response.get("mod"):
+                if response["data"].get("staff_pick"):
+                    actions.append(
+                        create_server_form(
+                            type="staff_pick_delete",
+                            title=locale.staff_pick_remove,
+                            icon="delete",
+                            require_confirmation=True,
+                            options=[
+                                ServerFormOptionsFactory.server_toggle_option(
+                                    query="_",
+                                    name="#CONFIRM",
+                                    required=True,
+                                    default=False,
+                                    description=locale.staff_pick_confirm
+                                )
+                            ],
+                        )
+                    )
+                else:
+                    actions.append(
+                        create_server_form(
+                            type="staff_pick_add",
+                            title=locale.staff_pick_add,
+                            icon="trophy",
+                            require_confirmation=True,
+                            options=[
+                                ServerFormOptionsFactory.server_toggle_option(
+                                    query="_",
+                                    name="#CONFIRM",
+                                    required=True,
+                                    default=False,
+                                    description=locale.staff_pick_confirm
+                                )
+                            ],
+                        )
+                    )
         if desc:
             item_data["description"] = desc
         uwu_handled = True
