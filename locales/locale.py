@@ -139,6 +139,42 @@ class Loc:
             return self._get("MAX_LIKES")
 
         @property
+        def STAFF_PICK_DESC(self) -> str:
+            return self._get("STAFF_PICK_SEARCH_DESC")
+
+        @property
+        def STAFF_PICK_CONFIG_DESC(self) -> str:
+            return self._get("STAFF_PICK_CONFIG_DESC")
+
+        @property
+        def STAFF_PICK_OFF(self) -> str:
+            return self._get("STAFF_PICK_OFF")
+
+        @property
+        def STAFF_PICK_TRUE(self) -> str:
+            return self._get("STAFF_PICK_TRUE")
+
+        @property
+        def STAFF_PICK_FALSE(self) -> str:
+            return self._get("STAFF_PICK_FALSE")
+
+        @property
+        def ONLY_LEVELS_I_COMMENTED_ON(self) -> str:
+            return self._get("ONLY_LEVELS_I_COMMENTED_ON")
+
+        @property
+        def COMMENTS(self) -> str:
+            return self._get("COMMENTS")
+
+        @property
+        def MIN_COMMENTS(self) -> str:
+            return self._get("MIN_COMMENTS")
+
+        @property
+        def MAX_COMMENTS(self) -> str:
+            return self._get("MAX_COMMENTS")
+
+        @property
         def TAGS_COMMA_SEPARATED(self) -> str:
             return self._get("TAGS_COMMA_SEPARATED")
 
@@ -232,6 +268,22 @@ class Loc:
     @property
     def staff_pick(self) -> str:
         return self._get("staff_pick")
+
+    @property
+    def off(self) -> str:
+        return self._get("off")
+
+    @property
+    def on(self) -> str:
+        return self._get("on")
+
+    @property
+    def staff_pick_desc(self) -> str:
+        return self._get("staff_pick_desc")
+
+    @property
+    def staff_pick_notice(self) -> str:
+        return self._get("staff_pick_notice")
 
     @property
     def mod_powers(self) -> str:

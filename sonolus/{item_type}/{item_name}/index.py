@@ -97,6 +97,16 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             params["page"] = page - 1
         else:
             page = 1
+        staff_pick = flattened_data.get("staff_pick", "off")
+        if level_status not in ["off", "default", "true", "false"]:
+            raise HTTPException(status_code=400, detail="Invalid staff_pick.")
+        params["staff_pick"] = {"off": None, "true": True, "false": False}[
+            (
+                staff_pick
+                if staff_pick not in ["default", None]
+                else request.state.staff_pick
+            )
+        ]
         min_rating = flattened_data.get("min_rating")
         max_rating = flattened_data.get("max_rating")
         if min_rating is not None:
@@ -159,12 +169,47 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 status_code=400,
                 detail="min_likes cannot be greater than max_likes.",
             )
+        min_comments = flattened_data.get("min_comments")
+        max_comments = flattened_data.get("max_comments")
+        if min_comments is not None:
+            if min_comments.isdigit():
+                min_comments = int(min_comments)
+            if not isinstance(min_comments, int):
+                raise HTTPException(
+                    status_code=400, detail="min_comments must be an integer."
+                )
+            params["min_comments"] = min_comments
+        if max_comments is not None:
+            if max_comments.isdigit():
+                max_comments = int(max_comments)
+            if not isinstance(max_comments, int):
+                raise HTTPException(
+                    status_code=400, detail="max_comments must be an integer."
+                )
+            params["max_comments"] = max_comments
+        if (
+            min_comments is not None
+            and max_comments is not None
+            and min_comments > max_comments
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="min_comments cannot be greater than max_comments.",
+            )
         liked_by = flattened_data.get("liked_by", False)
         if type(liked_by) == str and liked_by.isdigit():
             liked_by = bool(liked_by)
         if not isinstance(liked_by, bool):
             raise HTTPException(status_code=400, detail="liked_by must be a boolean.")
         params["liked_by"] = liked_by
+        commented_on = flattened_data.get("commented_on", False)
+        if type(commented_on) == str and commented_on.isdigit():
+            commented_on = bool(commented_on)
+        if not isinstance(commented_on, bool):
+            raise HTTPException(
+                status_code=400, detail="commented_on must be a boolean."
+            )
+        params["commented_on"] = commented_on
         title_includes = flattened_data.get("title_includes")
         if title_includes is not None:
             if not isinstance(title_includes, str):
@@ -187,7 +232,14 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 )
             params["artists_includes"] = artists_includes
         sort_by = flattened_data.get("sort_by", "created_at")
-        allowed_sort_by = ["created_at", "rating", "likes", "decaying_likes", "abc"]
+        allowed_sort_by = [
+            "created_at",
+            "rating",
+            "likes",
+            "comments",
+            "decaying_likes",
+            "abc",
+        ]
         if sort_by not in allowed_sort_by:
             raise HTTPException(
                 status_code=400,
@@ -285,6 +337,21 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             )
         )
         options.append(
+            ServerFormOptionsFactory.server_select_option(
+                query="staff_pick",
+                name=locale.staff_pick,
+                required=False,
+                default=staff_pick,
+                description=locale.search.STAFF_PICK_DESC,
+                values=[
+                    {"name": "default", "title": "#DEFAULT"},
+                    {"name": "off", "title": locale.search.STAFF_PICK_OFF},
+                    {"name": "true", "title": locale.search.STAFF_PICK_TRUE},
+                    {"name": "false", "title": locale.search.STAFF_PICK_FALSE},
+                ],
+            )
+        )
+        options.append(
             ServerFormOptionsFactory.server_text_option(
                 query="keywords",
                 name="#KEYWORDS",
@@ -359,6 +426,14 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                     default=liked_by,
                 )
             )
+            options.append(
+                ServerFormOptionsFactory.server_toggle_option(
+                    query="commented_on",
+                    name=locale.search.ONLY_LEVELS_I_COMMENTED_ON,
+                    required=False,
+                    default=commented_on,
+                )
+            )
         options.append(
             ServerFormOptionsFactory.server_slider_option(
                 query="min_likes",
@@ -376,6 +451,28 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 name=locale.search.MAX_LIKES,
                 required=False,
                 default=max_likes or 9999,
+                min_value=0,
+                max_value=9999,
+                step=1,
+            )
+        )
+        options.append(
+            ServerFormOptionsFactory.server_slider_option(
+                query="min_comments",
+                name=locale.search.MIN_COMMENTS,
+                required=False,
+                default=min_comments or 0,
+                min_value=0,
+                max_value=9999,
+                step=1,
+            )
+        )
+        options.append(
+            ServerFormOptionsFactory.server_slider_option(
+                query="max_comments",
+                name=locale.search.MAX_COMMENTS,
+                required=False,
+                default=max_comments or 9999,
                 min_value=0,
                 max_value=9999,
                 step=1,
@@ -402,6 +499,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                     {"name": "created_at", "title": locale.search.DATE_CREATED},
                     {"name": "rating", "title": locale.search.RATING},
                     {"name": "likes", "title": locale.search.LIKES},
+                    {"name": "comments", "title": locale.search.COMMENTS},
                     {
                         "name": "decaying_likes",
                         "title": locale.search.DECAYING_LIKES,

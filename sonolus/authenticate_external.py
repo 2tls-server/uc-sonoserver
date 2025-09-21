@@ -114,4 +114,4 @@ async def main(request: Request, data: ServerAuthenticateExternalRequest):
                 raise HTTPException(
                     status_code=req.status, detail="We're not sure what went wrong!"
                 )
-    return {"message": "Success."}
+    return {"message": "Success. Return to the browser."}

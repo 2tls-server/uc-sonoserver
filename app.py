@@ -35,7 +35,13 @@ class SonolusFastAPI(FastAPI):
         self.auth = self.api_config["auth"]
         self.auth_header = self.api_config["auth-header"]
 
-        self.remove_config_queries = ["localization", "page", "uwu", "levelbg"]
+        self.remove_config_queries = [
+            "localization",
+            "page",
+            "uwu",
+            "levelbg",
+            "stpickconfig",
+        ]
 
         self.repository = repo
 
@@ -76,6 +82,9 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.levelbg = request.query_params.get(
             "levelbg", "default_or_v3"
         ).lower()
+        request.state.staff_pick = request.query_params.get(
+            "stpickconfig", "off"
+        ).lower()
         try:
             assert request.state.levelbg in [
                 "default_or_v3",
@@ -84,6 +93,7 @@ class SonolusMiddleware(BaseHTTPMiddleware):
                 "v3",
             ]
             assert request.state.uwu in ["off", "uwu", "owo", "uvu"]
+            assert request.state.staff_pick in ["off", "true", "false"]
         except AssertionError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="invalid query params"

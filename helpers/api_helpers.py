@@ -102,6 +102,15 @@ def api_level_to_level(
             "url": make_url(i["music_file_hash"]),
         }
 
+    if i["staff_pick"]:
+        leveldata["tags"].insert(
+            0,
+            {
+                "title": loc.staff_pick,
+                "icon": "trophy",
+            },
+        )
+
     if not include_description:
         return leveldata
     else:

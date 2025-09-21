@@ -76,6 +76,22 @@ async def main(request: Request):
             description=locale.background.USEBACKGROUNDDESC,
         )
     )
+    options.append(
+        ServerFormOptionsFactory.server_select_option(
+            query="stpickconfig",
+            name=locale.staff_pick,
+            required=False,
+            default="off",
+            values=[
+                {"name": "off", "title": locale.search.STAFF_PICK_OFF},
+                {"name": "true", "title": locale.search.STAFF_PICK_TRUE},
+                {"name": "false", "title": locale.search.STAFF_PICK_FALSE},
+            ],
+            description=locale.search.STAFF_PICK_CONFIG_DESC
+            + "\n"
+            + locale.staff_pick_desc,
+        )
+    )
     desc = locale.server_description or request.app.config["description"]
 
     auth = request.headers.get("Sonolus-Session")

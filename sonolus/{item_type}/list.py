@@ -34,17 +34,21 @@ async def main(
     item_type: ItemType,
     type: Literal["quick", "advanced"] = Query("quick"),
     page: int = Query(0, ge=0),
+    staff_pick: Optional[Literal["default", "off", "true", "false"]] = Query("default"),
     min_rating: Optional[int] = Query(None),
     max_rating: Optional[int] = Query(None),
     tags: Optional[List[str]] = Query(None),
     min_likes: Optional[int] = Query(None),
     max_likes: Optional[int] = Query(None),
+    min_comments: Optional[int] = Query(None),
+    max_comments: Optional[int] = Query(None),
     liked_by: Optional[bool] = Query(False),
+    commented_on: Optional[bool] = Query(False),
     title_includes: Optional[str] = Query(None),
     description_includes: Optional[str] = Query(None),
     artists_includes: Optional[str] = Query(None),
     sort_by: Optional[
-        Literal["created_at", "rating", "likes", "decaying_likes", "abc"]
+        Literal["created_at", "rating", "likes", "comments", "decaying_likes", "abc"]
     ] = Query("created_at"),
     sort_order: Optional[Literal["desc", "asc"]] = Query("desc"),
     level_status: Optional[Literal["PUBLIC"]] = Query(
@@ -52,7 +56,6 @@ async def main(
     ),  # will only ever be PUBLIC here. anything else, go to playlists
     keywords: Optional[str] = Query(None),
 ):
-    query_params = request.state.query_params
     try:
         locale = Locale.get_messages(request.state.localization)
     except AssertionError as e:
@@ -93,18 +96,35 @@ async def main(
                 "type": type,
                 "page": page,
                 "meta_includes": keywords,
+                "staff_pick": {"off": None, "true": True, "false": False}[
+                    (
+                        staff_pick
+                        if staff_pick not in ["default", None]
+                        else request.state.staff_pick
+                    )
+                ],
             }
         else:
             params = {
                 "type": type,
                 "page": page,
+                "staff_pick": {"off": None, "true": True, "false": False}[
+                    (
+                        staff_pick
+                        if staff_pick not in ["default", None]
+                        else request.state.staff_pick
+                    )
+                ],
                 "min_rating": min_rating,
                 "max_rating": max_rating,
                 "status": level_status,
                 "tags": tags,
                 "min_likes": min_likes,
                 "max_likes": max_likes,
+                "min_comments": min_comments,
+                "max_comments": max_comments,
                 "liked_by": liked_by,
+                "commented_on": commented_on,
                 "title_includes": title_includes,
                 "description_includes": description_includes,
                 "artists_includes": artists_includes,

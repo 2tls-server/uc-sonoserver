@@ -47,7 +47,6 @@ import aiohttp
 
 @router.get("/")
 async def main(request: Request, item_type: ItemType):
-    query_params = request.state.query_params
     try:
         locale = Locale.get_messages(request.state.localization)
     except AssertionError as e:
@@ -169,18 +168,23 @@ async def main(request: Request, item_type: ItemType):
             )
         ]
     elif item_type == "levels":
+        staff_pick = request.state.staff_pick
         headers = {request.app.auth_header: request.app.auth}
         if auth:
             headers["authorization"] = auth
         async with aiohttp.ClientSession(headers=headers) as cs:
             async with cs.get(
                 request.app.api_config["url"] + "/api/charts/",
-                params={"type": "random"},
+                params={"type": "random", "staff_pick": staff_pick},
             ) as req:
                 random_response = await req.json()
             async with cs.get(
                 request.app.api_config["url"] + "/api/charts/",
-                params={"type": "advanced", "sort_by": "created_at"},
+                params={
+                    "type": "advanced",
+                    "sort_by": "created_at",
+                    "staff_pick": staff_pick,
+                },
             ) as req:
                 newest_response = await req.json()
         asset_base_url = random_response["asset_base_url"].removesuffix("/")
@@ -212,8 +216,9 @@ async def main(request: Request, item_type: ItemType):
             # create_section(
             #     locale.staff_pick,
             #     item_type,
-            #     handle_item_uwu(newest, uwu_level),
+            #     handle_item_uwu(random_staff_pick, uwu_level),
             #     icon="trophy",
+            #     description=locale.staff_pick_desc + locale.staff_pick_notice
             # ),
             create_section(
                 "#NEWEST",
@@ -240,7 +245,21 @@ async def main(request: Request, item_type: ItemType):
                 shortcuts=[],
             )
         )
-
+        options.append(
+            ServerFormOptionsFactory.server_select_option(
+                query="staff_pick",
+                name=locale.staff_pick,
+                required=False,
+                default="default",
+                description=locale.search.STAFF_PICK_DESC,
+                values=[
+                    {"name": "default", "title": "#DEFAULT"},
+                    {"name": "off", "title": locale.search.STAFF_PICK_OFF},
+                    {"name": "true", "title": locale.search.STAFF_PICK_TRUE},
+                    {"name": "false", "title": locale.search.STAFF_PICK_FALSE},
+                ],
+            )
+        )
         options.append(
             ServerFormOptionsFactory.server_slider_option(
                 query="min_rating",
@@ -305,6 +324,14 @@ async def main(request: Request, item_type: ItemType):
                     default=False,
                 )
             )
+            options.append(
+                ServerFormOptionsFactory.server_toggle_option(
+                    query="commented_on",
+                    name=locale.search.ONLY_LEVELS_I_COMMENTED_ON,
+                    required=False,
+                    default=False,
+                )
+            )
 
         options.append(
             ServerFormOptionsFactory.server_slider_option(
@@ -321,6 +348,28 @@ async def main(request: Request, item_type: ItemType):
             ServerFormOptionsFactory.server_slider_option(
                 query="max_likes",
                 name=locale.search.MAX_LIKES,
+                required=False,
+                default=9999,
+                min_value=0,
+                max_value=9999,
+                step=1,
+            )
+        )
+        options.append(
+            ServerFormOptionsFactory.server_slider_option(
+                query="min_comments",
+                name=locale.search.MIN_COMMENTS,
+                required=False,
+                default=0,
+                min_value=0,
+                max_value=9999,
+                step=1,
+            )
+        )
+        options.append(
+            ServerFormOptionsFactory.server_slider_option(
+                query="max_comments",
+                name=locale.search.MAX_COMMENTS,
                 required=False,
                 default=9999,
                 min_value=0,
@@ -349,6 +398,7 @@ async def main(request: Request, item_type: ItemType):
                     {"name": "created_at", "title": locale.search.DATE_CREATED},
                     {"name": "rating", "title": locale.search.RATING},
                     {"name": "likes", "title": locale.search.LIKES},
+                    {"name": "comments", "title": locale.search.COMMENTS},
                     {
                         "name": "decaying_likes",
                         "title": locale.search.DECAYING_LIKES,
