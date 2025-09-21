@@ -82,6 +82,7 @@ def setup():
         desc = locale.server_description or request.app.config["description"]
 
         auth = request.headers.get("Sonolus-Session")
+        login_message = False
         if auth:
             try:
                 headers = {request.app.auth_header: request.app.auth}
@@ -92,15 +93,21 @@ def setup():
                         + f"/api/accounts/session/account/",
                     ) as req:
                         response = await req.json()
-                desc += "\n\n" + locale.welcome(response["sonolus_username"])
+                desc += "\n\n" + ("-" * 40) + "\n"
+                desc += "\n" + locale.welcome(response["sonolus_username"])
                 desc += "\n\n" + ("-" * 40) + "\n"
                 if response.get("mod") or response.get("admin"):
                     if response.get("admin"):
                         desc += f"\n{locale.is_admin}\n{locale.admin_powers}\n{locale.mod_powers}"
                     else:
                         desc += f"\n{locale.is_mod}\n{locale.mod_powers}"
+                login_message = True
             except:
                 pass
+        if not login_message:
+            desc = locale.server_description or request.app.config["description"]
+            desc += "\n\n" + ("-" * 40) + "\n"
+            desc += "\n" + locale.not_logged_in
         buttons: List[ServerInfoButton] = [{"type": button} for button in button_list]
         data = {
             "title": request.app.config["name"],
