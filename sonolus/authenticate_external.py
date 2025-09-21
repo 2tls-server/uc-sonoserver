@@ -75,24 +75,29 @@ async def main(request: Request, data: ServerAuthenticateExternalRequest):
             hashfunc=hashlib.sha256,
             sigdecode=sigdecode_string,
         )
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Invalid signature")
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid signature"
+        )
 
     TIME_WINDOW = timedelta(minutes=5)
     if data.type != "authenticateExternal":
-        raise HTTPException(status_code=400)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     if (
         data.url != request.app.base_url + f"/sonolus/authenticate_external?id={id}"
         and not request.app.debug
     ):
-        raise HTTPException(status_code=400, detail="Are you using the right website?")
+        raise HTTPException(
+            status_code=status.HTTP_418_IM_A_TEAPOT,
+            detail="Are you using the right website?",
+        )
     current_time = round(time.time() * 1000)  # Current time in milliseconds (epoch)
     if (
         abs(current_time - data.time) > TIME_WINDOW.total_seconds() * 1000
         and not request.app.debug
     ):
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid time. Please click 'Cancel' and try again.",
         )
 
