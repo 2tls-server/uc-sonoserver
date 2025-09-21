@@ -187,7 +187,19 @@ async def main(request: Request, item_type: ItemType):
                 },
             ) as req:
                 newest_response = await req.json()
+            async with cs.get(
+                request.app.api_config["url"] + "/api/charts/",
+                params={"type": "random", "staff_pick": "true"},
+            ) as req:
+                staffpick_req = await req.json()
         asset_base_url = random_response["asset_base_url"].removesuffix("/")
+        random_staff_pick = await request.app.run_blocking(
+            api_level_to_level,
+            request,
+            asset_base_url,
+            staffpick_req["data"][0],
+            request.state.levelbg,
+        )
         random = await asyncio.gather(
             *[
                 request.app.run_blocking(
@@ -213,13 +225,13 @@ async def main(request: Request, item_type: ItemType):
             ]
         )
         sections: List[LevelItemSection] = [
-            # create_section(
-            #     locale.staff_pick,
-            #     item_type,
-            #     handle_item_uwu(random_staff_pick, uwu_level),
-            #     icon="trophy",
-            #     description=locale.staff_pick_desc + locale.staff_pick_notice
-            # ),
+            create_section(
+                locale.random_staff_pick,
+                item_type,
+                handle_item_uwu([random_staff_pick], uwu_level),
+                icon="trophy",
+                description=locale.staff_pick_desc,
+            ),
             create_section(
                 "#NEWEST",
                 item_type,

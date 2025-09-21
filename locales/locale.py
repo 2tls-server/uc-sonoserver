@@ -306,6 +306,10 @@ class Loc:
         return self._get("staff_pick_remove")
 
     @property
+    def random_staff_pick(self) -> str:
+        return self._get("random_staff_pick")
+
+    @property
     def mod_powers(self) -> str:
         lines = self._get("mod_powers")
         return "\n".join(f"- {line}" for line in lines)
