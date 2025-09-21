@@ -414,6 +414,10 @@ class LocaleManager:
             raise AssertionError(f"Locale '{locale}' is not supported.")
 
     def get_messages(self, locale: str) -> Loc:
+        if locale == "zhs":
+            locale = "zh-cn"
+        elif locale == "zht":
+            locale = "zh-TW"
         self.assert_supported(locale)
         locale_class = self.load_locale(locale)
         return locale_class
