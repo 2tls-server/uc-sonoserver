@@ -18,6 +18,9 @@
     "mod_powers": ["Delete rule-breaking comments", "Review charts for staff picks!", "Change the visibility of rule-breaking charts"],
     "admin_powers": ["Delete rule-breaking charts"],
     "staff_pick": "Staff Pick",
+    "staff_pick_desc": "Staff picks are charts we've reviewed and found both fun and playable! Do not request to be added: this happens automatically.",
+    "sponsored": "Sponsored",
+    "sponsored_hide": "Support us on Patreon to hide sponsors!",
     "search": {
         "FILTERS": "Filters (Page {page}/{pageCount})",
         "ADVANCED_SEARCH": "Advanced Search",
