@@ -198,7 +198,7 @@ def setup():
                         i,
                         request.state.levelbg,
                     )
-                    for i in random_response["data"]
+                    for i in random_response["data"][:4]
                 ]
             )
             newest = await asyncio.gather(
@@ -210,10 +210,16 @@ def setup():
                         i,
                         request.state.levelbg,
                     )
-                    for i in newest_response["data"][:5]
+                    for i in newest_response["data"][:4]
                 ]
             )
             sections: List[LevelItemSection] = [
+                # create_section(
+                #     locale.staff_pick,
+                #     item_type,
+                #     handle_item_uwu(newest, uwu_level),
+                #     icon="trophy",
+                # ),
                 create_section(
                     "#NEWEST",
                     item_type,

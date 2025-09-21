@@ -1,5 +1,7 @@
 donotload = False
 
+import aiohttp
+
 from fastapi import APIRouter, Request, HTTPException, status
 
 from helpers.data_compilers import compile_banner
@@ -77,11 +79,32 @@ def setup():
                 description=locale.background.USEBACKGROUNDDESC,
             )
         )
+        desc = locale.server_description or request.app.config["description"]
+
+        auth = request.headers.get("Sonolus-Session")
+        if auth:
+            try:
+                headers = {request.app.auth_header: request.app.auth}
+                headers["authorization"] = auth
+                async with aiohttp.ClientSession(headers=headers) as cs:
+                    async with cs.get(
+                        request.app.api_config["url"]
+                        + f"/api/accounts/session/account/",
+                    ) as req:
+                        response = await req.json()
+                desc += "\n" + ("-" * 20) + "\n"
+                if response.get("mod") or response.get("admin"):
+                    if response.get("admin"):
+                        desc += f"\n{locale.is_admin}\n{locale.admin_powers}\n{locale.mod_powers}"
+                    else:
+                        desc += f"\n{locale.is_mod}\n{locale.mod_powers}"
+            except:
+                pass
         buttons: List[ServerInfoButton] = [{"type": button} for button in button_list]
         data = {
             "title": request.app.config["name"],
             "description": handle_uwu(
-                locale.server_description or request.app.config["description"],
+                desc,
                 uwu_level,
             ),
             "buttons": buttons,

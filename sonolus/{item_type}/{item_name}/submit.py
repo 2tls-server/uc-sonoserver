@@ -78,7 +78,7 @@ def setup():
                     ) as req:
                         if req.status != 200:
                             raise HTTPException(
-                                status_code=req.status, detail=locale.not_mod
+                                status_code=req.status, detail=locale.not_admin
                             )
                 resp = {"key": "", "hashes": [], "shouldRemoveItem": True}
             elif type in ["visibility"]:

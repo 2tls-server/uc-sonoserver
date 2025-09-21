@@ -222,8 +222,33 @@ class Loc:
         return self._get("is_mod")
 
     @property
+    def not_admin(self) -> str:
+        return self._get("not_admin")
+
+    @property
+    def is_admin(self) -> str:
+        return self._get("is_admin")
+
+    @property
+    def staff_pick(self) -> str:
+        return self._get("staff_pick")
+
+    @property
+    def mod_powers(self) -> str:
+        lines = self._get("mod_powers")
+        return "\n".join(f"- {line}" for line in lines)
+
+    @property
+    def admin_powers(self) -> str:
+        lines = self._get("admin_powers")
+        return "\n".join(f"- {line}" for line in lines)
+
+    @property
     def server_description(self) -> str:
         return self._get("server_description")
+
+    def welcome(self, username: str) -> str:
+        return self._get("welcome").format(username=username)
 
     def item_not_found(self, item: str, name: str) -> str:
         return self._get("item_not_found").format(item=item, name=name)

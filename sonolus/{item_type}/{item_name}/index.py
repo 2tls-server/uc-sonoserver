@@ -536,11 +536,6 @@ def setup():
                     options=[the_option],
                 )
                 actions.append(the_action)
-            if response.get("mod"):
-                if desc:
-                    desc = locale.is_mod + f"\n{'-'*10}\n" + desc
-                else:
-                    desc = locale.is_mod + f"\n{'-'*10}\n" + "No description"
             if desc:
                 item_data["description"] = desc
             uwu_handled = True
