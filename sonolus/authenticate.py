@@ -1,5 +1,3 @@
-donotload = False
-
 import base64
 import hashlib
 
@@ -42,69 +40,64 @@ def load_public_key(jwk_dict):
     return pub_key
 
 
-def setup():
-    @router.post("/")
-    async def main(request: Request, data: ServerAuthenticateRequest):
-        """
-        We support a maximum of 6 sessions:
-        - 3 external (eg. website)
-        - 3 in-game
+@router.post("/")
+async def main(request: Request, data: ServerAuthenticateRequest):
+    """
+    We support a maximum of 6 sessions:
+    - 3 external (eg. website)
+    - 3 in-game
 
-        This route will replace any expired or nonexistent session.
+    This route will replace any expired or nonexistent session.
 
-        If all sessions are not expired, we replace the OLDEST session.
-        """
-        signature = request.headers.get("Sonolus-Signature")
-        if signature is None:
-            raise HTTPException(
-                status_code=400, detail="Missing Sonolus-Signature header"
-            )
-        public_key: VerifyingKey = (
-            request.app.sono_pub_key if hasattr(request.app, "sono_pub_key") else None
+    If all sessions are not expired, we replace the OLDEST session.
+    """
+    signature = request.headers.get("Sonolus-Signature")
+    if signature is None:
+        raise HTTPException(status_code=400, detail="Missing Sonolus-Signature header")
+    public_key: VerifyingKey = (
+        request.app.sono_pub_key if hasattr(request.app, "sono_pub_key") else None
+    )
+    if not public_key:
+        request.app.sono_pub_key = load_public_key(JWK)
+        public_key = request.app.sono_pub_key
+
+    # Verify the signature
+    decoded_signature = base64.urlsafe_b64decode(signature)
+    body = await request.body()
+    try:
+        public_key.verify(
+            decoded_signature,
+            body,
+            hashfunc=hashlib.sha256,
+            sigdecode=sigdecode_string,
         )
-        if not public_key:
-            request.app.sono_pub_key = load_public_key(JWK)
-            public_key = request.app.sono_pub_key
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid signature")
 
-        # Verify the signature
-        decoded_signature = base64.urlsafe_b64decode(signature)
-        body = await request.body()
-        try:
-            public_key.verify(
-                decoded_signature,
-                body,
-                hashfunc=hashlib.sha256,
-                sigdecode=sigdecode_string,
-            )
-        except Exception as e:
-            raise HTTPException(status_code=400, detail="Invalid signature")
+    TIME_WINDOW = timedelta(minutes=5)
+    if data.type != "authenticateServer":
+        raise HTTPException(status_code=400)
+    if data.address != request.app.base_url and not request.app.debug:
+        raise HTTPException(
+            status_code=400, detail="Are you connecting to the right server?"
+        )
+    current_time = round(time.time() * 1000)  # Current time in milliseconds (epoch)
+    if abs(current_time - data.time) > TIME_WINDOW.total_seconds() * 1000:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid time. Please click 'Cancel' and try again.",
+        )
 
-        TIME_WINDOW = timedelta(minutes=5)
-        if data.type != "authenticateServer":
-            raise HTTPException(status_code=400)
-        if data.address != request.app.base_url and not request.app.debug:
-            raise HTTPException(
-                status_code=400, detail="Are you connecting to the right server?"
-            )
-        current_time = round(time.time() * 1000)  # Current time in milliseconds (epoch)
-        if abs(current_time - data.time) > TIME_WINDOW.total_seconds() * 1000:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid time. Please click 'Cancel' and try again.",
-            )
-
-        headers = {request.app.auth_header: request.app.auth}
-        profilewithtype = data.model_dump()["userProfile"]
-        profilewithtype["type"] = "game"
-        async with aiohttp.ClientSession(headers=headers) as cs:
-            async with cs.post(
-                request.app.api_config["url"] + "/api/accounts/session/",
-                json=profilewithtype,
-            ) as req:
-                response = await req.json()
-        try:
-            return {"session": response["session"], "expiration": response["expiry"]}
-        except:
-            raise HTTPException(
-                status_code=400, detail="We're not sure what went wrong!"
-            )
+    headers = {request.app.auth_header: request.app.auth}
+    profilewithtype = data.model_dump()["userProfile"]
+    profilewithtype["type"] = "game"
+    async with aiohttp.ClientSession(headers=headers) as cs:
+        async with cs.post(
+            request.app.api_config["url"] + "/api/accounts/session/",
+            json=profilewithtype,
+        ) as req:
+            response = await req.json()
+    try:
+        return {"session": response["session"], "expiration": response["expiry"]}
+    except:
+        raise HTTPException(status_code=400, detail="We're not sure what went wrong!")

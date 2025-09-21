@@ -1,5 +1,3 @@
-donotload = False
-
 import base64
 import hashlib
 
@@ -42,78 +40,73 @@ def load_public_key(jwk_dict):
     return pub_key
 
 
-def setup():
-    @router.post("/")
-    async def main(request: Request, data: ServerAuthenticateExternalRequest):
-        """
-        We support a maximum of 6 sessions:
-        - 3 external (eg. website)
-        - 3 in-game
+@router.post("/")
+async def main(request: Request, data: ServerAuthenticateExternalRequest):
+    """
+    We support a maximum of 6 sessions:
+    - 3 external (eg. website)
+    - 3 in-game
 
-        This route will replace any expired or nonexistent session.
+    This route will replace any expired or nonexistent session.
 
-        If all sessions are not expired, we replace the OLDEST session.
-        """
-        id = request.query_params.get("id")
-        if not id:
-            raise HTTPException(status_code=400, detail="Missing id.")
+    If all sessions are not expired, we replace the OLDEST session.
+    """
+    id = request.query_params.get("id")
+    if not id:
+        raise HTTPException(status_code=400, detail="Missing id.")
 
-        signature = request.headers.get("Sonolus-Signature")
-        if signature is None:
-            raise HTTPException(
-                status_code=400, detail="Missing Sonolus-Signature header"
-            )
-        public_key: VerifyingKey = (
-            request.app.sono_pub_key if hasattr(request.app, "sono_pub_key") else None
+    signature = request.headers.get("Sonolus-Signature")
+    if signature is None:
+        raise HTTPException(status_code=400, detail="Missing Sonolus-Signature header")
+    public_key: VerifyingKey = (
+        request.app.sono_pub_key if hasattr(request.app, "sono_pub_key") else None
+    )
+    if not public_key:
+        request.app.sono_pub_key = load_public_key(JWK)
+        public_key = request.app.sono_pub_key
+
+    # Verify the signature
+    decoded_signature = base64.urlsafe_b64decode(signature)
+    body = await request.body()
+    try:
+        public_key.verify(
+            decoded_signature,
+            body,
+            hashfunc=hashlib.sha256,
+            sigdecode=sigdecode_string,
         )
-        if not public_key:
-            request.app.sono_pub_key = load_public_key(JWK)
-            public_key = request.app.sono_pub_key
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid signature")
 
-        # Verify the signature
-        decoded_signature = base64.urlsafe_b64decode(signature)
-        body = await request.body()
-        try:
-            public_key.verify(
-                decoded_signature,
-                body,
-                hashfunc=hashlib.sha256,
-                sigdecode=sigdecode_string,
-            )
-        except Exception as e:
-            raise HTTPException(status_code=400, detail="Invalid signature")
+    TIME_WINDOW = timedelta(minutes=5)
+    if data.type != "authenticateExternal":
+        raise HTTPException(status_code=400)
+    if (
+        data.url != request.app.base_url + f"/sonolus/authenticate_external?id={id}"
+        and not request.app.debug
+    ):
+        raise HTTPException(status_code=400, detail="Are you using the right website?")
+    current_time = round(time.time() * 1000)  # Current time in milliseconds (epoch)
+    if (
+        abs(current_time - data.time) > TIME_WINDOW.total_seconds() * 1000
+        and not request.app.debug
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid time. Please click 'Cancel' and try again.",
+        )
 
-        TIME_WINDOW = timedelta(minutes=5)
-        if data.type != "authenticateExternal":
-            raise HTTPException(status_code=400)
-        if (
-            data.url != request.app.base_url + f"/sonolus/authenticate_external?id={id}"
-            and not request.app.debug
-        ):
-            raise HTTPException(
-                status_code=400, detail="Are you using the right website?"
-            )
-        current_time = round(time.time() * 1000)  # Current time in milliseconds (epoch)
-        if (
-            abs(current_time - data.time) > TIME_WINDOW.total_seconds() * 1000
-            and not request.app.debug
-        ):
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid time. Please click 'Cancel' and try again.",
-            )
-
-        headers = {request.app.auth_header: request.app.auth}
-        profilewithtypeandid = data.model_dump()["userProfile"]
-        profilewithtypeandid["type"] = "external"
-        profilewithtypeandid["id_key"] = id
-        async with aiohttp.ClientSession(headers=headers) as cs:
-            async with cs.post(
-                request.app.api_config["url"] + "/api/accounts/session/external/",
-                json=profilewithtypeandid,
-            ) as req:
-                if req.status != 200:
-                    raise HTTPException(
-                        status_code=req.status, detail="We're not sure what went wrong!"
-                    )
-        return {"message": "Success."}
+    headers = {request.app.auth_header: request.app.auth}
+    profilewithtypeandid = data.model_dump()["userProfile"]
+    profilewithtypeandid["type"] = "external"
+    profilewithtypeandid["id_key"] = id
+    async with aiohttp.ClientSession(headers=headers) as cs:
+        async with cs.post(
+            request.app.api_config["url"] + "/api/accounts/session/external/",
+            json=profilewithtypeandid,
+        ) as req:
+            if req.status != 200:
+                raise HTTPException(
+                    status_code=req.status, detail="We're not sure what went wrong!"
+                )
+    return {"message": "Success."}
