@@ -1,5 +1,7 @@
 donotload = False
 
+import asyncio
+
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
@@ -48,7 +50,6 @@ def setup():
             elif page_count == 0:
                 raise HTTPException(status_code=400, detail=locale.not_found)
             comments = response["data"]
-            formatted_comments = []
             commentDeleteAction = create_server_form(
                 type="delete",
                 title="#DELETE",
@@ -56,21 +57,23 @@ def setup():
                 options=[],
                 icon="delete",
             )
-            for comment in comments:
-                formatted_comments.append(
-                    {
-                        "name": str(comment["id"]),
-                        "author": handle_uwu(comment["username"], uwu_level),
-                        "time": comment["created_at"],
-                        "content": handle_uwu(comment["content"], uwu_level),
-                        "actions": (
-                            [commentDeleteAction]
-                            if (comment["owner"] or response.get("mod"))
-                            and not comment["deleted_at"]
-                            else []
-                        ),
-                    }
-                )
+
+            async def process_comment(comment: dict) -> dict:
+                return {
+                    "name": str(comment["id"]),
+                    "author": handle_uwu(comment["username"], uwu_level),
+                    "time": comment["created_at"],
+                    "content": handle_uwu(comment["content"], uwu_level),
+                    "actions": (
+                        [commentDeleteAction]
+                        if (comment["owner"] or response.get("mod"))
+                        and not comment["deleted_at"]
+                        else []
+                    ),
+                }
+
+            tasks = [process_comment(comment) for comment in comments]
+            formatted_comments = await asyncio.gather(*tasks)
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
