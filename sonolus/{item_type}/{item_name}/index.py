@@ -499,15 +499,16 @@ def setup():
                         )
                     )
             if response.get("mod") or response.get("owner"):
-                actions.append(
-                    create_server_form(
-                        type="delete",
-                        title="#DELETE",
-                        icon="delete",
-                        require_confirmation=True,
-                        options=[],
+                if response.get("owner") or response.get("admin"):
+                    actions.append(
+                        create_server_form(
+                            type="delete",
+                            title="#DELETE",
+                            icon="delete",
+                            require_confirmation=True,
+                            options=[],
+                        )
                     )
-                )
                 VISIBILITIES = {
                     "PUBLIC": {"title": "#PUBLIC", "icon": "globe"},
                     "PRIVATE": {"title": "#PRIVATE", "icon": "lock"},
