@@ -551,6 +551,10 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 + f"/api/charts/{item_name.removeprefix('UnCh-')}/"
             ) as req:
                 response = await req.json()
+                if req.status != 200:
+                    raise HTTPException(
+                        status_code=req.status, detail=response.get("detail")
+                    )
         asset_base_url = response["asset_base_url"].removesuffix("/")
         liked = response["data"].get("liked")
         like_count = response["data"]["like_count"]
