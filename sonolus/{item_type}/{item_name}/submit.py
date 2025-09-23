@@ -80,6 +80,20 @@ async def main(
                         raise HTTPException(
                             status_code=req.status, detail=locale.not_admin_or_owner
                         )
+                    data = await req.json()
+                if data.get("admin") and not data.get("owner"):
+                    async with cs.post(
+                        request.app.api_config["url"] + f"/api/accounts/notifications/",
+                        json={
+                            "user_id": data["author"],
+                            "title": "Chart Deleted",
+                            "content": f"#CHART_DELETED\n{data['title']}",
+                        },
+                    ) as req:
+                        if req.status != 200:
+                            raise HTTPException(
+                                status_code=req.status, detail=locale.not_mod
+                            )
             resp = {"key": "", "hashes": [], "shouldRemoveItem": True}
         elif type in ["visibility"]:
             async with aiohttp.ClientSession(headers=headers) as cs:
@@ -92,6 +106,24 @@ async def main(
                         raise HTTPException(
                             status_code=req.status, detail=locale.not_mod_or_owner
                         )
+                    data = await req.json()
+                if (
+                    flattened_data["visibility"] != "PUBLIC"
+                    and data.get("mod")
+                    and not data.get("owner")
+                ):
+                    async with cs.post(
+                        request.app.api_config["url"] + f"/api/accounts/notifications/",
+                        json={
+                            "user_id": data["author"],
+                            "title": "Chart Visibility Update",
+                            "content": f"#CHART_VISIBILITY_CHANGED\n{flattened_data['visibility']}\n{data['title']}",
+                        },
+                    ) as req:
+                        if req.status != 200:
+                            raise HTTPException(
+                                status_code=req.status, detail=locale.not_mod
+                            )
             resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
         elif type in ["staff_pick_add", "staff_pick_delete"]:
             async with aiohttp.ClientSession(headers=headers) as cs:

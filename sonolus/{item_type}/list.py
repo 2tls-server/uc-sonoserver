@@ -13,14 +13,12 @@ from helpers.data_compilers import (
     compile_effects_list,
     compile_particles_list,
     compile_skins_list,
-    compile_static_posts_list,
     # compile_replays_list,
     # compile_rooms_list
-    sort_posts_by_newest,
 )
 from helpers.paginate import list_to_pages
 from helpers.sonolus_typings import ItemType
-from helpers.api_helpers import api_level_to_level
+from helpers.api_helpers import api_level_to_level, api_notif_to_post
 
 router = APIRouter()
 
@@ -86,10 +84,23 @@ async def main(
             compile_particles_list, request.app.base_url
         )
     elif item_type == "posts":
-        data = await request.app.run_blocking(
-            compile_static_posts_list, request.app.base_url
-        )
-        data = sort_posts_by_newest(data)
+        notifs = []
+        if auth:
+            headers = {request.app.auth_header: request.app.auth}
+            headers["authorization"] = auth
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.get(
+                    request.app.api_config["url"] + f"/api/accounts/notifications/",
+                    params={"only_unread": 0},
+                ) as req:
+                    response = await req.json()
+            raw_notifs = response.get("notifications", [])
+            notifs = [api_notif_to_post(request, i) for i in raw_notifs]
+        if not notifs:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail=locale.notification.none
+            )
+        data = notifs
     elif item_type == "levels":
         if type == "quick":
             params = {

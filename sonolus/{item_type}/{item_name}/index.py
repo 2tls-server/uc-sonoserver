@@ -18,7 +18,7 @@ from helpers.data_compilers import (
 from helpers.sonolus_typings import ItemType
 from helpers.datastructs import ServerItemDetails, get_item_type
 from helpers.data_helpers import create_server_form, ServerFormOptionsFactory
-from helpers.api_helpers import api_level_to_level
+from helpers.api_helpers import api_level_to_level, api_notif_to_post
 
 router = APIRouter()
 
@@ -64,10 +64,29 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             compile_particles_list, request.app.base_url
         )
     elif item_type == "posts":
-        data = await request.app.run_blocking(
-            compile_static_posts_list, request.app.base_url
-        )
-        # maybe also grab non-static posts lol
+        if item_name.startswith("notification-"):
+            if not auth:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail=locale.not_found
+                )
+            headers = {"authorization": auth}
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.get(
+                    request.app.api_config["url"]
+                    + f"/api/accounts/notifications/{item_name.removeprefix('notification-')}/"
+                ) as req:
+                    if req.status != 200:
+                        raise HTTPException(
+                            status_code=req.status, detail=locale.not_found
+                        )
+                    data = await req.json()
+            item_data, desc = api_notif_to_post(request, data, include_description=True)
+            item_data["description"] = desc
+            uwu_handled = True  # don't uwu important info
+        else:
+            data = await request.app.run_blocking(
+                compile_static_posts_list, request.app.base_url
+            )
     elif item_type == "playlists":
         session = request.headers.get("Sonolus-Session")
         if not session:

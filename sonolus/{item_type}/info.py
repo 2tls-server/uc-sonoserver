@@ -19,7 +19,7 @@ from helpers.datastructs import (
     ServerItemInfo,
     ServerForm,
 )
-from helpers.api_helpers import api_level_to_level
+from helpers.api_helpers import api_level_to_level, api_notif_to_post
 from helpers.data_helpers import (
     create_section,
     create_server_form,
@@ -140,8 +140,6 @@ async def main(request: Request, item_type: ItemType):
         data = await request.app.run_blocking(
             compile_static_posts_list, request.app.base_url
         )
-        # grab non-static posts too
-        # sort em
         data = sort_posts_by_newest(data)
         sections: List[PostItemSection] = [
             create_section(
@@ -151,6 +149,40 @@ async def main(request: Request, item_type: ItemType):
                 icon="post",
             )
         ]
+        if auth:
+            headers = {request.app.auth_header: request.app.auth}
+            headers["authorization"] = auth
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.get(
+                    request.app.api_config["url"] + f"/api/accounts/notifications/",
+                    params={"only_unread": 1},
+                ) as req:
+                    response = await req.json()
+            raw_notifs = response.get("notifications", [])
+            notifs = [api_notif_to_post(request, i) for i in raw_notifs]
+            if notifs:
+                sections.insert(
+                    0,
+                    create_section(
+                        locale.notification.UNREAD,
+                        item_type,
+                        # don't uwuify. these are important
+                        notifs,
+                        icon="bell",
+                        description=locale.notification.NOTIFICATION_DESC_UNREAD,
+                    ),
+                )
+            else:
+                sections.insert(
+                    0,
+                    create_section(
+                        locale.notification.NOTIFICATION,
+                        item_type,
+                        [],
+                        icon="bell",
+                        description=locale.notification.NOTIFICATION_DESC,
+                    ),
+                )
     elif item_type == "playlists":
         data = await request.app.run_blocking(
             compile_playlists_list, request.app.base_url, request.state.localization

@@ -107,12 +107,24 @@ async def main(request: Request):
                     response = await req.json()
             desc += "\n\n" + ("-" * 40) + "\n"
             desc += "\n" + locale.welcome(response["sonolus_username"])
+            notifications = response["unread_notifications"]
+            desc += "\n\n" + (
+                locale.notifications_singular(notifications)
+                if notifications == 1
+                else (
+                    locale.notifications_plural(notifications)
+                    if notifications > 0
+                    else locale.notification.none
+                )
+            )
+            if notifications > 0:
+                button_list = ["post"]
             desc += "\n\n" + ("-" * 40) + "\n"
             if response.get("mod") or response.get("admin"):
                 if response.get("admin"):
-                    desc += f"\n{locale.is_admin}\n{locale.admin_powers}\n{locale.mod_powers}"
+                    desc += f"\n{locale.is_admin}\n\n{locale.admin_powers}\n{locale.mod_powers}"
                 else:
-                    desc += f"\n{locale.is_mod}\n{locale.mod_powers}"
+                    desc += f"\n{locale.is_mod}\n\n{locale.mod_powers}"
             login_message = True
         except:
             pass

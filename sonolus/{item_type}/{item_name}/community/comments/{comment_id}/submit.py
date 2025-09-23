@@ -58,13 +58,27 @@ async def main(
             async with aiohttp.ClientSession(headers=headers) as cs:
                 async with cs.delete(
                     request.app.api_config["url"]
-                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/comment/{comment_id}/",
-                    json={"content": flattened_data.get("content")},
+                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/comment/{comment_id}/"
                 ) as req:
                     if req.status != 200:
                         raise HTTPException(
                             status_code=req.status, detail=locale.unknown_error
                         )
+                    data = await req.json()
+                    if data.get("mod") and not data.get("owner"):
+                        async with cs.post(
+                            request.app.api_config["url"]
+                            + f"/api/accounts/notifications/",
+                            json={
+                                "user_id": data["commenter"],
+                                "title": "Comment Deleted",
+                                "content": f"#COMMENT_DELETED\n{data['content']}",
+                            },
+                        ) as req:
+                            if req.status != 200:
+                                raise HTTPException(
+                                    status_code=req.status, detail=locale.not_mod
+                                )
             resp = {"key": "", "hashes": [], "shouldUpdateComments": True}
     else:
         raise HTTPException(

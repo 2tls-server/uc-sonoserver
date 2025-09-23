@@ -32,6 +32,8 @@
     "sponsored_hide": "Support us on Patreon to hide sponsors!",
     "on": "On",
     "off": "Off",
+    "notifications_plural": "You have {num} new notifications!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
+    "notifications_singular": "You have {num} new notification!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
     "search": {
         "FILTERS": "Filters (Page {page}/{pageCount})",
         "ADVANCED_SEARCH": "Advanced Search",
@@ -85,5 +87,19 @@
     "playlist": {
         "UPLOADED": "Your Uploaded Charts",
         "UPLOADEDSUB": "View all your uploaded charts."
+    },
+    "notification": {
+        "NOTIFICATION": "Notifications",
+        "none": "You don't have any past notifications.",
+        "UNREAD": "Unread Notifications",
+        "UNREAD_STATUS": "Unread",
+        "READ_STATUS": "Read",
+        "NOTIFICATION_DESC_UNREAD": "You can find all your past notifications by clicking \"More\". You have unread notifications that need to be read.",
+        "NOTIFICATION_DESC": "You can find all your past notifications by clicking \"More\". You do not currently have any unread notifications.",
+        "templates": {
+            "CHART_VISIBILITY_CHANGED": "The visibility of your chart \"{chart_name}\" has been updated to {visibility_status}. Please review our upload policies to see why this change was necessary. If you fix your chart to comply, you can change it back to Public. Otherwise, keep it as it is now, or else we may be forced to delete it.",
+            "COMMENT_DELETED": "Your comment was deleted because it violated our comment policy. Please make sure all comments adhere to our community guidelines.\n\n----------------------\nCOMMENT:\n\n{comment_content}",
+            "CHART_DELETED": "Your chart \"{chart_name}\" was deleted for violating our upload rules. Please take a moment to review our chart upload guidelines for more information."
+        }
     }
 }

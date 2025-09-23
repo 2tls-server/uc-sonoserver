@@ -226,12 +226,77 @@ class Loc:
         def ASCENDING(self) -> str:
             return self._get("ASCENDING")
 
+    class Notification:
+        class Templates:
+            def __init__(self, parent: "Loc"):
+                self._parent = parent
+
+            def _get(self, key: str) -> str:
+                try:
+                    return self._parent._data["notification"]["templates"][key]
+                except KeyError:
+                    return self._parent._default["notification"]["templates"][key]
+
+            def CHART_VISIBILITY_CHANGED(
+                self, chart_name: str, visibility_status: str
+            ) -> str:
+                return self._get("CHART_VISIBILITY_CHANGED").format(
+                    chart_name=chart_name, visibility_status=visibility_status
+                )
+
+            def COMMENT_DELETED(self, comment_content: str) -> str:
+                return self._get("COMMENT_DELETED").format(
+                    comment_content=comment_content
+                )
+
+            def CHART_DELETED(self, chart_name: str) -> str:
+                return self._get("CHART_DELETED").format(chart_name=chart_name)
+
+        def __init__(self, parent: "Loc"):
+            self._parent = parent
+            self.templates = self.Templates(parent)
+
+        def _get(self, key: str) -> str:
+            try:
+                return self._parent._data["notification"][key]
+            except KeyError:
+                return self._parent._default["notification"][key]
+
+        @property
+        def READ_STATUS(self) -> str:
+            return self._get("READ_STATUS")
+
+        @property
+        def UNREAD_STATUS(self) -> str:
+            return self._get("UNREAD_STATUS")
+
+        @property
+        def NOTIFICATION(self) -> str:
+            return self._get("NOTIFICATION")
+
+        @property
+        def NOTIFICATION_DESC_UNREAD(self) -> str:
+            return self._get("NOTIFICATION_DESC_UNREAD")
+
+        @property
+        def NOTIFICATION_DESC(self) -> str:
+            return self._get("NOTIFICATION_DESC")
+
+        @property
+        def UNREAD(self) -> str:
+            return self._get("UNREAD")
+
+        @property
+        def none(self) -> str:
+            return self._get("none")
+
     def __init__(self, data: dict, default: dict):
         self._data = data
         self._default = default
         self.search = self.Search(self)
         self.playlist = self.Playlist(self)
         self.background = self.Background(self)
+        self.notification = self.Notification(self)
 
     def _get(self, value: str) -> str:
         try:
@@ -284,6 +349,12 @@ class Loc:
     @property
     def on(self) -> str:
         return self._get("on")
+
+    def notifications_singular(self, num: int) -> str:
+        return self._get("notifications_singular").format(num=f"{num:,}")
+
+    def notifications_plural(self, num: int) -> str:
+        return self._get("notifications_plural").format(num=f"{num:,}")
 
     @property
     def staff_pick_desc(self) -> str:

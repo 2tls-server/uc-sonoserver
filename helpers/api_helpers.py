@@ -4,6 +4,51 @@ from locales.locale import Locale
 from helpers.owoify import handle_uwu
 
 
+def api_notif_to_post(
+    request,
+    i: dict,
+    include_description: bool = False,
+) -> dict | tuple:
+    loc = Locale.get_messages(request.state.localization)
+    d = {
+        "name": f"notification-{i['id']}",
+        "source": request.app.base_url,
+        "version": 1,
+        "title": i["title"],
+        "time": i["timestamp"],
+        "author": "UntitledCharts",
+        "tags": [
+            (
+                {"title": loc.notification.READ_STATUS, "icon": "envelopeOpen"}
+                if i["is_read"]
+                else {"title": loc.notification.UNREAD_STATUS, "icon": "envelope"}
+            )
+        ],
+    }
+    if include_description:
+        content = i["content"]
+        content_parts = content.splitlines()
+        if content_parts[0].startswith("#"):
+            if content_parts[0] == "#CHART_DELETED":
+                del content_parts[0]
+                content = loc.notification.templates.CHART_DELETED(
+                    chart_name="\n".join(content_parts)
+                )
+            elif content_parts[0] == "#CHART_VISIBILITY_CHANGED":
+                del content_parts[0]
+                visibility = content_parts.pop(0)
+                content = loc.notification.templates.CHART_VISIBILITY_CHANGED(
+                    visibility_status=visibility, chart_name="\n".join(content_parts)
+                )
+            elif content_parts[0] == "#COMMENT_DELETED":
+                del content_parts[0]
+                content = loc.notification.templates.COMMENT_DELETED(
+                    comment_content="\n".join(content_parts)
+                )
+        return d, content
+    return d
+
+
 def api_level_to_level(
     request,
     asset_base_url: str,
