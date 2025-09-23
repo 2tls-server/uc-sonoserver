@@ -90,7 +90,8 @@
     },
     "notification": {
         "NOTIFICATION": "Notifications",
-        "none": "You don't have any past notifications.",
+        "none_past": "You don't have any past notifications.",
+        "none": "You don't have any unread notifications.",
         "UNREAD": "Unread Notifications",
         "UNREAD_STATUS": "Unread",
         "READ_STATUS": "Read",

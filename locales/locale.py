@@ -290,6 +290,10 @@ class Loc:
         def none(self) -> str:
             return self._get("none")
 
+        @property
+        def none_past(self) -> str:
+            return self._get("none_past")
+
     def __init__(self, data: dict, default: dict):
         self._data = data
         self._default = default

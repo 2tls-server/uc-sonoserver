@@ -98,7 +98,8 @@ async def main(
             notifs = [api_notif_to_post(request, i) for i in raw_notifs]
         if not notifs:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=locale.notification.none
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=locale.notification.none_past,
             )
         data = notifs
     elif item_type == "levels":
