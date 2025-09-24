@@ -10,7 +10,7 @@ from helpers.data_helpers import (
 
 from typing import List
 
-from locales.locale import Locale
+from locales.locale import Loc
 from helpers.owoify import handle_uwu
 
 router = APIRouter()
@@ -18,10 +18,7 @@ router = APIRouter()
 
 @router.get("/")
 async def main(request: Request):
-    try:
-        locale = Locale.get_messages(request.state.localization)
-    except AssertionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    locale: Loc = request.state.loc
     uwu_level = request.state.uwu
     # Assume logged in
     # We only need to validate the session

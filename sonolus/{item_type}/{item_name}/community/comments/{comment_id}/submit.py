@@ -9,7 +9,7 @@ from urllib.parse import parse_qs
 
 router = APIRouter()
 
-from locales.locale import Locale
+from locales.locale import Loc
 
 import aiohttp
 
@@ -26,11 +26,7 @@ async def main(
     comment_id: int,
     data: ServerSubmitItemActionRequest,
 ):
-    query_params = request.state.query_params
-    try:
-        locale = Locale.get_messages(request.state.localization)
-    except AssertionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    locale: Loc = request.state.loc
     uwu_level = request.state.uwu
     item_data = None
     auth = request.headers.get("Sonolus-Session")

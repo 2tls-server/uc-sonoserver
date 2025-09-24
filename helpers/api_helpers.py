@@ -9,7 +9,7 @@ def api_notif_to_post(
     i: dict,
     include_description: bool = False,
 ) -> dict | tuple:
-    loc = Locale.get_messages(request.state.localization)
+    loc = request.state.loc
     d = {
         "name": f"notification-{i['id']}",
         "source": request.app.base_url,
@@ -57,7 +57,7 @@ def api_level_to_level(
     include_description: bool = False,
     disable_replace_missing_preview: bool = False,
 ) -> dict | tuple:
-    loc = Locale.get_messages(request.state.localization)
+    loc = request.state.loc
 
     @lru_cache(maxsize=None)
     def get_cached_background(base_url, localization):

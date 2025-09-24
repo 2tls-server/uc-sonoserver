@@ -22,7 +22,7 @@ from helpers.api_helpers import api_level_to_level, api_notif_to_post
 
 router = APIRouter()
 
-from locales.locale import Locale
+from locales.locale import Loc
 from helpers.owoify import handle_item_uwu
 
 
@@ -54,10 +54,7 @@ async def main(
     ),  # will only ever be PUBLIC here. anything else, go to playlists
     keywords: Optional[str] = Query(None),
 ):
-    try:
-        locale = Locale.get_messages(request.state.localization)
-    except AssertionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    locale: Loc = request.state.loc
     uwu_level = request.state.uwu
     searching = False
     generate_pages = True

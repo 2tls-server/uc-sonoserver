@@ -26,7 +26,7 @@ async def main(
     data: ServerSubmitItemActionRequest,
 ):
     try:
-        locale = Locale.get_messages(request.state.localization)
+        locale = request.state.loc
     except AssertionError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     uwu_level = request.state.uwu

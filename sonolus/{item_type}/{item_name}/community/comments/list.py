@@ -17,7 +17,7 @@ import aiohttp
 @router.get("/")
 async def main(request: Request, item_type: ItemType, item_name: str):
     try:
-        locale = Locale.get_messages(request.state.localization)
+        locale = request.state.loc
     except AssertionError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     page = request.state.query_params.get("page", 0)

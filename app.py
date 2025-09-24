@@ -10,13 +10,14 @@ with open("config.yml", "r") as f:
 
 from fastapi import FastAPI, Request
 from fastapi import status, HTTPException
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 import uvicorn
 
 from helpers.repository_map import repo
+from locales.locale import Locale
 
 debug = config["server"]["debug"]
 
@@ -85,6 +86,9 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.staff_pick = request.query_params.get(
             "stpickconfig", "off"
         ).lower()
+        request.state.loc, request.state.localization = Locale.get_messages(
+            request.state.localization
+        )
         try:
             assert request.state.levelbg in [
                 "default_or_v3",

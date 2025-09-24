@@ -1,5 +1,5 @@
 import json
-from typing import Dict
+from typing import Dict, Tuple
 
 
 class Loc:
@@ -484,18 +484,22 @@ class LocaleManager:
             "pt",
             "zh-cn",
             "zh-TW",
+            "vi",
         ]
         if locale not in supported:
             raise AssertionError(f"Locale '{locale}' is not supported.")
 
-    def get_messages(self, locale: str) -> Loc:
+    def get_messages(self, locale: str) -> Tuple[Loc, str]:
         if locale == "zhs":
             locale = "zh-cn"
         elif locale == "zht":
             locale = "zh-TW"
-        self.assert_supported(locale)
+        try:
+            self.assert_supported(locale)
+        except AssertionError:
+            locale = "en"
         locale_class = self.load_locale(locale)
-        return locale_class
+        return locale_class, locale
 
 
 Locale = LocaleManager(default_locale="en")

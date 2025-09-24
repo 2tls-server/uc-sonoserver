@@ -22,7 +22,7 @@ from helpers.api_helpers import api_level_to_level, api_notif_to_post
 
 router = APIRouter()
 
-from locales.locale import Locale
+from locales.locale import Loc
 from helpers.owoify import handle_item_uwu
 
 import aiohttp
@@ -30,10 +30,7 @@ import aiohttp
 
 @router.get("/")
 async def main(request: Request, item_type: ItemType, item_name: str):
-    try:
-        locale = Locale.get_messages(request.state.localization)
-    except AssertionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    locale: Loc = request.state.loc
     uwu_level = request.state.uwu
     community = False
     uwu_handled = False
