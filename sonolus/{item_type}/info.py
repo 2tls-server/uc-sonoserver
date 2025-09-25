@@ -228,11 +228,21 @@ async def main(request: Request, item_type: ItemType):
                         ],
                     },
                 ),
+                cs.get(
+                    url,
+                    params={
+                        "type": "advanced",
+                        "staff_pick": {"off": 0, "true": 1, "false": 0}[
+                            ("true" if staff_pick in ["off", "false"] else "false")
+                        ],
+                        "sort_by": "decaying_likes",
+                    },
+                ),
             ]
             responses = await asyncio.gather(*tasks)
 
-            random_response, newest_response, staffpick_req = await asyncio.gather(
-                *[resp.json() for resp in responses]
+            random_response, newest_response, staffpick_req, popular_response = (
+                await asyncio.gather(*[resp.json() for resp in responses])
             )
         asset_base_url = random_response["asset_base_url"].removesuffix("/")
         random_staff_pick = await request.app.run_blocking(
@@ -251,7 +261,7 @@ async def main(request: Request, item_type: ItemType):
                     i,
                     request.state.levelbg,
                 )
-                for i in random_response["data"][:4]
+                for i in random_response["data"][:3]
             ]
         )
         newest = await asyncio.gather(
@@ -263,7 +273,19 @@ async def main(request: Request, item_type: ItemType):
                     i,
                     request.state.levelbg,
                 )
-                for i in newest_response["data"][:4]
+                for i in newest_response["data"][:3]
+            ]
+        )
+        popular = await asyncio.gather(
+            *[
+                request.app.run_blocking(
+                    api_level_to_level,
+                    request,
+                    asset_base_url,
+                    i,
+                    request.state.levelbg,
+                )
+                for i in popular_response["data"][:3]
             ]
         )
         sections: List[LevelItemSection] = [
@@ -292,6 +314,12 @@ async def main(request: Request, item_type: ItemType):
                 "#RANDOM",
                 item_type,
                 handle_item_uwu(random, uwu_level),
+                icon="level",
+            ),
+            create_section(
+                "#POPULAR",
+                item_type,
+                handle_item_uwu(popular, uwu_level),
                 icon="level",
             ),
         ]
