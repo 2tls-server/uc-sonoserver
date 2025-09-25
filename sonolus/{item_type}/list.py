@@ -44,9 +44,18 @@ async def main(
     commented_on: Optional[bool] = Query(False),
     title_includes: Optional[str] = Query(None),
     description_includes: Optional[str] = Query(None),
+    author_includes: Optional[str] = Query(None),
     artists_includes: Optional[str] = Query(None),
     sort_by: Optional[
-        Literal["created_at", "rating", "likes", "comments", "decaying_likes", "abc"]
+        Literal[
+            "created_at",
+            "rating",
+            "likes",
+            "comments",
+            "decaying_likes",
+            "abc",
+            "random",
+        ]
     ] = Query("created_at"),
     sort_order: Optional[Literal["desc", "asc"]] = Query("desc"),
     level_status: Optional[Literal["PUBLIC"]] = Query(
@@ -116,7 +125,7 @@ async def main(
         else:
             params = {
                 "type": type,
-                "page": page,
+                "page": page if sort_by != "random" else 1,
                 "staff_pick": {"off": None, "true": True, "false": False}[
                     (
                         staff_pick
@@ -136,6 +145,7 @@ async def main(
                 "commented_on": commented_on,
                 "title_includes": title_includes,
                 "description_includes": description_includes,
+                "author_includes": author_includes,
                 "artists_includes": artists_includes,
                 "sort_by": sort_by,
                 "sort_order": sort_order,
@@ -155,6 +165,11 @@ async def main(
             ) as req:
                 response = await req.json()
         pageCount = response["pageCount"]
+        if sort_by == "random" and pageCount != 0 and len(response["data"]) == 10:
+            pageCount = (
+                page + 2
+            )  # always have one extra page, random will not run out and there may be duplicates
+            # only if pageCount isn't 0 of course, and the api actually returned a full list (so there likely is more)
         if page > pageCount or page < 0:
             raise HTTPException(
                 status_code=400,
@@ -182,7 +197,7 @@ async def main(
                 for item in response_data
             ]
         )
-        num_pages = response["pageCount"]
+        num_pages = pageCount
         generate_pages = False
     # elif item_type == "replays":
     #     data = await request.app.run_blocking(compile_replays_list, request.app.base_url)

@@ -102,7 +102,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
         params = {
             "type": "advanced",
         }
-        page = flattened_data.get("page")
+        page = flattened_data.get("page") if sort_by != "random" else 1
         if page is not None:
             if page.isdigit():
                 page = int(page)
@@ -240,6 +240,13 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                     status_code=400, detail="description_includes must be a string."
                 )
             params["description_includes"] = description_includes
+        author_includes = flattened_data.get("author_includes")
+        if author_includes is not None:
+            if not isinstance(author_includes, str):
+                raise HTTPException(
+                    status_code=400, detail="author_includes must be a string."
+                )
+            params["author_includes"] = author_includes
         artists_includes = flattened_data.get("artists_includes")
         if artists_includes is not None:
             if not isinstance(artists_includes, str):
@@ -255,6 +262,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             "comments",
             "decaying_likes",
             "abc",
+            "random",
         ]
         if sort_by not in allowed_sort_by:
             raise HTTPException(
@@ -307,6 +315,11 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             ]
         )
         pageCount = response["pageCount"]
+        if sort_by == "random" and pageCount != 0 and len(response["data"]) == 10:
+            pageCount = (
+                page + 2
+            )  # always have one extra page, random will not run out and there may be duplicates
+            # only if pageCount isn't 0 of course, and the api actually returned a full list (so there likely is more)
         if page > pageCount or page < 0:
             raise HTTPException(
                 status_code=400,
@@ -413,6 +426,17 @@ async def main(request: Request, item_type: ItemType, item_name: str):
         )
         options.append(
             ServerFormOptionsFactory.server_text_option(
+                query="author_includes",
+                name=locale.search.AUTHOR_CONTAINS,
+                required=False,
+                default=author_includes or "",
+                placeholder=locale.search.ENTER_TEXT,
+                limit=60,
+                shortcuts=[],
+            )
+        )
+        options.append(
+            ServerFormOptionsFactory.server_text_option(
                 query="description_includes",
                 name=locale.search.DESCRIPTION_CONTAINS,
                 required=False,
@@ -513,6 +537,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 default=sort_by or "created_at",
                 values=[
                     {"name": "created_at", "title": locale.search.DATE_CREATED},
+                    {"name": "random", "title": "#RANDOM"},
                     {"name": "rating", "title": locale.search.RATING},
                     {"name": "likes", "title": locale.search.LIKES},
                     {"name": "comments", "title": locale.search.COMMENTS},

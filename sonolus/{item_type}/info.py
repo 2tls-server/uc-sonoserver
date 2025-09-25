@@ -357,6 +357,17 @@ async def main(request: Request, item_type: ItemType):
         )
         options.append(
             ServerFormOptionsFactory.server_text_option(
+                query="author_includes",
+                name=locale.search.AUTHOR_CONTAINS,
+                required=False,
+                default="",
+                placeholder=locale.search.ENTER_TEXT,
+                limit=60,
+                shortcuts=[],
+            )
+        )
+        options.append(
+            ServerFormOptionsFactory.server_text_option(
                 query="description_includes",
                 name=locale.search.DESCRIPTION_CONTAINS,
                 required=False,
@@ -458,6 +469,7 @@ async def main(request: Request, item_type: ItemType):
                 default="created_at",
                 values=[
                     {"name": "created_at", "title": locale.search.DATE_CREATED},
+                    {"name": "random", "title": "#RANDOM"},
                     {"name": "rating", "title": locale.search.RATING},
                     {"name": "likes", "title": locale.search.LIKES},
                     {"name": "comments", "title": locale.search.COMMENTS},

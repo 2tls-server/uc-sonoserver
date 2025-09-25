@@ -1,7 +1,12 @@
 from functools import lru_cache
-from helpers.data_compilers import compile_engines_list, compile_backgrounds_list
-from locales.locale import Locale
+from helpers.data_compilers import (
+    compile_engines_list,
+    compile_backgrounds_list,
+    compile_particles_list,
+)
+from locales.locale import Loc
 from helpers.owoify import handle_uwu
+from datetime import datetime, timedelta, timezone
 
 
 def api_notif_to_post(
@@ -9,7 +14,7 @@ def api_notif_to_post(
     i: dict,
     include_description: bool = False,
 ) -> dict | tuple:
-    loc = request.state.loc
+    loc: Loc = request.state.loc
     d = {
         "name": f"notification-{i['id']}",
         "source": request.app.base_url,
@@ -57,14 +62,22 @@ def api_level_to_level(
     include_description: bool = False,
     disable_replace_missing_preview: bool = False,
 ) -> dict | tuple:
-    loc = request.state.loc
+    loc: Loc = request.state.loc
 
     @lru_cache(maxsize=None)
-    def get_cached_background(base_url, localization):
+    def get_cached_particle(base_url: str, particle_name: str):
+        particles = compile_particles_list(base_url)
+        particle_data = next(
+            particle for particle in particles if particle["name"] == particle_name
+        )
+        return particle_data
+
+    @lru_cache(maxsize=None)
+    def get_cached_background(base_url: str, localization: str):
         return compile_backgrounds_list(base_url, localization)[0].copy()
 
     @lru_cache(maxsize=None)
-    def get_cached_engine(base_url, localization):
+    def get_cached_engine(base_url: str, localization: str):
         return compile_engines_list(base_url, localization)[0]
 
     author = i["author"]
@@ -99,6 +112,40 @@ def api_level_to_level(
         title = loc.background.UPLOADED
     bg_item["title"] = handle_uwu(title, request.state.uwu)
 
+    if request.state.particle == "engine_default":
+        particle_option = {"useDefault": True}
+    else:
+        try:
+            particle_option = {
+                "useDefault": False,
+                "item": get_cached_particle(
+                    request.app.base_url, request.state.particle
+                ),
+            }
+        except:
+            particle_option = {"useDefault": True}
+
+    created_at = datetime.fromisoformat(i["created_at"].rstrip("Z")).astimezone(
+        timezone.utc
+    )
+    now = datetime.now(timezone.utc)
+    delta = now - created_at
+    if delta >= timedelta(days=1):
+        days = delta.days
+        time_str = f"{days}d"
+    elif delta >= timedelta(hours=1):
+        hours = delta.seconds // 3600
+        time_str = f"{hours}h"
+    elif delta >= timedelta(minutes=1):
+        minutes = delta.seconds // 60
+        time_str = f"{minutes}m"
+    elif delta >= timedelta(seconds=1):
+        seconds = delta.seconds
+        time_str = f"{seconds}s"
+    else:
+        time_str = "0s"
+    created_at_str = handle_uwu(loc.time_ago(time_str), request.state.uwu)
+
     leveldata = {
         "name": f"UnCh-{level_id}",
         "source": request.app.base_url,
@@ -109,6 +156,7 @@ def api_level_to_level(
         "title": handle_uwu(i["title"], request.state.uwu),
         "tags": (
             [
+                {"title": created_at_str, "icon": "clock"},
                 {
                     "title": str(i["like_count"]),
                     "icon": "heart" if i.get("liked") else "heartHollow",
@@ -126,7 +174,7 @@ def api_level_to_level(
         "engine": get_cached_engine(request.app.base_url, request.state.localization),
         "useSkin": {"useDefault": True},
         "useEffect": {"useDefault": True},
-        "useParticle": {"useDefault": True},
+        "useParticle": particle_option,
         "useBackground": {"useDefault": False, "item": bg_item},
         "cover": {
             "hash": i["jacket_file_hash"],

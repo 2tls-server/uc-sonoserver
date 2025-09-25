@@ -49,7 +49,7 @@ def compile_banner() -> Optional[SRL]:
 def compile_playlists_list(
     source: str = None, locale: str = "en"
 ) -> List[PlaylistItem]:
-    loc = Locale.get_messages(locale)
+    loc, locale = Locale.get_messages(locale)
     if cached.get(f"playlists_{locale}"):
         return cached[f"playlists_{locale}"]
     compiled_data_list = []
@@ -150,9 +150,10 @@ def compile_effects_list(source: str = None) -> List[EffectItem]:
 
 
 def compile_backgrounds_list(
-    source: str = None, locale: str = "en"
+    source: str = None,
+    locale: str = "en",
 ) -> List[BackgroundItem]:
-    loc = Locale.get_messages(locale)
+    loc, locale = Locale.get_messages(locale)
     if cached.get(f"backgrounds_{locale}"):
         return cached[f"backgrounds_{locale}"]
     compiled_data_list = []
@@ -208,7 +209,7 @@ def compile_particles_list(source: str = None) -> List[ParticleItem]:
             particle_data: dict = json.load(f)
         if not particle_data.get("enabled", True):
             continue
-        item_keys = ["version", "title", "subtitle", "author"]
+        item_keys = ["version", "title", "subtitle", "author", "engine_specific"]
         for key in item_keys:
             compiled_data[key] = particle_data[key]
         data_files = {

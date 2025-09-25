@@ -86,7 +86,7 @@ def process_resource(
     return res_dir
 
 
-def extract_engine(scp_path: Path, out_root: Path):
+def extract_resources(scp_path: Path, out_root: Path):
     """Extract engine and all resources from a single SCP file."""
     out_root.mkdir(exist_ok=True)
 
@@ -94,66 +94,67 @@ def extract_engine(scp_path: Path, out_root: Path):
         try:
             with zf.open("sonolus/engines/list") as f:
                 engine_list = json.load(f)
-        except KeyError:
+            engine = engine_list["items"][0]
+        except (KeyError, IndexError):
             print(f"No engines found in {scp_path}")
-            return
+            engine = False
 
-        engine = engine_list["items"][0]
+        if engine:
+            if f"sonolus/engines/{engine['name']}" in zf.namelist():
+                with zf.open(f"sonolus/engines/{engine['name']}") as f:
+                    engine_expanded_data = json.load(f)
+            else:
+                engine_expanded_data = {}
 
-        if f"sonolus/engines/{engine['name']}" in zf.namelist():
-            with zf.open(f"sonolus/engines/{engine['name']}") as f:
-                engine_expanded_data = json.load(f)
+            engine_dir = out_root / engine["name"]
+            engine_dir.mkdir(parents=True, exist_ok=True)
+
+            engine_json = {
+                "version": engine["version"],
+                "title": engine["title"],
+                "subtitle": engine.get("subtitle", ""),
+                "author": engine.get("author", ""),
+                "skin_name": engine["skin"]["name"],
+                "background_name": engine["background"]["name"],
+                "effect_name": engine["effect"]["name"],
+                "particle_name": engine["particle"]["name"],
+            }
+            if engine.get("description"):
+                engine_json["description"] = engine["description"]
+                engine_json["description"] = (
+                    f"{add_to_description}\n{engine_json['description']}"
+                )
+            elif engine_expanded_data.get("description"):
+                engine_json["description"] = engine_expanded_data["description"]
+                engine_json["description"] = (
+                    f"{add_to_description}\n{engine_json['description']}"
+                )
+            elif len(add_to_description.strip()) != 0:
+                engine_json["description"] = add_to_description
+            save_json(engine_json, engine_dir / "engine.json")
+
+            # Top-level engine files
+            top_keys = [
+                "thumbnail",
+                "playData",
+                "watchData",
+                "previewData",
+                "tutorialData",
+                "configuration",
+                "rom",  # rom is optional actually, but very important for the engines that do have it
+            ]
+            for key in top_keys:
+                if key in engine:
+                    url = engine[key]["url"]
+                    if key == "thumbnail":
+                        extract_file(zf, url, engine_dir / f"{key}.png")
+                    elif key == "configuration":
+                        extract_file(zf, url, engine_dir / f"{key}.json.gz")
+                    else:
+                        extract_file(zf, url, engine_dir / key)
         else:
-            engine_expanded_data = {}
+            engine_dir = out_root / Path("no_engine")
 
-        engine_dir = out_root / engine["name"]
-        engine_dir.mkdir(parents=True, exist_ok=True)
-
-        engine_json = {
-            "version": engine["version"],
-            "title": engine["title"],
-            "subtitle": engine.get("subtitle", ""),
-            "author": engine.get("author", ""),
-            "skin_name": engine["skin"]["name"],
-            "background_name": engine["background"]["name"],
-            "effect_name": engine["effect"]["name"],
-            "particle_name": engine["particle"]["name"],
-        }
-        if engine.get("description"):
-            engine_json["description"] = engine["description"]
-            engine_json["description"] = (
-                f"{add_to_description}\n{engine_json['description']}"
-            )
-        elif engine_expanded_data.get("description"):
-            engine_json["description"] = engine_expanded_data["description"]
-            engine_json["description"] = (
-                f"{add_to_description}\n{engine_json['description']}"
-            )
-        elif len(add_to_description.strip()) != 0:
-            engine_json["description"] = add_to_description
-        save_json(engine_json, engine_dir / "engine.json")
-
-        # Top-level engine files
-        top_keys = [
-            "thumbnail",
-            "playData",
-            "watchData",
-            "previewData",
-            "tutorialData",
-            "configuration",
-            "rom",  # rom is optional actually, but very important for the engines that do have it
-        ]
-        for key in top_keys:
-            if key in engine:
-                url = engine[key]["url"]
-                if key == "thumbnail":
-                    extract_file(zf, url, engine_dir / f"{key}.png")
-                elif key == "configuration":
-                    extract_file(zf, url, engine_dir / f"{key}.json.gz")
-                else:
-                    extract_file(zf, url, engine_dir / key)
-
-        # --- Resources from SCP lists ---
         for resource_type_plural in ["skins", "backgrounds", "effects", "particles"]:
             list_path = f"sonolus/{resource_type_plural}/list"
             try:
@@ -172,12 +173,12 @@ def main():
     )
     parser.add_argument("scp_files", type=Path, nargs="+", help="One or more SCP files")
     parser.add_argument(
-        "--out", type=Path, default=Path("extracted_engine"), help="Output folder"
+        "--out", type=Path, default=Path("extracted_resources"), help="Output folder"
     )
     args = parser.parse_args()
 
     for scp_path in args.scp_files:
-        extract_engine(scp_path, args.out)
+        extract_resources(scp_path, args.out)
 
     print("All done.")
 

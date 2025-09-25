@@ -127,6 +127,10 @@ class Loc:
             return self._get("ARTISTS_CONTAINS")
 
         @property
+        def AUTHOR_CONTAINS(self) -> str:
+            return self._get("AUTHOR_CONTAINS")
+
+        @property
         def ONLY_LEVELS_I_LIKED(self) -> str:
             return self._get("ONLY_LEVELS_I_LIKED")
 
@@ -436,6 +440,17 @@ class Loc:
     @property
     def you(self) -> str:
         return self._get("you")
+
+    @property
+    def default_particle(self) -> str:
+        return self._get("default_particle")
+
+    @property
+    def default_particle_desc(self) -> str:
+        return self._get("default_particle_desc")
+
+    def time_ago(self, time_str: str) -> str:
+        return self._get("time_ago").format(time_ago=time_str)
 
 
 class LocaleManager:

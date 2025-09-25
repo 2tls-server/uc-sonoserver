@@ -1,6 +1,7 @@
 {
     "version": 3,
     "title": "Next SEKAI",
+    "engine_specific": true,
     "subtitle": "Next SEKAI",
     "author": "Burrito#1000"
 }

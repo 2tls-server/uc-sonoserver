@@ -17,6 +17,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 import uvicorn
 
 from helpers.repository_map import repo
+from helpers.data_compilers import compile_particles_list
 from locales.locale import Locale
 
 debug = config["server"]["debug"]
@@ -42,6 +43,7 @@ class SonolusFastAPI(FastAPI):
             "uwu",
             "levelbg",
             "stpickconfig",
+            "defaultparticle",
         ]
 
         self.repository = repo
@@ -86,6 +88,9 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.staff_pick = request.query_params.get(
             "stpickconfig", "off"
         ).lower()
+        request.state.particle = request.query_params.get(
+            "defaultparticle", "engine_default"
+        ).lower()
         request.state.loc, request.state.localization = Locale.get_messages(
             request.state.localization
         )
@@ -98,9 +103,16 @@ class SonolusMiddleware(BaseHTTPMiddleware):
             ]
             assert request.state.uwu in ["off", "uwu", "owo", "uvu"]
             assert request.state.staff_pick in ["off", "true", "false"]
+            particles = await request.app.run_blocking(
+                compile_particles_list, request.app.base_url
+            )
+            assert request.state.particle in [
+                "engine_default",
+                *[item["name"] for item in particles],
+            ]
         except AssertionError:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="invalid query params"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid configuration"
             )
         query_params = dict(request.query_params)
         for item in request.app.remove_config_queries:

@@ -2,7 +2,7 @@ import aiohttp
 
 from fastapi import APIRouter, Request, HTTPException, status
 
-from helpers.data_compilers import compile_banner
+from helpers.data_compilers import compile_banner, compile_particles_list
 from helpers.datastructs import ServerInfoButton
 from helpers.data_helpers import (
     ServerFormOptionsFactory,
@@ -87,6 +87,24 @@ async def main(request: Request):
             description=locale.search.STAFF_PICK_CONFIG_DESC
             + "\n"
             + locale.staff_pick_desc,
+        )
+    )
+    particles = await request.app.run_blocking(
+        compile_particles_list, request.app.base_url
+    )
+    options.append(
+        ServerFormOptionsFactory.server_select_option(
+            query="defaultparticle",
+            name=locale.default_particle,
+            required=False,
+            default="engine_default",
+            values=[{"name": "engine_default", "title": "#DEFAULT"}]
+            + [
+                {"name": item["name"], "title": item["title"]}
+                for item in particles
+                if item.get("engine_specific", False) == False
+            ],
+            description=locale.default_particle_desc,
         )
     )
     desc = locale.server_description or request.app.config["description"]

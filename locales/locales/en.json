@@ -32,6 +32,9 @@
     "sponsored_hide": "Support us on Patreon to hide sponsors!",
     "on": "On",
     "off": "Off",
+    "time_ago": "{time_ago} ago",
+    "default_particle": "Default Level Particle",
+    "default_particle_desc": "Choose your default level particle that will be applied!",
     "notifications_plural": "You have {num} new notifications!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
     "notifications_singular": "You have {num} new notification!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
     "search": {
@@ -47,6 +50,7 @@
         "TITLE_CONTAINS": "Title Contains",
         "DESCRIPTION_CONTAINS": "Description Contains",
         "ARTISTS_CONTAINS": "Artists Contains",
+        "AUTHOR_CONTAINS": "Chart Author Name Contains",
         "ONLY_LEVELS_I_LIKED": "Only Levels I've Liked",
         "ONLY_LEVELS_I_COMMENTED_ON": "Only Levels I've Commented On",
         "MIN_LIKES": "Minimum Likes",
