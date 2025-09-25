@@ -102,6 +102,22 @@ async def main(request: Request, item_type: ItemType, item_name: str):
         params = {
             "type": "advanced",
         }
+        sort_by = flattened_data.get("sort_by", "created_at")
+        allowed_sort_by = [
+            "created_at",
+            "rating",
+            "likes",
+            "comments",
+            "decaying_likes",
+            "abc",
+            "random",
+        ]
+        if sort_by not in allowed_sort_by:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid value for sort_by. Allowed values are: {', '.join(allowed_sort_by)}.",
+            )
+        params["sort_by"] = sort_by
         page = flattened_data.get("page") if sort_by != "random" else 1
         if page is not None:
             if page.isdigit():
@@ -254,22 +270,6 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                     status_code=400, detail="artists_includes must be a string."
                 )
             params["artists_includes"] = artists_includes
-        sort_by = flattened_data.get("sort_by", "created_at")
-        allowed_sort_by = [
-            "created_at",
-            "rating",
-            "likes",
-            "comments",
-            "decaying_likes",
-            "abc",
-            "random",
-        ]
-        if sort_by not in allowed_sort_by:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid value for sort_by. Allowed values are: {', '.join(allowed_sort_by)}.",
-            )
-        params["sort_by"] = sort_by
         sort_order = flattened_data.get("sort_order", "desc")
         allowed_sort_order = ["desc", "asc"]
         if sort_order not in allowed_sort_order:
