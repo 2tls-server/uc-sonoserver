@@ -9,7 +9,7 @@
   "not_logged_in": "Bạn chưa đăng nhập!",
   "not_found": "Không tìm thấy.",
   "unknown_error": "Lỗi không xác định!",
-  "welcome": "Chào mừng! Bạn đã đăng nhập dưới tên {username}.\"",
+  "welcome": "Chào mừng! Bạn đã đăng nhập dưới tên {username}.",
   "you": "Bạn",
   "not_mod": "Bạn không phải là người điều hành!",
   "not_mod_or_owner": "Bạn không phải là người điều hành hoặc chủ sở hữu!",
@@ -41,6 +41,8 @@
   "time_ago": "{time_ago} trước",
   "default_particle": "Hiệu ứng mặc định khi bấm nốt",
   "default_particle_desc": "Chọn hiệu ứng xuất hiện khi bạn bấm nốt!",
+  "default_engine": "Bộ máy máy chủ",
+  "default_engine_desc": "Chọn bộ máy máy chủ bạn muốn dùng!",
   "notifications_plural": "Bạn có {num} thông báo mới!\nThông báo hệ thống có trong mục \"Bài đăng\".\nVui lòng đọc để tiếp tục vào server.",
   "notifications_singular": "Bạn có {num} thông báo mới!\nThông báo hệ thống có trong mục \"Bài đăng\".\nVui lòng đọc để tiếp tục vào server.",
   "search": {
