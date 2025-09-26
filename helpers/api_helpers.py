@@ -77,8 +77,12 @@ def api_level_to_level(
         return compile_backgrounds_list(base_url, localization)[0].copy()
 
     @lru_cache(maxsize=None)
-    def get_cached_engine(base_url: str, localization: str):
-        return compile_engines_list(base_url, localization)[0]
+    def get_cached_engine(base_url: str, engine_name: str, locale: str):
+        engines = compile_engines_list(base_url, locale)
+        engine_data = next(
+            engine for engine in engines if engine["name"] == engine_name
+        )
+        return engine_data
 
     author = i["author"]
     level_id = i["id"]
@@ -171,7 +175,9 @@ def api_level_to_level(
                 for tag in i["tags"]
             ]
         ),
-        "engine": get_cached_engine(request.app.base_url, request.state.localization),
+        "engine": get_cached_engine(
+            request.app.base_url, request.state.engine, request.state.localization
+        ),
         "useSkin": {"useDefault": True},
         "useEffect": {"useDefault": True},
         "useParticle": particle_option,
