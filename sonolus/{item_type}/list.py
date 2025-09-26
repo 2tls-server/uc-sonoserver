@@ -75,6 +75,12 @@ async def main(
         )
     elif item_type == "skins":
         data = await request.app.run_blocking(compile_skins_list, request.app.base_url)
+        data = [
+            item
+            for item in data
+            if (item.get("engine") == None)
+            or (item.get("engine") == request.state.engine)
+        ]
     elif item_type == "backgrounds":
         data = await request.app.run_blocking(
             compile_backgrounds_list,

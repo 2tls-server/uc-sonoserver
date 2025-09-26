@@ -71,6 +71,12 @@ async def main(request: Request, item_type: ItemType):
         ]
     elif item_type == "skins":
         data = await request.app.run_blocking(compile_skins_list, request.app.base_url)
+        data = [
+            item
+            for item in data
+            if (item.get("engine") == None)
+            or (item.get("engine") == request.state.engine)
+        ]
         sections: List[SkinItemSection] = [
             create_section(
                 "#SKIN",
