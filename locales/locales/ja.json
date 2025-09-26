@@ -80,7 +80,7 @@
     "DESCENDING": "降順",
     "ASCENDING": "昇順",
     "VISIBILITY": "可視性",
-    "VISIBILITY_ALL": "全",
+    "VISIBILITY_ALL": "すべて",
     "VISIBILITY_PUBLIC": "公開",
     "VISIBILITY_UNLISTED": "未公開",
     "VISIBILITY_PRIVATE": "非公開"
@@ -97,8 +97,8 @@
     "UPLOADED": "ユーザーがアップロードした背景"
   },
   "playlist": {
-    "UPLOADED": "アップロードした譜面　",
-    "UPLOADEDSUB": "アップロードしたすべての譜面を表示して"
+    "UPLOADED": "アップロードした譜面",
+    "UPLOADEDSUB": "アップロードしたすべての譜面を表示します"
   },
   "notification": {
     "NOTIFICATION": "通知",
