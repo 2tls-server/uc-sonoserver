@@ -27,7 +27,7 @@
   ],
   "staff_pick": "Staff Pick",
   "staff_pick_desc": "StaffPickは「楽しい」と評価された譜面です。",
-  "non_staff_pick_desc": "StaffPickのみが有効になっているため、StaffPickだけレベルはランダムになります",
+  "non_staff_pick_desc": "StaffPickフィルターが有効になっているため、非StaffPickランダムになります。",
   "staff_pick_notice": "StaffPickは不要です。好評をお願いします。",
   "staff_pick_confirm": "譜面が楽しいものであり正確に評価、プレイ可能であることを確認してください。",
   "staff_pick_add": "StaffPick追加",
