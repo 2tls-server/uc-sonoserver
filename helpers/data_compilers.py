@@ -295,9 +295,15 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
             if os.path.exists(f"files/engines/{engine}/{file}"):
                 hash = repo.add_file(f"files/engines/{engine}/{file}")
                 compiled_data[key] = repo.get_srl(hash)
+
+        def get_skin_name(engine_data: dict, locale: str) -> str:
+            if engine_data.get("skin_name_locale", {}).get(locale):
+                return engine_data["skin_name_locale"][locale]
+            return engine_data["skin_name"]
+
         skins = compile_skins_list(source)
         skin_data = next(
-            skin for skin in skins if skin["name"] == engine_data["skin_name"]
+            skin for skin in skins if skin["name"] == get_skin_name(engine_data, locale)
         )
         compiled_data["skin"] = skin_data
         effects = compile_effects_list(source)
