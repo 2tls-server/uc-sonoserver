@@ -1,0 +1,14 @@
+{
+    "version": 13,
+    "title": "NextSEKAI R ( ALPHA!!!! )",
+    "subtitle": "NextSEKAI R",
+    "author": "NextSEKAI R",
+    "skin_name": "PR-S1-3",
+    "skin_name_locale": {
+        "en": "PR-S1-3-EN"
+    },
+    "background_name": "PLEASE-SELECT",
+    "effect_name": "coconut-next-sekai-1",
+    "particle_name": "coconut-next-sekai-1",
+    "description": "\nNext SEKAI's expansion engine\nVersion: 0.1.0\n\nhttps://github.com/Next-SEKAI/sonolus-next-sekai-engine"
+}

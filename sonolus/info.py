@@ -2,7 +2,11 @@ import aiohttp
 
 from fastapi import APIRouter, Request, HTTPException, status
 
-from helpers.data_compilers import compile_banner, compile_particles_list
+from helpers.data_compilers import (
+    compile_banner,
+    compile_particles_list,
+    compile_engines_list,
+)
 from helpers.datastructs import ServerInfoButton
 from helpers.data_helpers import (
     ServerFormOptionsFactory,
@@ -92,6 +96,9 @@ async def main(request: Request):
     particles = await request.app.run_blocking(
         compile_particles_list, request.app.base_url
     )
+    engines = await request.app.run_blocking(
+        compile_engines_list, request.app.base_url, request.state.localization
+    )
     options.append(
         ServerFormOptionsFactory.server_select_option(
             query="defaultparticle",
@@ -112,10 +119,8 @@ async def main(request: Request):
             query="defaultengine",
             name=locale.default_engine,
             required=False,
-            default="engine_default",
-            values=[
-                {"name": item["name"], "title": item["title"]} for item in particles
-            ],
+            default="NextSEKAI",
+            values=[{"name": item["name"], "title": item["title"]} for item in engines],
             description=locale.default_engine_desc,
         )
     )

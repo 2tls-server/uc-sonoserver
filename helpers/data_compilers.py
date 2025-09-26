@@ -301,30 +301,39 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
                 return engine_data["skin_name_locale"][locale]
             return engine_data["skin_name"]
 
-        skins = compile_skins_list(source)
-        skin_data = next(
-            skin for skin in skins if skin["name"] == get_skin_name(engine_data, locale)
-        )
-        compiled_data["skin"] = skin_data
-        effects = compile_effects_list(source)
-        effect_data = next(
-            effect for effect in effects if effect["name"] == engine_data["effect_name"]
-        )
-        compiled_data["effect"] = effect_data
-        particles = compile_particles_list(source)
-        particle_data = next(
-            particle
-            for particle in particles
-            if particle["name"] == engine_data["particle_name"]
-        )
-        compiled_data["particle"] = particle_data
-        backgrounds = compile_backgrounds_list(source, locale)
-        background_data = next(
-            background
-            for background in backgrounds
-            if background["name"] == engine_data["background_name"]
-        )
-        compiled_data["background"] = background_data
+        try:
+            skins = compile_skins_list(source)
+            skin_data = next(
+                skin
+                for skin in skins
+                if skin["name"] == get_skin_name(engine_data, locale)
+            )
+            compiled_data["skin"] = skin_data
+            effects = compile_effects_list(source)
+            effect_data = next(
+                effect
+                for effect in effects
+                if effect["name"] == engine_data["effect_name"]
+            )
+            compiled_data["effect"] = effect_data
+            particles = compile_particles_list(source)
+            particle_data = next(
+                particle
+                for particle in particles
+                if particle["name"] == engine_data["particle_name"]
+            )
+            compiled_data["particle"] = particle_data
+            backgrounds = compile_backgrounds_list(source, locale)
+            background_data = next(
+                background
+                for background in backgrounds
+                if background["name"] == engine_data["background_name"]
+            )
+            compiled_data["background"] = background_data
+        except StopIteration:
+            raise KeyError(
+                "StopIteration raised: incorrect key name! Make sure your engine file names and resource file names match."
+            )
         compiled_data_list.append(compiled_data)
     cached[f"engines_{locale}"] = compiled_data_list
     return compiled_data_list

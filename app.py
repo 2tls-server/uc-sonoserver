@@ -92,9 +92,7 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.particle = request.query_params.get(
             "defaultparticle", "engine_default"
         ).lower()
-        request.state.engine = request.query_params.get(
-            "defaultengine", "NextSEKAI"
-        ).lower()
+        request.state.engine = request.query_params.get("defaultengine", "NextSEKAI")
         request.state.loc, request.state.localization = Locale.get_messages(
             request.state.localization
         )
@@ -119,8 +117,9 @@ class SonolusMiddleware(BaseHTTPMiddleware):
             ]
             assert request.state.engine in [item["name"] for item in engines]
         except AssertionError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid configuration"
+            return JSONResponse(
+                content={"message": "Invalid configuration"},
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
         query_params = dict(request.query_params)
         for item in request.app.remove_config_queries:
