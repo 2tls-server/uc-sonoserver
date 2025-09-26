@@ -17,7 +17,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 import uvicorn
 
 from helpers.repository_map import repo
-from helpers.data_compilers import compile_particles_list
+from helpers.data_compilers import compile_particles_list, compile_engines_list
 from locales.locale import Locale
 
 debug = config["server"]["debug"]
@@ -44,6 +44,7 @@ class SonolusFastAPI(FastAPI):
             "levelbg",
             "stpickconfig",
             "defaultparticle",
+            "defaultengine",
         ]
 
         self.repository = repo
@@ -91,6 +92,9 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.particle = request.query_params.get(
             "defaultparticle", "engine_default"
         ).lower()
+        request.state.engine = request.query_params.get(
+            "defaultengine", "NextSEKAI"
+        ).lower()
         request.state.loc, request.state.localization = Locale.get_messages(
             request.state.localization
         )
@@ -106,10 +110,14 @@ class SonolusMiddleware(BaseHTTPMiddleware):
             particles = await request.app.run_blocking(
                 compile_particles_list, request.app.base_url
             )
+            engines = await request.app.run_blocking(
+                compile_engines_list, request.app.base_url, request.state.localization
+            )
             assert request.state.particle in [
                 "engine_default",
                 *[item["name"] for item in particles],
             ]
+            assert request.state.engine in [item["name"] for item in engines]
         except AssertionError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid configuration"

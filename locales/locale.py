@@ -449,6 +449,14 @@ class Loc:
     def default_particle_desc(self) -> str:
         return self._get("default_particle_desc")
 
+    @property
+    def default_engine(self) -> str:
+        return self._get("default_engine")
+
+    @property
+    def default_engine_desc(self) -> str:
+        return self._get("default_engine_desc")
+
     def time_ago(self, time_str: str) -> str:
         return self._get("time_ago").format(time_ago=time_str)
 

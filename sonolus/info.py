@@ -107,6 +107,18 @@ async def main(request: Request):
             description=locale.default_particle_desc,
         )
     )
+    options.append(
+        ServerFormOptionsFactory.server_select_option(
+            query="defaultengine",
+            name=locale.default_engine,
+            required=False,
+            default="engine_default",
+            values=[
+                {"name": item["name"], "title": item["title"]} for item in particles
+            ],
+            description=locale.default_engine_desc,
+        )
+    )
     desc = locale.server_description or request.app.config["description"]
 
     auth = request.headers.get("Sonolus-Session")

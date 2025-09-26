@@ -35,6 +35,8 @@
     "time_ago": "{time_ago} ago",
     "default_particle": "Default Level Particle",
     "default_particle_desc": "Choose your default level particle that will be applied!",
+    "default_engine": "Server Engine",
+    "default_engine_desc": "Choose the server engine to use!",
     "notifications_plural": "You have {num} new notifications!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
     "notifications_singular": "You have {num} new notification!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
     "search": {
