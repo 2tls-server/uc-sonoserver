@@ -1,0 +1,69 @@
+{
+  "server_description": "https://discord.gg/UntitledCharts\nUntitledCharts 官方客製化伺服器！",
+  "items_not_found": "找不到任何 {item}。",
+  "items_not_found_search": "找不到任何符合您搜尋條件的 {item}。",
+  "invalid_page_plural": "第 {page} 頁不存在！共有 {max_page} 頁。",
+  "invalid_page_singular": "第 {page} 頁不存在！共有 {max_page} 頁。",
+  "not_logged_in": "您尚未登入！",
+  "unknown_error": "未知錯誤！",
+  "is_mod": "您是版主！",
+  "is_admin": "您是管理員！",
+  "not_admin": "您不是管理員！",
+  "mod_powers": [
+    "刪除違規評論",
+    null,
+    null
+  ],
+  "admin_powers": [
+    null
+  ],
+  "staff_pick_notice": "不要乞求被添加：這會自動發生。最多，你可以請求評論。",
+  "sponsored_hide": "在 Patreon 上支持我們以隱藏贊助商！",
+  "time_ago": "{time_ago} 前",
+  "default_engine": "伺服器引擎",
+  "default_engine_desc": "選擇要使用的伺服器引擎！",
+  "notifications_plural": "您有 {num} 條新通知！\n系統通知可在「貼文」中找到。\n請閱讀通知後繼續訪問伺服器。",
+  "search": {
+    "FILTERS": "過濾器（第 {page}/{pageCount} 頁）",
+    "ADVANCED_SEARCH": "進階搜尋",
+    "DESCRIPTION_CONTAINS": "描述包含",
+    "TAGS_COMMA_SEPARATED": "標籤（逗號分隔）",
+    "ENTER_TEXT": "輸入文字",
+    "ENTER_TAGS": "輸入標籤",
+    "SORT_BY": "排序方式",
+    "SORT_BY_DESCRIPTION": "按選項排序。\n注意：標題按降序排列，從 A 到 Z。",
+    "DATE_CREATED": "建立日期",
+    "RATING": "等級",
+    "LIKES": "喜歡",
+    "COMMENTS": "評論",
+    "DECAYING_LIKES": "熱門內容",
+    "TITLE_A_Z": "標題（從 A 到 Z）",
+    "SORT_ORDER": "排序順序",
+    "DESCENDING": "降序",
+    "ASCENDING": "升序",
+    "VISIBILITY_ALL": "全部",
+    "VISIBILITY_UNLISTED": "未公開"
+  },
+  "background": {
+    "BACKGROUNDSELECTSUB": "請在配置中選擇一個背景。",
+    "V1": "PJSK V1",
+    "V3": "PJSK V3",
+    "DEF_OR_V1": "已上傳或 PJSK V1",
+    "DEF_OR_V3": "已上傳或 PJSK V3",
+    "UPLOADED": "用戶上傳的背景"
+  },
+  "playlist": {
+  },
+  "notification": {
+    "NOTIFICATION": "通知",
+    "none_past": "您沒有任何過去的通知。",
+    "none": "您沒有任何未讀通知。",
+    "UNREAD": "未讀通知",
+    "UNREAD_STATUS": "未讀",
+    "NOTIFICATION_DESC_UNREAD": "點擊「更多」即可查看所有過去的通知。您有未讀通知需要閱讀。",
+    "NOTIFICATION_DESC": "點擊「更多」即可查看所有過去的通知。您目前沒有未讀通知。",
+    "templates": {
+      "COMMENT_DELETED": "您的評論已被刪除，因為它違反了我們的評論政策。請確保所有評論都遵守我們的社群準則。\n\n---------------------\n評論：\n\n{comment_content}"
+    }
+  }
+}
