@@ -1,11 +1,16 @@
 {
   "server_description": "https://discord.gg/UntitledCharts\n\nO servidor customizado oficial de UntitledCharts!",
+  "item_not_found": "{item} item \"{name}\" não encontrado.",
   "item_type_not_found": "Item \"{item}\" não encontrado.",
   "items_not_found": "Não foi possível encontrar nenhum {item}.",
   "items_not_found_search": "Não foi possível {item} correspondendo à sua pesquisa.",
   "invalid_page_plural": "Página {page} não existe! Há {max_page} páginas.",
   "invalid_page_singular": "Página {page} não existe! Há {max_page} página.",
   "not_logged_in": "Você não está logado!",
+  "not_found": "Não encontrado.",
+  "unknown_error": "Erro desconhecido!",
+  "welcome": "Bem-vindo! Conectado como {username}.",
+  "you": "Você",
   "not_mod": "Você não é um moderador!",
   "not_mod_or_owner": "Você não é um moderador ou o dono!",
   "is_mod": "Você é um moderador!",
@@ -41,6 +46,7 @@
   "notifications_plural": "Você tem {num} novas notificações! As notificações do sistema podem ser encontradas em \"Posts\". \nLeia-as para prosseguir para o servidor. ",
   "notifications_singular": "Você tem {num} nova notificação! As notificações do sistema podem ser encontradas em \"Posts\". \nLeia-as para prosseguir para o servidor. ",
   "search": {
+    "FILTERS": "Filtros (Página {page}/{pageCount})",
     "ADVANCED_SEARCH": "Pesquisa Avançada ",
     "STAFF_PICK_SEARCH_DESC": "Filtrar por escolhas do staff? (Você pode definir o comportamento padrão na Configuração)",
     "STAFF_PICK_CONFIG_DESC": "Filtrar por escolhas do staff? Por padrão, todos as charts são exibidas. \n\nOBSERVAÇÃO: Sempre mostraremos uma chart oposta ao que você escolher em Níveis, para variar um pouco. Por exemplo, desativar as Escolhas do Staff sempre exibirá uma escolha em Níveis, enquanto ativar as Escolhas do Staff sempre exibirá uma escolha que não seja do Staff em Níveis. ",
@@ -69,16 +75,23 @@
     "LIKES": "Curtidas",
     "COMMENTS": "Comentários",
     "DECAYING_LIKES": "Trending",
+    "TITLE_A_Z": "Título (A-Z)",
     "SORT_ORDER": "Ordem de classificação",
     "DESCENDING": "Descendente",
     "ASCENDING": "Ascendente",
-    "VISIBILITY_ALL": "Todos"
+    "VISIBILITY": "Visibilidade",
+    "VISIBILITY_ALL": "Todos",
+    "VISIBILITY_PUBLIC": "Público",
+    "VISIBILITY_UNLISTED": "Não listado",
+    "VISIBILITY_PRIVATE": "Privado"
   },
   "background": {
     "BACKGROUNDSELECT": "Seleção de Fundo",
     "BACKGROUNDSELECTSUB": "Por favor selecione um fundo na Configuração. ",
     "USEBACKGROUNDDESC": "Selecione um Fundo para usar! Enviado significa que o charter enviou um fundo, se existir.",
     "USEBACKGROUND": "Selecionar Fundo do Nível",
+    "V1": "PJSK V1",
+    "V3": "PJSK V3",
     "DEF_OR_V1": "Enviado OU PJSK V1",
     "DEF_OR_V3": "Enviado OU PJSK V3",
     "UPLOADED": "Fundo Enviado pelo User"
@@ -88,6 +101,7 @@
     "UPLOADEDSUB": "Ver todas sua charts enviadas."
   },
   "notification": {
+    "NOTIFICATION": "Notificação",
     "none_past": "Você não tem nenhuma notificação passada.",
     "none": "Você não tem nenhuma notificação não lida.",
     "UNREAD": "Notificações não lidas",
