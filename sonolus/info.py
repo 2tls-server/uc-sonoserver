@@ -31,6 +31,8 @@ async def main(request: Request):
     if request.headers.get("Sonolus-Session"):
         logged_in = True
 
+    uwu_supported = ["en", "tr"]
+
     banner_srl = await request.app.run_blocking(compile_banner)
     button_list = [
         "authentication",
@@ -47,7 +49,7 @@ async def main(request: Request):
     if logged_in:
         button_list.append("playlist")
     options = []
-    if request.state.localization == "en":
+    if request.state.localization in uwu_supported:
         option = ServerFormOptionsFactory.server_select_option(
             query="uwu",
             name=locale.uwu,
