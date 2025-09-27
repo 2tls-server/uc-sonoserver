@@ -56,7 +56,10 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             return {
                 "name": str(comment["id"]),
                 "author": handle_uwu(
-                    comment["username"], request.state.localization, uwu_level
+                    comment["username"],
+                    request.state.localization,
+                    uwu_level,
+                    symbols=False,
                 ),
                 "time": comment["created_at"],
                 "content": handle_uwu(

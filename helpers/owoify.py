@@ -637,7 +637,7 @@ def uvuify(source: str, locale: str = "en") -> str:
     return owoify(source=source, level=2, locale=locale)
 
 
-def handle_uwu(source: str, locale: str, uwu_level: str, symbols: bool = False) -> str:
+def handle_uwu(source: str, locale: str, uwu_level: str, symbols: bool = True) -> str:
     if uwu_level == "off":
         return source
     elif uwu_level == "owo":
