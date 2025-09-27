@@ -49,7 +49,7 @@
     "FILTERS": "フィルター (ページ {page}/{pageCount})",
     "ADVANCED_SEARCH": "詳細検索",
     "STAFF_PICK_SEARCH_DESC": "StaffPickでフィルタリングしますか? (設定でデフォルトの動作を設定できます)",
-    "STAFF_PICK_CONFIG_DESC": "StaffPickで絞り込みますか？デフォルトではすべての譜面が表示されます。\n\n\"Levels\"で選んだ譜面の反対のチャートが常に表示されます。例えば、StaffPickをオフにすると、Levelsには常にStaffPickが表示されますが、StaffPickをオンにすると、Levelsには常にStaffPickが表示されます。",
+    "STAFF_PICK_CONFIG_DESC": "StaffPickで絞り込みますか？デフォルトではすべての譜面が表示されます。\n\n注意：「レベル」をクリックしたとき、選んだものとは逆の譜面が最初に表示されます。例えば、StaffPickをオフにすると、最初にStaffPickランダムが表示されますが、StaffPickをオンにすると、最初に非StaffPickランダムが表示されます。",
     "STAFF_PICK_OFF": "StaffPickフィルターオフ",
     "STAFF_PICK_TRUE": "StaffPickのみ",
     "STAFF_PICK_FALSE": "非StaffPickのみ",
