@@ -77,27 +77,21 @@ async def main(request: Request):
             description=locale.background.USEBACKGROUNDDESC,
         )
     )
+    engines = await request.app.run_blocking(
+        compile_engines_list, request.app.base_url, request.state.localization
+    )
     options.append(
         ServerFormOptionsFactory.server_select_option(
-            query="stpickconfig",
-            name=locale.staff_pick,
+            query="defaultengine",
+            name=locale.default_engine,
             required=False,
-            default="off",
-            values=[
-                {"name": "off", "title": locale.search.STAFF_PICK_OFF},
-                {"name": "true", "title": locale.search.STAFF_PICK_TRUE},
-                {"name": "false", "title": locale.search.STAFF_PICK_FALSE},
-            ],
-            description=locale.search.STAFF_PICK_CONFIG_DESC
-            + "\n"
-            + locale.staff_pick_desc,
+            default="NextSEKAI",
+            values=[{"name": item["name"], "title": item["title"]} for item in engines],
+            description=locale.default_engine_desc,
         )
     )
     particles = await request.app.run_blocking(
         compile_particles_list, request.app.base_url
-    )
-    engines = await request.app.run_blocking(
-        compile_engines_list, request.app.base_url, request.state.localization
     )
     options.append(
         ServerFormOptionsFactory.server_select_option(
@@ -116,12 +110,18 @@ async def main(request: Request):
     )
     options.append(
         ServerFormOptionsFactory.server_select_option(
-            query="defaultengine",
-            name=locale.default_engine,
+            query="stpickconfig",
+            name=locale.staff_pick,
             required=False,
-            default="NextSEKAI",
-            values=[{"name": item["name"], "title": item["title"]} for item in engines],
-            description=locale.default_engine_desc,
+            default="off",
+            values=[
+                {"name": "off", "title": locale.search.STAFF_PICK_OFF},
+                {"name": "true", "title": locale.search.STAFF_PICK_TRUE},
+                {"name": "false", "title": locale.search.STAFF_PICK_FALSE},
+            ],
+            description=locale.search.STAFF_PICK_CONFIG_DESC
+            + "\n"
+            + locale.staff_pick_desc,
         )
     )
     desc = locale.server_description or request.app.config["description"]
