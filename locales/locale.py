@@ -457,6 +457,26 @@ class Loc:
     def default_engine_desc(self) -> str:
         return self._get("default_engine_desc")
 
+    @property
+    def uwu(self) -> str:
+        return self._get("uwu")
+
+    @property
+    def uwu_desc(self) -> str:
+        return self._get("uwu_desc")
+
+    @property
+    def slightly(self) -> str:
+        return self._get("slightly")
+
+    @property
+    def a_lot(self) -> str:
+        return self._get("a_lot")
+
+    @property
+    def extreme(self) -> str:
+        return self._get("extreme")
+
     def time_ago(self, time_str: str) -> str:
         return self._get("time_ago").format(time_ago=time_str)
 
@@ -508,6 +528,7 @@ class LocaleManager:
             "zh-cn",
             "zh-TW",
             "vi",
+            "tl",
         ]
         if locale not in supported:
             raise AssertionError(f"Locale '{locale}' is not supported.")

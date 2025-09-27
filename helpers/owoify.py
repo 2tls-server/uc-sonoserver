@@ -492,7 +492,9 @@ def interleave_arrays(a: list, b: list) -> list:
     return arr
 
 
-def owoify(source: str, level: int = 0, symbols: bool = True) -> str:
+def owoify(
+    source: str, level: int = 0, locale: str = "en", symbols: bool = True
+) -> str:
     """
     Pass the source string and the desired level of owoness to owoify it.
     ----
@@ -510,64 +512,81 @@ def owoify(source: str, level: int = 0, symbols: bool = True) -> str:
     word_matches = WORD_REGEX.findall(source)
     space_matches = SPACE_REGEX.findall(source)
 
-    SPECIFIC_WORD_MAPPING_LIST = [
-        map_fuc_to_fwuc,
-        map_mom_to_mwom,
-        map_time_to_tim,
-        map_me_to_mwe,
-        map_over_to_owor,
-        map_ove_to_uv,
-        map_haha_to_hehe_xd,
-        map_the_to_teh,
-        map_you_to_u,
-        map_read_to_wead,
-        map_worse_to_wose,
-        map_great_to_gwate,
-        map_aviat_to_awiat,
-        map_dedicat_to_deditat,
-        map_remember_to_rember,
-        map_when_to_wen,
-        map_frightened_to_frigten,
-        map_meme_to_mem,
-        map_feel_to_fell,
-    ]
-    UVU_MAPPING_LIST = [
-        map_o_to_owo,
-        map_ew_to_uwu,
-        map_hey_to_hay,
-        map_dead_to_ded,
-        map_n_vowel_t_to_nd,
-    ]
-    UWU_MAPPING_LIST = [
-        map_brackets_to_star_trails_pre(symbols),
-        map_period_comma_exclamation_semicolon_to_kaomojis_pre(symbols),
-        map_that_to_dat,
-        map_th_to_f,
-        map_le_to_wal,
-        map_ve_to_we,
-        map_ry_to_wwy,
-        map_r_or_l_to_w,
-    ]
-    OWO_MAPPING_LIST = [
-        map_n_vowel_to_ny,
-        map_ll_to_ww,
-        map_vowel_or_r_except_o_l_to_wl,
-        map_old_to_owld,
-        map_ol_to_owl,
-        map_l_or_r_o_to_wo,
-        map_specific_consonants_o_to_letter_and_wo,
-        map_v_or_w_le_to_wal,
-        map_fi_to_fwi,
-        map_ver_to_wer,
-        map_poi_to_pwoi,
-        map_specific_consonants_le_to_letter_and_wal,
-        map_consonant_r_to_consonant_w,
-        map_ly_to_wy,
-        map_ple_to_pwe,
-        map_nr_to_nw,
-        map_mem_to_mwem,
-        unmap_nywo_to_nyo,
-    ]
+    if locale == "en":
+        SPECIFIC_WORD_MAPPING_LIST = [
+            map_fuc_to_fwuc,
+            map_mom_to_mwom,
+            map_time_to_tim,
+            map_me_to_mwe,
+            map_over_to_owor,
+            map_ove_to_uv,
+            map_haha_to_hehe_xd,
+            map_the_to_teh,
+            map_you_to_u,
+            map_read_to_wead,
+            map_worse_to_wose,
+            map_great_to_gwate,
+            map_aviat_to_awiat,
+            map_dedicat_to_deditat,
+            map_remember_to_rember,
+            map_when_to_wen,
+            map_frightened_to_frigten,
+            map_meme_to_mem,
+            map_feel_to_fell,
+        ]
+        UVU_MAPPING_LIST = [
+            map_o_to_owo,
+            map_ew_to_uwu,
+            map_hey_to_hay,
+            map_dead_to_ded,
+            map_n_vowel_t_to_nd,
+        ]
+        UWU_MAPPING_LIST = [
+            map_brackets_to_star_trails_pre(symbols),
+            map_period_comma_exclamation_semicolon_to_kaomojis_pre(symbols),
+            map_that_to_dat,
+            map_th_to_f,
+            map_le_to_wal,
+            map_ve_to_we,
+            map_ry_to_wwy,
+            map_r_or_l_to_w,
+        ]
+        OWO_MAPPING_LIST = [
+            map_n_vowel_to_ny,
+            map_ll_to_ww,
+            map_vowel_or_r_except_o_l_to_wl,
+            map_old_to_owld,
+            map_ol_to_owl,
+            map_l_or_r_o_to_wo,
+            map_specific_consonants_o_to_letter_and_wo,
+            map_v_or_w_le_to_wal,
+            map_fi_to_fwi,
+            map_ver_to_wer,
+            map_poi_to_pwoi,
+            map_specific_consonants_le_to_letter_and_wal,
+            map_consonant_r_to_consonant_w,
+            map_ly_to_wy,
+            map_ple_to_pwe,
+            map_nr_to_nw,
+            map_mem_to_mwem,
+            unmap_nywo_to_nyo,
+        ]
+    elif locale == "tr":
+        SPECIFIC_WORD_MAPPING_LIST = []
+        UVU_MAPPING_LIST = [
+            map_brackets_to_star_trails_pre(symbols),
+            map_period_comma_exclamation_semicolon_to_kaomojis_pre(symbols),
+            map_o_to_owo,
+        ]  # level 2
+        UWU_MAPPING_LIST = [map_ll_to_ww, map_ry_to_wwy]  # level 1
+        OWO_MAPPING_LIST = [
+            map_ly_to_wy,
+            map_nr_to_nw,
+            map_ple_to_pwe,
+            map_r_or_l_to_w,
+        ]  # level 0
+    else:
+        raise ValueError(f"Unsupported locale {locale}")
 
     words = [Word(s) for s in word_matches]
     spaces = [Word(s) for s in space_matches]
@@ -618,19 +637,19 @@ def uvuify(source: str) -> str:
     return owoify(source=source, level=2)
 
 
-def handle_uwu(source: str, uwu_level: str, symbols: bool = False) -> str:
+def handle_uwu(source: str, uwu_level: str, locale: str, symbols: bool = False) -> str:
     if uwu_level == "off":
         return source
     elif uwu_level == "owo":
-        return owoify(source, symbols=symbols)
+        return owoify(source, locale=locale, symbols=symbols)
     elif uwu_level == "uwu":
-        return owoify(source, level=1, symbols=symbols)
+        return owoify(source, level=1, locale=locale, symbols=symbols)
     elif uwu_level == "uvu":
-        return owoify(source, level=2, symbols=symbols)
+        return owoify(source, level=2, locale=locale, symbols=symbols)
     return source
 
 
-def handle_item_uwu(source_items: list, uwu_level: str) -> list:
+def handle_item_uwu(source_items: list, uwu_level: str, locale: str) -> list:
     returned = []
     for item in source_items:
         item = item.copy()
@@ -638,7 +657,7 @@ def handle_item_uwu(source_items: list, uwu_level: str) -> list:
         for key in ["title", "author", "subtitle", "description"]:
             if key in item:
                 item[key] = handle_uwu(
-                    item[key], uwu_level, symbols=key in include_symbols
+                    item[key], uwu_level, locale, symbols=key in include_symbols
                 )
         returned.append(item)
     return returned

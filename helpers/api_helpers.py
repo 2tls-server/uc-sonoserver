@@ -114,7 +114,7 @@ def api_level_to_level(
         title = loc.background.V1
     else:
         title = loc.background.UPLOADED
-    bg_item["title"] = handle_uwu(title, request.state.uwu)
+    bg_item["title"] = handle_uwu(title, request.state.localization, request.state.uwu)
 
     if request.state.particle == "engine_default":
         particle_option = {"useDefault": True}
@@ -148,16 +148,20 @@ def api_level_to_level(
         time_str = f"{seconds}s"
     else:
         time_str = "0s"
-    created_at_str = handle_uwu(loc.time_ago(time_str), request.state.uwu)
+    created_at_str = handle_uwu(
+        loc.time_ago(time_str), request.state.localization, request.state.uwu
+    )
 
     leveldata = {
         "name": f"UnCh-{level_id}",
         "source": request.app.base_url,
         "version": 1,
         "rating": i["rating"],
-        "artists": handle_uwu(i["artists"], request.state.uwu),
+        "artists": handle_uwu(
+            i["artists"], request.state.localization, request.state.uwu
+        ),
         "author": i["author_full"],
-        "title": handle_uwu(i["title"], request.state.uwu),
+        "title": handle_uwu(i["title"], request.state.localization, request.state.uwu),
         "tags": (
             [
                 {"title": created_at_str, "icon": "clock"},
@@ -171,7 +175,12 @@ def api_level_to_level(
                 },
             ]
             + [
-                {"title": handle_uwu(tag, request.state.uwu), "icon": "tag"}
+                {
+                    "title": handle_uwu(
+                        tag, request.state.localization, request.state.uwu
+                    ),
+                    "icon": "tag",
+                }
                 for tag in i["tags"]
             ]
         ),
@@ -215,5 +224,5 @@ def api_level_to_level(
     else:
         desc = i.get("description")
         if desc:
-            desc = handle_uwu(desc, request.state.uwu)
+            desc = handle_uwu(desc, request.state.localization, request.state.uwu)
         return leveldata, desc

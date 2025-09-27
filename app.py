@@ -78,9 +78,10 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.localization = request.query_params.get(
             "localization", "en"
         ).lower()
+        uwu_supported = ["tr", "en"]
         request.state.uwu = (
             request.query_params.get("uwu", "off").lower()
-            if request.state.localization == "en"
+            if request.state.localization in uwu_supported
             else "off"
         )
         request.state.levelbg = request.query_params.get(

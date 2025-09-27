@@ -39,6 +39,11 @@
     "default_engine_desc": "Choose the server engine to use!",
     "notifications_plural": "You have {num} new notifications!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
     "notifications_singular": "You have {num} new notification!\nSystem notifications can be found in \"Posts\".\nPlease read them to continue to the server.",
+    "uwu": "UwU >.<",
+    "uwu_desc": "UwUify your menu (EN/TR ONLY)",
+    "slightly": "Slightly",
+    "a_lot": "A Lot",
+    "extreme": "Extreme",
     "search": {
         "FILTERS": "Filters (Page {page}/{pageCount})",
         "ADVANCED_SEARCH": "Advanced Search",
@@ -78,6 +83,9 @@
         "VISIBILITY_PUBLIC": "Public",
         "VISIBILITY_UNLISTED": "Unlisted",
         "VISIBILITY_PRIVATE": "Private"
+    },
+    "leaderboard": {
+
     },
     "background": {
         "BACKGROUNDSELECT": "Background Selection",

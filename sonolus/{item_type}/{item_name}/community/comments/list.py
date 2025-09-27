@@ -8,7 +8,7 @@ from helpers.data_helpers import create_server_form
 
 router = APIRouter()
 
-from locales.locale import Locale
+from locales.locale import Loc
 from helpers.owoify import handle_uwu
 
 import aiohttp
@@ -16,10 +16,7 @@ import aiohttp
 
 @router.get("/")
 async def main(request: Request, item_type: ItemType, item_name: str):
-    try:
-        locale = request.state.loc
-    except AssertionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    locale: Loc = request.state.loc
     page = request.state.query_params.get("page", 0)
     uwu_level = request.state.uwu
     auth = request.headers.get("Sonolus-Session")
@@ -58,9 +55,13 @@ async def main(request: Request, item_type: ItemType, item_name: str):
         async def process_comment(comment: dict) -> dict:
             return {
                 "name": str(comment["id"]),
-                "author": handle_uwu(comment["username"], uwu_level),
+                "author": handle_uwu(
+                    comment["username"], request.state.localization, uwu_level
+                ),
                 "time": comment["created_at"],
-                "content": handle_uwu(comment["content"], uwu_level),
+                "content": handle_uwu(
+                    comment["content"], request.state.localization, uwu_level
+                ),
                 "actions": (
                     [commentDeleteAction]
                     if (comment["owner"] or response.get("mod"))

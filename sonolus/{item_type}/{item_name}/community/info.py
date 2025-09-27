@@ -44,9 +44,13 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             formatted_comments.append(
                 {
                     "name": str(comment["id"]),
-                    "author": handle_uwu(comment["username"], uwu_level),
+                    "author": handle_uwu(
+                        comment["username"], request.state.localization, uwu_level
+                    ),
                     "time": comment["created_at"],
-                    "content": handle_uwu(comment["content"], uwu_level),
+                    "content": handle_uwu(
+                        comment["content"], request.state.localization, uwu_level
+                    ),
                     "actions": (
                         [commentDeleteAction]
                         if (comment["owner"] or response.get("mod"))

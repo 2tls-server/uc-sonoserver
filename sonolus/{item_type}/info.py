@@ -64,6 +64,7 @@ async def main(request: Request, item_type: ItemType):
                 handle_item_uwu(data[:5], uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
+                    request.state.localization,
                     uwu_level,
                 ),
                 icon="engine",
@@ -84,6 +85,7 @@ async def main(request: Request, item_type: ItemType):
                 handle_item_uwu(data[:5], uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
+                    request.state.localization,
                     uwu_level,
                 ),
                 icon="skin",
@@ -102,6 +104,7 @@ async def main(request: Request, item_type: ItemType):
                 handle_item_uwu(data[:5], uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
+                    request.state.localization,
                     uwu_level,
                 ),
                 icon="background",
@@ -118,6 +121,7 @@ async def main(request: Request, item_type: ItemType):
                 handle_item_uwu(data[:5], uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
+                    request.state.localization,
                     uwu_level,
                 ),
                 icon="effect",
@@ -134,6 +138,7 @@ async def main(request: Request, item_type: ItemType):
                 handle_item_uwu(data[:5], uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
+                    request.state.localization,
                     uwu_level,
                 ),
                 icon="particle",
@@ -197,6 +202,7 @@ async def main(request: Request, item_type: ItemType):
                 data[:1],
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
+                    request.state.localization,
                     uwu_level,
                 ),
                 icon="playlist",
@@ -540,7 +546,7 @@ async def main(request: Request, item_type: ItemType):
     #     sections: List[ReplayItemSection] = [
     #         create_section(
     #             "Replays", item_type, data[:5], description=handle_uwu(
-    #     locale.server_description or request.app.config["description"],
+    #     locale.server_description or request.app.config["description"], request.state.localization,
     #     uwu_level,
     # ), icon="replay"
     #         )
@@ -550,7 +556,7 @@ async def main(request: Request, item_type: ItemType):
     #     sections: List[RoomItemSection] = [
     #         create_section(
     #             "Rooms", item_type, data[:5], description=handle_uwu(
-    #     locale.server_description or request.app.config["description"],
+    #     locale.server_description or request.app.config["description"], request.state.localization,
     #     uwu_level,
     # ), icon="room"
     #         )

@@ -50,16 +50,16 @@ async def main(request: Request):
     if request.state.localization == "en":
         option = ServerFormOptionsFactory.server_select_option(
             query="uwu",
-            name="UwU >.<",
+            name=locale.uwu,
             required=False,
             default="off",
             values=[
-                {"name": "off", "title": "OFF"},
-                {"name": "owo", "title": "SLIGHTLY"},
-                {"name": "uwu", "title": "A LOT"},
-                {"name": "uvu", "title": "EXTREME"},
+                {"name": "off", "title": locale.off},
+                {"name": "owo", "title": locale.slightly},
+                {"name": "uwu", "title": locale.a_lot},
+                {"name": "uvu", "title": locale.extreme},
             ],
-            description="Uwuify your menu (EN ONLY).",
+            description=locale.uwu_desc,
         )
         options.append(option)
     options.append(
@@ -169,6 +169,7 @@ async def main(request: Request):
         "title": request.app.config["name"],
         "description": handle_uwu(
             desc,
+            request.state.localization,
             uwu_level,
         ),
         "buttons": buttons,
