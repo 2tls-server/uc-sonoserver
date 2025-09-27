@@ -243,7 +243,7 @@ async def main(
                 ),
             )
         page_data = data
-    page_data = handle_item_uwu(page_data, uwu_level)
+    page_data = handle_item_uwu(page_data, request.state.localization, uwu_level)
     return {
         "pageCount": len(pages) if generate_pages else num_pages,
         "items": page_data,

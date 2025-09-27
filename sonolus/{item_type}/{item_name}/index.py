@@ -729,7 +729,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
     if uwu_handled:
         data = item_data
     else:
-        data = handle_item_uwu([item_data], uwu_level)[0]
+        data = handle_item_uwu([item_data], request.state.localization, uwu_level)[0]
     detail: ServerItemDetails[T] = {
         "item": data,
         "actions": actions,

@@ -61,7 +61,7 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#ENGINE",
                 item_type,
-                handle_item_uwu(data[:5], uwu_level),
+                handle_item_uwu(data[:5], request.state.localization, uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
                     request.state.localization,
@@ -82,7 +82,7 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#SKIN",
                 item_type,
-                handle_item_uwu(data[:5], uwu_level),
+                handle_item_uwu(data[:5], request.state.localization, uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
                     request.state.localization,
@@ -101,7 +101,7 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#BACKGROUND",
                 item_type,
-                handle_item_uwu(data[:5], uwu_level),
+                handle_item_uwu(data[:5], request.state.localization, uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
                     request.state.localization,
@@ -118,7 +118,7 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#EFFECT",
                 item_type,
-                handle_item_uwu(data[:5], uwu_level),
+                handle_item_uwu(data[:5], request.state.localization, uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
                     request.state.localization,
@@ -135,7 +135,7 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#PARTICLE",
                 item_type,
-                handle_item_uwu(data[:5], uwu_level),
+                handle_item_uwu(data[:5], request.state.localization, uwu_level),
                 description=handle_uwu(
                     locale.server_description or request.app.config["description"],
                     request.state.localization,
@@ -153,7 +153,7 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#NEWEST",
                 item_type,
-                handle_item_uwu(data[:5], uwu_level),
+                handle_item_uwu(data[:5], request.state.localization, uwu_level),
                 icon="post",
             )
         ]
@@ -308,7 +308,9 @@ async def main(request: Request, item_type: ItemType):
                     else locale.random_non_staff_pick
                 ),
                 item_type,
-                handle_item_uwu([random_staff_pick], uwu_level),
+                handle_item_uwu(
+                    [random_staff_pick], request.state.localization, uwu_level
+                ),
                 icon="trophy",
                 description=(
                     locale.staff_pick_desc
@@ -319,19 +321,19 @@ async def main(request: Request, item_type: ItemType):
             create_section(
                 "#NEWEST",
                 item_type,
-                handle_item_uwu(newest, uwu_level),
+                handle_item_uwu(newest, request.state.localization, uwu_level),
                 icon="level",
             ),
             create_section(
                 "#RANDOM",
                 item_type,
-                handle_item_uwu(random, uwu_level),
+                handle_item_uwu(random, request.state.localization, uwu_level),
                 icon="level",
             ),
             create_section(
                 "#POPULAR",
                 item_type,
-                handle_item_uwu(popular, uwu_level),
+                handle_item_uwu(popular, request.state.localization, uwu_level),
                 icon="level",
             ),
         ]
