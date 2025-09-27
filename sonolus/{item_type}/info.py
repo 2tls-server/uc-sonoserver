@@ -188,7 +188,11 @@ async def main(request: Request, item_type: ItemType):
                         item_type,
                         [],
                         icon="bell",
-                        description=locale.notification.NOTIFICATION_DESC,
+                        description=handle_uwu(
+                            locale.notification.NOTIFICATION_DESC,
+                            request.state.localization,
+                            uwu_level,
+                        ),
                     ),
                 )
     elif item_type == "playlists":
@@ -355,7 +359,9 @@ async def main(request: Request, item_type: ItemType):
                 name=locale.staff_pick,
                 required=False,
                 default="default",
-                description=locale.search.STAFF_PICK_DESC,
+                description=handle_uwu(
+                    locale.search.STAFF_PICK_DESC, request.state.localization, uwu_level
+                ),
                 values=[
                     {"name": "default", "title": "#DEFAULT"},
                     {"name": "off", "title": locale.search.STAFF_PICK_OFF},

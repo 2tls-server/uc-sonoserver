@@ -23,7 +23,7 @@ from helpers.api_helpers import api_level_to_level, api_notif_to_post
 router = APIRouter()
 
 from locales.locale import Loc
-from helpers.owoify import handle_item_uwu
+from helpers.owoify import handle_item_uwu, handle_uwu
 
 import aiohttp
 
@@ -371,7 +371,9 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 name=locale.staff_pick,
                 required=False,
                 default=staff_pick,
-                description=locale.search.STAFF_PICK_DESC,
+                description=handle_uwu(
+                    locale.search.STAFF_PICK_DESC, request.state.localization, uwu_level
+                ),
                 values=[
                     {"name": "default", "title": "#DEFAULT"},
                     {"name": "off", "title": locale.search.STAFF_PICK_OFF},

@@ -61,7 +61,9 @@ async def main(request: Request):
                 {"name": "uwu", "title": locale.a_lot},
                 {"name": "uvu", "title": locale.extreme},
             ],
-            description=locale.uwu_desc,
+            description=handle_uwu(
+                locale.uwu_desc, request.state.localization, request.state.uwu
+            ),
         )
         options.append(option)
     options.append(
@@ -89,7 +91,9 @@ async def main(request: Request):
             required=False,
             default="NextSEKAI",
             values=[{"name": item["name"], "title": item["title"]} for item in engines],
-            description=locale.default_engine_desc,
+            description=handle_uwu(
+                locale.default_engine_desc, request.state.localization, uwu_level
+            ),
         )
     )
     particles = await request.app.run_blocking(
@@ -107,7 +111,9 @@ async def main(request: Request):
                 for item in particles
                 if item.get("engine_specific", False) == False
             ],
-            description=locale.default_particle_desc,
+            description=handle_uwu(
+                locale.default_particle_desc, request.state.localization, uwu_level
+            ),
         )
     )
     options.append(
@@ -121,9 +127,11 @@ async def main(request: Request):
                 {"name": "true", "title": locale.search.STAFF_PICK_TRUE},
                 {"name": "false", "title": locale.search.STAFF_PICK_FALSE},
             ],
-            description=locale.search.STAFF_PICK_CONFIG_DESC
-            + "\n"
-            + locale.staff_pick_desc,
+            description=handle_uwu(
+                locale.search.STAFF_PICK_CONFIG_DESC + "\n" + locale.staff_pick_desc,
+                request.state.localization,
+                uwu_level,
+            ),
         )
     )
     desc = locale.server_description or request.app.config["description"]
