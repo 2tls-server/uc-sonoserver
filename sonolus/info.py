@@ -78,7 +78,11 @@ async def main(request: Request):
                 {"name": "default_or_v1", "title": locale.background.DEF_OR_V1},
                 {"name": "v1", "title": locale.background.V1},
             ],
-            description=locale.background.USEBACKGROUNDDESC,
+            description=handle_uwu(
+                locale.background.USEBACKGROUNDDESC,
+                request.state.localization,
+                uwu_level,
+            ),
         )
     )
     engines = await request.app.run_blocking(

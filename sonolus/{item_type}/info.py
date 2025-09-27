@@ -188,11 +188,7 @@ async def main(request: Request, item_type: ItemType):
                         item_type,
                         [],
                         icon="bell",
-                        description=handle_uwu(
-                            locale.notification.NOTIFICATION_DESC,
-                            request.state.localization,
-                            uwu_level,
-                        ),
+                        description=locale.notification.NOTIFICATION_DESC,
                     ),
                 )
     elif item_type == "playlists":
@@ -316,10 +312,14 @@ async def main(request: Request, item_type: ItemType):
                     [random_staff_pick], request.state.localization, uwu_level
                 ),
                 icon="trophy",
-                description=(
-                    locale.staff_pick_desc
-                    if staff_pick in ["off", "false"]
-                    else locale.non_staff_pick_desc
+                description=handle_uwu(
+                    (
+                        locale.staff_pick_desc
+                        if staff_pick in ["off", "false"]
+                        else locale.non_staff_pick_desc
+                    ),
+                    request.state.localization,
+                    uwu_level,
                 ),
             ),
             create_section(
@@ -527,7 +527,11 @@ async def main(request: Request, item_type: ItemType):
                     },
                     {"name": "abc", "title": locale.search.TITLE_A_Z},
                 ],
-                description=locale.search.SORT_BY_DESCRIPTION,
+                description=handle_uwu(
+                    locale.search.SORT_BY_DESCRIPTION,
+                    request.state.localization,
+                    uwu_level,
+                ),
             )
         )
         options.append(

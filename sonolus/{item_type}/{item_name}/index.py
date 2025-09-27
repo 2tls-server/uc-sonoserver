@@ -549,7 +549,11 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                     },
                     {"name": "abc", "title": locale.search.TITLE_A_Z},
                 ],
-                description=locale.search.SORT_BY_DESCRIPTION,
+                description=handle_uwu(
+                    locale.search.SORT_BY_DESCRIPTION,
+                    request.state.localization,
+                    uwu_level,
+                ),
             )
         )
         options.append(
@@ -682,7 +686,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                                     name="#CONFIRM",
                                     required=True,
                                     default=False,
-                                    description=locale.staff_pick_confirm,
+                                    description=locale.staff_pick_confirm,  # no uwu
                                 )
                             ],
                         )
@@ -700,7 +704,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                                     name="#CONFIRM",
                                     required=True,
                                     default=False,
-                                    description=locale.staff_pick_confirm,
+                                    description=locale.staff_pick_confirm,  # no uwu
                                 )
                             ],
                         )
