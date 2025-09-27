@@ -623,21 +623,21 @@ def owoify(
     return "".join(result_strings)
 
 
-def uwuify(source: str) -> str:
+def uwuify(source: str, locale: str = "en") -> str:
     """
     Equivalent to owoify at level 1
     """
-    return owoify(source=source, level=1)
+    return owoify(source=source, level=1, locale=locale)
 
 
-def uvuify(source: str) -> str:
+def uvuify(source: str, locale: str = "en") -> str:
     """
     Equivalent to owoify at level 2
     """
-    return owoify(source=source, level=2)
+    return owoify(source=source, level=2, locale=locale)
 
 
-def handle_uwu(source: str, uwu_level: str, locale: str, symbols: bool = False) -> str:
+def handle_uwu(source: str, locale: str, uwu_level: str, symbols: bool = False) -> str:
     if uwu_level == "off":
         return source
     elif uwu_level == "owo":
@@ -649,15 +649,19 @@ def handle_uwu(source: str, uwu_level: str, locale: str, symbols: bool = False) 
     return source
 
 
-def handle_item_uwu(source_items: list, uwu_level: str, locale: str) -> list:
+def handle_item_uwu(source_items: list, locale: str, uwu_level: str) -> list:
     returned = []
     for item in source_items:
         item = item.copy()
         include_symbols = ["title", "subtitle", "description"]
+        always_assume_en = ["title", "subtitle", "description"]
         for key in ["title", "author", "subtitle", "description"]:
             if key in item:
                 item[key] = handle_uwu(
-                    item[key], uwu_level, locale, symbols=key in include_symbols
+                    item[key],
+                    locale if locale not in always_assume_en else "en",
+                    uwu_level,
+                    symbols=key in include_symbols,
                 )
         returned.append(item)
     return returned
