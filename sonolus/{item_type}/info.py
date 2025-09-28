@@ -230,7 +230,7 @@ async def main(request: Request, item_type: ItemType):
                     url,
                     params={
                         "type": "advanced",
-                        "sort_by": "created_at",
+                        "sort_by": "published_at",
                         "staff_pick": {"off": 0, "true": 1, "false": 0}[staff_pick],
                     },
                 ),
