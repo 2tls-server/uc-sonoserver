@@ -91,10 +91,17 @@ def api_level_to_level(
         if not candidates:
             raise KeyError("no matching theme/engine for skin found")
 
+        #  try to match locale
         for skin in candidates:
             if skin.get("locale") == localization:
                 return skin
 
+        # fallback: find skin where no locale is set (some global skin)
+        for skin in candidates:
+            if skin.get("locale") == None:
+                return skin
+
+        # fallback 2: just return first item
         return candidates[0]
 
     @lru_cache(maxsize=None)

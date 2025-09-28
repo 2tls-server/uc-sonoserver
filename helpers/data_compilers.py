@@ -349,7 +349,7 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
         compiled_data_list,
         key=lambda item: (
             item.get("engine_sort_order", float("inf")),  # last, if no sort order
-            item["theme"].lower(),  # abc
+            item["title"].lower(),  # abc
         ),
     )
     cached[f"engines_{locale}"] = compiled_data_list
