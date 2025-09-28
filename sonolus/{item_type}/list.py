@@ -25,6 +25,8 @@ router = APIRouter()
 from locales.locale import Loc
 from helpers.owoify import handle_item_uwu
 
+type_func = type
+
 
 @router.get("/")
 async def main(
@@ -80,7 +82,7 @@ async def main(
             for item in data
             if (item.get("engines") == None)
             or (
-                (type(request.state.engine) in [list, tuple])
+                (type_func(item.get("engines")) in [list, tuple])
                 and (request.state.engine in item.get("engines"))
             )
         ]

@@ -77,7 +77,7 @@ async def main(request: Request, item_type: ItemType):
             for item in data
             if (item.get("engines") == None)
             or (
-                (type(request.state.engine) in [list, tuple])
+                (type(item.get("engines")) in [list, tuple])
                 and (request.state.engine in item.get("engines"))
             )
         ]
