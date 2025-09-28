@@ -27,7 +27,7 @@ def api_notif_to_post(
         "author": "UntitledCharts",
         "tags": [
             (
-                {"title": loc.notification.READ_STATUS, "icon": "envelopeOpen"}
+                {"title": loc.notification.READ_STATUS, "icon": "unlock"}
                 if i["is_read"]
                 else {"title": loc.notification.UNREAD_STATUS, "icon": "envelope"}
             )
@@ -64,6 +64,7 @@ def api_level_to_level(
     bgtype: str,
     include_description: bool = False,
     disable_replace_missing_preview: bool = False,
+    context: str = "list",  # or level
 ) -> dict | tuple:
     loc: Loc = request.state.loc
 
@@ -208,6 +209,32 @@ def api_level_to_level(
         request.state.uwu,
     )
 
+    if context == "list":
+        additional = []
+        tags = [
+            {"title": handle_uwu(tag, request.state.localization, request.state.uwu)}
+            for tag in i["tags"]
+        ]
+    elif context == "level":
+        VISIBILITIES = {
+            "PUBLIC": {"title": "#PUBLIC", "icon": "globe"},
+            "PRIVATE": {"title": "#PRIVATE", "icon": "lock"},
+            "UNLISTED": {
+                "title": loc.search.VISIBILITY_UNLISTED,
+                "icon": "unlock",
+            },
+        }
+        additional = [
+            {"title": VISIBILITIES[i["status"]], "icon": VISIBILITIES[i["status"]]}
+        ]
+        tags = [
+            {
+                "title": handle_uwu(tag, request.state.localization, request.state.uwu),
+                "icon": "tag",
+            }
+            for tag in i["tags"]
+        ]
+
     leveldata = {
         "name": f"UnCh-{level_id}",
         "source": request.app.base_url,
@@ -219,7 +246,8 @@ def api_level_to_level(
         "author": i["author_full"],
         "title": handle_uwu(i["title"], request.state.localization, request.state.uwu),
         "tags": (
-            [
+            additional
+            + [
                 {"title": created_at_str, "icon": "clock"},
                 {
                     "title": str(i["like_count"]),
@@ -230,15 +258,7 @@ def api_level_to_level(
                     "icon": "comment",
                 },
             ]
-            + [
-                {
-                    "title": handle_uwu(
-                        tag, request.state.localization, request.state.uwu
-                    ),
-                    "icon": "tag",
-                }
-                for tag in i["tags"]
-            ]
+            + tags
         ),
         "engine": get_cached_engine(
             request.app.base_url, request.state.engine, request.state.localization
