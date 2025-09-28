@@ -1,8 +1,11 @@
+from typing import Any, Dict
+
 from functools import lru_cache
 from helpers.data_compilers import (
     compile_engines_list,
     compile_backgrounds_list,
     compile_particles_list,
+    compile_skins_list,
 )
 from locales.locale import Loc
 from helpers.owoify import handle_uwu
@@ -73,6 +76,28 @@ def api_level_to_level(
         return particle_data
 
     @lru_cache(maxsize=None)
+    def get_cached_skin(
+        base_url: str, skin_name: str, engine_name: str, localization: str
+    ) -> Dict[str, Any]:
+        skins = compile_skins_list(base_url)
+
+        candidates = [
+            skin
+            for skin in skins
+            if skin.get("theme") == skin_name
+            and ("engines" not in skin or engine_name in skin["engines"])
+        ]
+
+        if not candidates:
+            raise KeyError("no matching theme/engine for skin found")
+
+        for skin in candidates:
+            if skin.get("locale") == localization:
+                return skin
+
+        return candidates[0]
+
+    @lru_cache(maxsize=None)
     def get_cached_background(base_url: str, localization: str):
         return compile_backgrounds_list(base_url, localization)[0].copy()
 
@@ -115,6 +140,22 @@ def api_level_to_level(
     else:
         title = loc.background.UPLOADED
     bg_item["title"] = handle_uwu(title, request.state.localization, request.state.uwu)
+
+    if request.state.skin == "engine_default":
+        skin_option = {"useDefault": True}
+    else:
+        try:
+            skin_option = {
+                "useDefault": False,
+                "item": get_cached_skin(
+                    request.app.base_url,
+                    request.state.skin,
+                    request.state.engine,
+                    request.state.localization,
+                ),
+            }
+        except:  # handles if an engine does not have a correctly-themed skin, KeyError
+            skin_option = {"useDefault": True}
 
     if request.state.particle == "engine_default":
         particle_option = {"useDefault": True}
@@ -187,7 +228,7 @@ def api_level_to_level(
         "engine": get_cached_engine(
             request.app.base_url, request.state.engine, request.state.localization
         ),
-        "useSkin": {"useDefault": True},
+        "useSkin": skin_option,
         "useEffect": {"useDefault": True},
         "useParticle": particle_option,
         "useBackground": {"useDefault": False, "item": bg_item},

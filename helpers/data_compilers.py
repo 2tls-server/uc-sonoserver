@@ -240,7 +240,15 @@ def compile_skins_list(source: str = None) -> List[SkinItem]:
             skin_data: dict = json.load(f)
         if not skin_data.get("enabled", True):
             continue
-        item_keys = ["version", "title", "subtitle", "author", "engines"]
+        item_keys = [
+            "version",
+            "title",
+            "subtitle",
+            "author",
+            "engines",
+            "theme",
+            "locale",
+        ]
         for key in item_keys:
             if key in skin_data.keys():
                 compiled_data[key] = skin_data[key]

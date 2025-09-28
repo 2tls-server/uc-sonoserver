@@ -1,7 +1,8 @@
 {
     "version": 4,
-    "title": "Next SEKAI 01",
+    "title": "Next SEKAI v1",
     "subtitle": "Next SEKAI",
     "author": "Burrito#1000",
-    "engines": ["NextSEKAI", "NextSEKAI_arc"]
+    "engines": ["NextSEKAI", "NextSEKAI_arc"],
+    "theme": "v1"
 }
