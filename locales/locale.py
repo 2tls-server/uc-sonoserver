@@ -365,6 +365,10 @@ class Loc:
         return self._get("notifications_plural").format(num=f"{num:,}")
 
     @property
+    def find_in_playlists(self) -> str:
+        return self._get("find_in_playlists")
+
+    @property
     def staff_pick_desc(self) -> str:
         return self._get("staff_pick_desc")
 

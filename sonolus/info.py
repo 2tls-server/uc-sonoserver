@@ -166,7 +166,9 @@ async def main(request: Request):
             if notifications > 0:
                 button_list = ["post"]
             desc += "\n\n" + ("-" * 40) + "\n"
+            desc += f"\n{locale.find_in_playlists}"
             if response.get("mod") or response.get("admin"):
+                desc += "\n\n" + ("-" * 40) + "\n"
                 if response.get("admin"):
                     desc += f"\n{locale.is_admin}\n\n{locale.admin_powers}\n{locale.mod_powers}"
                 else:
