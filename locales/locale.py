@@ -492,6 +492,9 @@ class Loc:
     def time_ago(self, time_str: str) -> str:
         return self._get("time_ago").format(time_ago=time_str)
 
+    def time_ago_not_published(self, time_str: str) -> str:
+        return self._get("time_ago_not_published").format(time_ago=time_str)
+
 
 class LocaleManager:
     def __init__(self, default_locale: str):

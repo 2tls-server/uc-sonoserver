@@ -34,6 +34,7 @@
     "off": "Off",
     "find_in_playlists": "You can find your own uploaded levels in Playlists.",
     "time_ago": "{time_ago} ago",
+    "time_ago_not_published": "{time_ago} ago (uploaded, not published)",
     "default_particle": "Default Level Particle",
     "default_particle_desc": "Choose your default level particle that will be applied!",
     "default_engine": "Server Engine",

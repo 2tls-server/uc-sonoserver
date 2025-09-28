@@ -177,9 +177,11 @@ def api_level_to_level(
         except:
             particle_option = {"useDefault": True}
 
-    created_at = datetime.fromisoformat(i["created_at"].rstrip("Z")).astimezone(
-        timezone.utc
-    )
+    if i.get("published_at"):
+        key = "published_at"
+    else:
+        key = "created_at"
+    created_at = datetime.fromisoformat(i[key].rstrip("Z")).astimezone(timezone.utc)
     now = datetime.now(timezone.utc)
     delta = now - created_at
     if delta >= timedelta(days=1):
@@ -197,7 +199,13 @@ def api_level_to_level(
     else:
         time_str = "0s"
     created_at_str = handle_uwu(
-        loc.time_ago(time_str), request.state.localization, request.state.uwu
+        (
+            loc.time_ago(time_str)
+            if key == "published_at"
+            else loc.time_ago_not_published(time_str)
+        ),
+        request.state.localization,
+        request.state.uwu,
     )
 
     leveldata = {
