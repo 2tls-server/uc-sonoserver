@@ -75,8 +75,11 @@ async def main(request: Request, item_type: ItemType):
         data = [
             item
             for item in data
-            if (item.get("engine") == None)
-            or (item.get("engine") == request.state.engine)
+            if (item.get("engines") == None)
+            or (
+                (type(request.state.engine) in [list, tuple])
+                and (request.state.engine in item.get("engines"))
+            )
         ]
         sections: List[SkinItemSection] = [
             create_section(

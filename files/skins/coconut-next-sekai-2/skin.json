@@ -3,5 +3,5 @@
     "title": "Next SEKAI 02",
     "subtitle": "Next SEKAI",
     "author": "Burrito#1000",
-    "engine": "NextSEKAI"
+    "engines": ["NextSEKAI", "NextSEKAI_arc"]
 }
