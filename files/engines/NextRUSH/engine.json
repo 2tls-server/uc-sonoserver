@@ -10,5 +10,6 @@
     "background_name": "PLEASE-SELECT",
     "effect_name": "coconut-next-sekai-1",
     "particle_name": "coconut-next-sekai-1",
-    "description": "\nNext SEKAI's expansion engine\nVersion: 0.1.0\n\nhttps://github.com/Next-SEKAI/sonolus-next-sekai-engine"
+    "description": "\nNext SEKAI's expansion engine\nVersion: 0.1.0\n\nhttps://github.com/Next-SEKAI/sonolus-next-sekai-engine",
+    "engine_sort_order": 2
 }

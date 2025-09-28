@@ -94,7 +94,7 @@ async def main(request: Request):
             query="defaultengine",
             name=locale.default_engine,
             required=False,
-            default="NextSEKAI",
+            default="none",
             values=[{"name": item["name"], "title": item["title"]} for item in engines],
             description=handle_uwu(
                 locale.default_engine_desc, request.state.localization, uwu_level

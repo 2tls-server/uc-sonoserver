@@ -126,6 +126,8 @@ class SonolusMiddleware(BaseHTTPMiddleware):
                 "engine_default",
                 *[item["name"] for item in particles],
             ]
+            if request.state.engine == "none":
+                request.state.engine = engines[0]["name"]
             assert request.state.engine in [item["name"] for item in engines]
             assert request.state.skin in ["engine_default", *supported_skins]
         except AssertionError:

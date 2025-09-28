@@ -288,9 +288,10 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
         compiled_data["name"] = engine
         if source:
             compiled_data["source"] = source
-        item_keys = ["version", "title", "subtitle", "author"]
+        item_keys = ["version", "title", "subtitle", "author", "engine_sort_order"]
         for key in item_keys:
-            compiled_data[key] = engine_data[key]
+            if key in engine_data.keys():
+                compiled_data[key] = engine_data[key]
         data_files = {
             "thumbnail": "thumbnail.png",
             "configuration": "EngineConfiguration",
@@ -344,5 +345,12 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
                 "StopIteration raised: incorrect key name! Make sure your engine file names and resource file names match."
             )
         compiled_data_list.append(compiled_data)
+    compiled_data_list = sorted(
+        compiled_data_list,
+        key=lambda item: (
+            item.get("engine_sort_order", float("inf")),  # last, if no sort order
+            item["theme"].lower(),  # abc
+        ),
+    )
     cached[f"engines_{locale}"] = compiled_data_list
     return compiled_data_list
