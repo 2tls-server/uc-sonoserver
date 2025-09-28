@@ -285,12 +285,12 @@ def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineI
             compiled_data[key] = engine_data[key]
         data_files = {
             "thumbnail": "thumbnail.png",
-            "configuration": "configuration.json.gz",
-            "playData": "playData",
-            "watchData": "watchData",
-            "previewData": "previewData",
-            "tutorialData": "tutorialData",
-            "rom": "rom",
+            "configuration": "EngineConfiguration",
+            "playData": "EnginePlayData",
+            "watchData": "EngineWatchData",
+            "previewData": "EnginePreviewData",
+            "tutorialData": "EngineTutorialData",
+            "rom": "EngineRom",
         }
         for key, file in data_files.items():
             if os.path.exists(f"files/engines/{engine}/{file}"):
