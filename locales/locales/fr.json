@@ -25,7 +25,7 @@
   "admin_powers": [
     "Supprimer les niveaux non conformes aux règles"
   ],
-  "staff_pick": "Choix du personnel",
+  "staff_pick": "Choix des modérateurs",
   "staff_pick_desc": "Les choix des modérateurs sont des niveaux que nous avons examinés et trouvés à la fois amusants et jouables !",
   "non_staff_pick_desc": "Niveau de sélection aléatoire non choix des modérateurs, car vous n'avez activé que les sélections du personnel.",
   "staff_pick_notice": "Ne réclamez pas votre ajout : cela se fait automatiquement. Vous pouvez seulement demander une évaluation du niveau.",
@@ -38,13 +38,21 @@
   "sponsored_hide": "Donnez-nous du soutien sur Patreon pour cacher les sponsors!",
   "on": "Allumé",
   "off": "Éteint",
+  "find_in_playlists": "Vous pouvez trouver vos propres niveaux publié dans les listes de lecture.",
   "time_ago": "Il y a {time_ago}",
   "default_particle": "Particule de niveau par défaut",
   "default_particle_desc": "Choisissez votre niveau de particule par défaut qui sera appliqué !",
   "default_engine": "Moteur du Serveur",
   "default_engine_desc": "Choisisez le moteur du serveur à utiliser!",
+  "default_skin": "Skin du serveur",
+  "default_skin_desc": "Choisissez le type de skin par défaut ! Le skin sera différent selon le moteur (par exemple, le skin V1 est légèrement différent sur Rush et Next).",
   "notifications_plural": "Vous avez {num} nouvelles notifications !\nLes notifications système se trouvent dans la section « Messages ».\nVeuillez les lire pour accéder au serveur.",
   "notifications_singular": "Vous avez reçu {num} nouvelle notification !\nLes notifications système se trouvent dans la section « Messages ».\nVeuillez les lire pour accéder au serveur.",
+  "uwu": "UwU >.<",
+  "uwu_desc": "UwUtisez votre menu (EN/TR UNIQUEMENT)",
+  "slightly": "Légèrement",
+  "a_lot": "Beaucoup",
+  "extreme": "Extrême",
   "search": {
     "FILTERS": "Filtres (Page {page}/{pageCount})",
     "ADVANCED_SEARCH": "Recherche avancée",
@@ -70,7 +78,8 @@
     "ENTER_TAGS": "Entrez les tags",
     "SORT_BY": "Trier par",
     "SORT_BY_DESCRIPTION": "Trier par options.\nRemarque : Les titre sont trié de A à Z par ordre décroissant.",
-    "DATE_CREATED": "Date de création",
+    "DATE_CREATED": "Date de téléchargement au serveur",
+    "DATE_PUBLISHED": "Date de publication",
     "RATING": "Note",
     "LIKES": "Likes",
     "COMMENTS": "Commentaires",
@@ -84,6 +93,8 @@
     "VISIBILITY_PUBLIC": "Publique",
     "VISIBILITY_UNLISTED": "Non-listé",
     "VISIBILITY_PRIVATE": "Privé"
+  },
+  "leaderboard": {
   },
   "background": {
     "BACKGROUNDSELECT": "Sélection d'arrière-plan",
