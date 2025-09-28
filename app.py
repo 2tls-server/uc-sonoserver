@@ -17,7 +17,11 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 import uvicorn
 
 from helpers.repository_map import repo
-from helpers.data_compilers import compile_particles_list, compile_engines_list
+from helpers.data_compilers import (
+    compile_particles_list,
+    compile_engines_list,
+    compile_skins_list,
+)
 from locales.locale import Locale
 
 debug = config["server"]["debug"]
@@ -45,6 +49,7 @@ class SonolusFastAPI(FastAPI):
             "stpickconfig",
             "defaultparticle",
             "defaultengine",
+            "defaultskin",
         ]
 
         self.repository = repo
@@ -93,6 +98,11 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         request.state.particle = request.query_params.get(
             "defaultparticle", "engine_default"
         ).lower()
+        request.state.skin = request.query_params.get(
+            "defaultskin", "engine_default"
+        ).lower()
+        skins = await request.app.run_blocking(compile_skins_list, request.app.base_url)
+        supported_skins = list(set([skin["theme"] for skin in skins]))
         request.state.engine = request.query_params.get("defaultengine", "NextSEKAI")
         request.state.loc, request.state.localization = Locale.get_messages(
             request.state.localization
@@ -117,6 +127,7 @@ class SonolusMiddleware(BaseHTTPMiddleware):
                 *[item["name"] for item in particles],
             ]
             assert request.state.engine in [item["name"] for item in engines]
+            assert request.state.skin in ["engine_default", *supported_skins]
         except AssertionError:
             return JSONResponse(
                 content={"message": "Invalid configuration"},
