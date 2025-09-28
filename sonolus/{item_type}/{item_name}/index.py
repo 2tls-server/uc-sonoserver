@@ -612,6 +612,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             response["data"],
             request.state.levelbg,
             include_description=True,
+            context="level",
         )
         if auth:
             if liked:
