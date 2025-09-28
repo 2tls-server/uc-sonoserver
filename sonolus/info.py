@@ -6,6 +6,7 @@ from helpers.data_compilers import (
     compile_banner,
     compile_particles_list,
     compile_engines_list,
+    compile_skins_list,
 )
 from helpers.datastructs import ServerInfoButton
 from helpers.data_helpers import (
@@ -97,6 +98,31 @@ async def main(request: Request):
             values=[{"name": item["name"], "title": item["title"]} for item in engines],
             description=handle_uwu(
                 locale.default_engine_desc, request.state.localization, uwu_level
+            ),
+        )
+    )
+    skins = await request.app.run_blocking(compile_skins_list, request.app.base_url)
+    unique = []
+    seen = set()
+
+    for item in skins:
+        theme = item["theme"]
+        if theme not in seen:
+            unique.append({"name": theme, "title": theme.upper()})
+            seen.add(theme)
+    options.append(
+        ServerFormOptionsFactory.server_select_option(
+            query="defaultskin",
+            name=locale.default_skin,
+            required=False,
+            default="engine_default",
+            values=[{"name": "engine_default", "title": "#DEFAULT"}]
+            + [
+                {"name": k, "title": k.upper()}
+                for k in {item["theme"]: None for item in skins}
+            ],
+            description=handle_uwu(
+                locale.default_skin_desc, request.state.localization, uwu_level
             ),
         )
     )

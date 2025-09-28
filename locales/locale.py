@@ -462,6 +462,14 @@ class Loc:
         return self._get("default_engine_desc")
 
     @property
+    def default_skin(self) -> str:
+        return self._get("default_skin")
+
+    @property
+    def default_skin_desc(self) -> str:
+        return self._get("default_skin_desc")
+
+    @property
     def uwu(self) -> str:
         return self._get("uwu")
 
