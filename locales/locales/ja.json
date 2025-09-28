@@ -43,8 +43,13 @@
   "default_particle_desc": "パーティクルを選択してください。",
   "default_engine": "サーバーエンジン",
   "default_engine_desc": "使用するサーバーエンジンを選択してください。",
+  "default_skin": "サーバースキン",
   "notifications_plural": "新着通知：{num}件\n通知は「投稿」で確認できます。\nサーバーに進むにはお読みください。",
   "notifications_singular": "新着通知：{num}件\n通知は「投稿」で確認できます。\nサーバーに進むにはお読みください。",
+  "uwu": "UwU >.<",
+  "slightly": "少し",
+  "a_lot": "多い",
+  "extreme": "過激",
   "search": {
     "FILTERS": "フィルター (ページ {page}/{pageCount})",
     "ADVANCED_SEARCH": "詳細検索",
@@ -70,7 +75,8 @@
     "ENTER_TAGS": "タグを入力",
     "SORT_BY": "並べ替え",
     "SORT_BY_DESCRIPTION": "オプションで並べ替えます\n\n降順の場合、タイトルはA-Zで並べ替えられます。",
-    "DATE_CREATED": "作成日",
+    "DATE_CREATED": "アップロード日",
+    "DATE_PUBLISHED": "公開日",
     "RATING": "難易度",
     "LIKES": "好評価数",
     "COMMENTS": "コメント数",
@@ -84,6 +90,8 @@
     "VISIBILITY_PUBLIC": "公開",
     "VISIBILITY_UNLISTED": "未公開",
     "VISIBILITY_PRIVATE": "非公開"
+  },
+  "leaderboard": {
   },
   "background": {
     "BACKGROUNDSELECT": "背景の選択",
