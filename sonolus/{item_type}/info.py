@@ -218,40 +218,40 @@ async def main(request: Request, item_type: ItemType):
             headers["authorization"] = auth
         async with aiohttp.ClientSession(headers=headers) as cs:
             url = request.app.api_config["url"] + "/api/charts/"
+            staff_pick_value = {"off": None, "true": 1, "false": 0}[staff_pick]
+            random_params = {"type": "random"}
+            if staff_pick_value:
+                random_params["staff_pick"] = staff_pick_value
+            newest_params = {"type": "advanced", "sort_by": "published_at"}
+            if staff_pick_value:
+                newest_params["staff_pick"] = staff_pick_value
+            popular_params = {
+                "type": "advanced",
+                "sort_by": "decaying_likes",
+            }
+            if staff_pick_value:
+                popular_params["staff_pick"] = staff_pick_value
             tasks = [
                 cs.get(
                     url,
-                    params={
-                        "type": "random",
-                        "staff_pick": {"off": 0, "true": 1, "false": 0}[staff_pick],
-                    },
+                    params=random_params,
                 ),
                 cs.get(
                     url,
-                    params={
-                        "type": "advanced",
-                        "sort_by": "published_at",
-                        "staff_pick": {"off": 0, "true": 1, "false": 0}[staff_pick],
-                    },
+                    params=newest_params,
                 ),
                 cs.get(
                     url,
                     params={
                         "type": "random",
-                        "staff_pick": {"off": 0, "true": 1, "false": 0}[
+                        "staff_pick": {"true": 1, "false": 0}[
                             ("true" if staff_pick in ["off", "false"] else "false")
                         ],
                     },
                 ),
                 cs.get(
                     url,
-                    params={
-                        "type": "advanced",
-                        "staff_pick": {"off": 0, "true": 1, "false": 0}[
-                            ("true" if staff_pick in ["off", "false"] else "false")
-                        ],
-                        "sort_by": "decaying_likes",
-                    },
+                    params=popular_params,
                 ),
             ]
             responses = await asyncio.gather(*tasks)
