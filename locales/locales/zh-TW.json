@@ -40,12 +40,20 @@
   "off": "關閉",
   "find_in_playlists": "您可以在Playlists里找到您上傳的關卡。",
   "time_ago": "{time_ago} 前",
+  "time_ago_not_published": "{time_ago}前(已上傳，但尚未發布)",
   "default_particle": "預設關卡粒子",
   "default_particle_desc": "選擇將要套用的預設關卡粒子！",
   "default_engine": "伺服器引擎",
   "default_engine_desc": "選擇要使用的伺服器引擎！",
+  "default_skin": "伺服器皮膚",
+  "default_skin_desc": "選擇要使用的預設皮膚類型！皮膚會根據引擎而有所不同（例如，Rush 上的 V1 皮膚與 Next 上的略有不同），但適用於所有引擎。\n\n注意：如果引擎沒有支援的皮膚，它將使用引擎預設皮膚。",
   "notifications_plural": "您有 {num} 條新通知！\n系統通知可在「貼文」中找到。\n請閱讀通知後繼續訪問伺服器。",
+  "notifications_singular": "您有 {num} 條新通知！\n系統通知可在「貼文」中找到。\n請閱讀通知後繼續訪問伺服器。",
+  "uwu": "UwU >.<",
+  "uwu_desc": "UwU 化你的選單 (僅限 EN/TR)",
   "slightly": "稍微",
+  "a_lot": "很多",
+  "extreme": "超級",
   "search": {
     "FILTERS": "過濾器（第 {page}/{pageCount} 頁）",
     "ADVANCED_SEARCH": "進階搜尋",
@@ -75,6 +83,7 @@
     "DATE_PUBLISHED": "發佈日期",
     "RATING": "等級",
     "LIKES": "喜歡",
+    "COMMENTS": "評論數",
     "DECAYING_LIKES": "熱門內容",
     "TITLE_A_Z": "標題（從 A 到 Z）",
     "SORT_ORDER": "排序順序",
@@ -114,7 +123,8 @@
     "NOTIFICATION_DESC": "點擊「更多」即可查看所有過去的通知。您目前沒有未讀通知。",
     "templates": {
       "CHART_VISIBILITY_CHANGED": "您的譜面「{chart_name}」的可見性已更新為 {visibility_status}。請查看我們的上傳政策，以了解為何需要進行此更改。如果您已修改譜面以符合要求，則可以將其重新變更為「公開」。否則，請保持當前狀態，否則我們可能會被迫刪除它。",
-      "COMMENT_DELETED": "您的評論已被刪除，因為它違反了我們的評論政策。請確保所有評論都遵守我們的社群準則。\n\n---------------------\n評論：\n\n{comment_content}"
+      "COMMENT_DELETED": "您的評論已被刪除，因為它違反了我們的評論政策。請確保所有評論都遵守我們的社群準則。\n\n---------------------\n評論：\n\n{comment_content}",
+      "CHART_DELETED": "您的譜面「{chart_name}」因違反我們的上傳規則而被刪除。請花點時間查看我們的譜面上傳指南，以了解更多資訊。"
     }
   }
 }
