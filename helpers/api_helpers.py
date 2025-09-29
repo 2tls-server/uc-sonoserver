@@ -225,7 +225,10 @@ def api_level_to_level(
             },
         }
         additional = [
-            {"title": VISIBILITIES[i["status"]], "icon": VISIBILITIES[i["status"]]}
+            {
+                "title": VISIBILITIES[i["status"]]["title"],
+                "icon": VISIBILITIES[i["status"]]["icon"],
+            }
         ]
         tags = [
             {
@@ -234,6 +237,18 @@ def api_level_to_level(
             }
             for tag in i["tags"]
         ]
+
+    metadata = [
+        {"title": created_at_str, "icon": "clock"},
+        {
+            "title": str(i["like_count"]),
+            "icon": "heart" if i.get("liked") else "heartHollow",
+        },
+        {
+            "title": str(i["comment_count"]),
+            "icon": "comment",
+        },
+    ]
 
     leveldata = {
         "name": f"UnCh-{level_id}",
@@ -245,21 +260,7 @@ def api_level_to_level(
         ),
         "author": i["author_full"],
         "title": handle_uwu(i["title"], request.state.localization, request.state.uwu),
-        "tags": (
-            additional
-            + [
-                {"title": created_at_str, "icon": "clock"},
-                {
-                    "title": str(i["like_count"]),
-                    "icon": "heart" if i.get("liked") else "heartHollow",
-                },
-                {
-                    "title": str(i["comment_count"]),
-                    "icon": "comment",
-                },
-            ]
-            + tags
-        ),
+        "tags": (additional + metadata + tags),
         "engine": get_cached_engine(
             request.app.base_url, request.state.engine, request.state.localization
         ),
@@ -287,13 +288,22 @@ def api_level_to_level(
         }
 
     if i["staff_pick"]:
-        leveldata["tags"].insert(
-            0,
-            {
-                "title": loc.staff_pick,
-                "icon": "trophy",
-            },
-        )
+        if context == "list":
+            leveldata["tags"].insert(
+                0,
+                {
+                    "title": "",
+                    "icon": "trophy",
+                },
+            )
+        elif context == "level":
+            leveldata["tags"].insert(
+                0,
+                {
+                    "title": loc.staff_pick,
+                    "icon": "trophy",
+                },
+            )
 
     if not include_description:
         return leveldata
