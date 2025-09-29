@@ -45,6 +45,8 @@
   "default_particle_desc": "Uygulanacak varsayılan seviye parçacığınızı seçin!",
   "default_engine": "Sunucu Motoru",
   "default_engine_desc": "Kullanılacak sunucu motorunu seçin!",
+  "default_skin": "Sunucu Dokusu",
+  "default_skin_desc": "Kullanılacak varsayılan doku türünü seçin! Doku, motora bağlı olarak farklılık gösterecektir (örneğin, V1 dokusu Rush'ta Next'ten biraz farklı); ancak tüm motorlar için geçerli olacaktır.\n\nNOT: Bir motorda desteklenen doku yoksa, varsayılan motor dokusu kullanılacaktır.",
   "notifications_plural": "{num} yeni bildiriminiz var!\nSistem bildirimlerine \"Gönderiler\" bölümünden ulaşabilirsiniz.\nSunucuya devam etmek için lütfen bunları okuyun.",
   "notifications_singular": "{num} yeni bildiriminiz var!\nSistem bildirimlerine \"Gönderiler\" bölümünden ulaşabilirsiniz.\nSunucuya devam etmek için lütfen bunları okuyun.",
   "uwu": "UwU >.<",
