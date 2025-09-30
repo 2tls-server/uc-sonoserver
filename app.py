@@ -72,6 +72,11 @@ class SonolusFastAPI(FastAPI):
                 content={"message": exc.detail}, status_code=exc.status_code
             )
         else:
+            print(
+                "-" * 1000
+                + f"\nerror 500: {request.method} {str(request.url)}\n"
+                + "-" * 1000
+            )
             return JSONResponse(content={}, status_code=exc.status_code)
 
 
