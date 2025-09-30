@@ -103,7 +103,12 @@ class SonolusMiddleware(BaseHTTPMiddleware):
         ).lower()
         skins = await request.app.run_blocking(compile_skins_list, request.app.base_url)
         supported_skins = list(set([skin["theme"] for skin in skins]))
-        request.state.engine = request.query_params.get("defaultengine", "NextSEKAI")
+        engines = await request.app.run_blocking(
+            compile_engines_list, request.app.base_url, request.state.localization
+        )
+        request.state.engine = request.query_params.get(
+            "defaultengine", engines[0]["name"]
+        )
         request.state.loc, request.state.localization = Locale.get_messages(
             request.state.localization
         )
@@ -118,9 +123,6 @@ class SonolusMiddleware(BaseHTTPMiddleware):
             assert request.state.staff_pick in ["off", "true", "false"]
             particles = await request.app.run_blocking(
                 compile_particles_list, request.app.base_url
-            )
-            engines = await request.app.run_blocking(
-                compile_engines_list, request.app.base_url, request.state.localization
             )
             assert request.state.particle in [
                 "engine_default",
