@@ -203,6 +203,10 @@ class Loc:
             return self._get("DATE_CREATED")
 
         @property
+        def DATE_PUBLISHED(self) -> str:
+            return self._get("DATE_PUBLISHED")
+
+        @property
         def RATING(self) -> str:
             return self._get("RATING")
 

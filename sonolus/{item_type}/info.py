@@ -517,8 +517,9 @@ async def main(request: Request, item_type: ItemType):
                 query="sort_by",
                 name=locale.search.SORT_BY,
                 required=False,
-                default="created_at",
+                default="published_at",
                 values=[
+                    {"name": "published_at", "title": locale.search.DATE_PUBLISHED},
                     {"name": "created_at", "title": locale.search.DATE_CREATED},
                     {"name": "random", "title": "#RANDOM"},
                     {"name": "rating", "title": locale.search.RATING},

@@ -51,6 +51,7 @@ async def main(
     sort_by: Optional[
         Literal[
             "created_at",
+            "published_at",
             "rating",
             "likes",
             "comments",
@@ -58,7 +59,7 @@ async def main(
             "abc",
             "random",
         ]
-    ] = Query("created_at"),
+    ] = Query("published_at"),
     sort_order: Optional[Literal["desc", "asc"]] = Query("desc"),
     level_status: Optional[Literal["PUBLIC"]] = Query(
         "PUBLIC"
@@ -125,6 +126,7 @@ async def main(
                 "type": type,
                 "page": page,
                 "meta_includes": keywords,
+                "sort_by": "published_at",
                 "staff_pick": {"off": None, "true": True, "false": False}[
                     (
                         staff_pick
