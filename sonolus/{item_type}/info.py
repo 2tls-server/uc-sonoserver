@@ -51,6 +51,7 @@ async def main(request: Request, item_type: ItemType):
     uwu_level = request.state.uwu
     banner_srl = await request.app.run_blocking(compile_banner)
     searches = []
+    creates = []
     auth = request.headers.get("Sonolus-Session")
 
     if item_type == "engines":
@@ -212,6 +213,16 @@ async def main(request: Request, item_type: ItemType):
             )
         ]
     elif item_type == "levels":
+        creates = [
+            create_server_form(
+                type="level",
+                title="#UPLOAD",
+                icon="level",
+                require_confirmation=True,
+                options=[],
+                description=locale.use_website_to_upload("https://untitledcharts.com"),
+            )
+        ]
         staff_pick = request.state.staff_pick
         headers = {request.app.auth_header: request.app.auth}
         if auth:
@@ -579,7 +590,8 @@ async def main(request: Request, item_type: ItemType):
     #     ]
     else:
         raise HTTPException(
-            status_code=404, detail=locale.item_type_not_found(item_type)
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=locale.item_type_not_found(item_type),
         )
     data: ServerItemInfo = {
         "sections": sections,
@@ -588,4 +600,6 @@ async def main(request: Request, item_type: ItemType):
         data["banner"] = banner_srl
     if searches:
         data["searches"] = searches
+    if creates:
+        data["creates"] = creates
     return data

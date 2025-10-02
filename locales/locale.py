@@ -499,6 +499,9 @@ class Loc:
     def time_ago_not_published(self, time_str: str) -> str:
         return self._get("time_ago_not_published").format(time_ago=time_str)
 
+    def use_website_to_upload(self, website: str) -> str:
+        return self._get("use_website_to_upload").format(url=website)
+
 
 class LocaleManager:
     def __init__(self, default_locale: str):
