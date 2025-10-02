@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "Sonolusからの譜面をアップロードすることは出来ません。\nウェブサイトにログインして、そこからアップロードしてください。\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\nUntitledChartsの公式創作譜面サーバー!",
   "item_not_found": "{item} \"{name}\"はありません。",
   "item_type_not_found": "\"{item}\"はありません。",
