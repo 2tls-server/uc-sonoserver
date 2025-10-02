@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "Tolong login di website kami untuk mengunggah level baru. Kami tidak mendukung unggahan level melalui game.\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\nServer resmi UntitledCharts!",
   "item_not_found": "{item} item \"{name}\" tidak ditemukan.",
   "item_type_not_found": "Item \"{item}\" tidak ditemukan.",
@@ -29,7 +30,7 @@
   "staff_pick_desc": "Pilihan staff adalah level yang telah ditinjau dan kami temukan seru dan enak untuk dimain!",
   "non_staff_pick_desc": "Level selain pilihan staff akan dipilih secara acak, karena hanya pilihan staff yang sedang nyala.",
   "staff_pick_notice": "Jangan memohon staff untuk menambah level anda: ini terjadi secara otomatis. Anda bisa meminta tinjauan dari seseorang.",
-  "staff_pick_confirm": "Mohon untuk memastikan bahwa level ini seru, dinilai secara akurat (setidaknya +-1), dan dapat dimain.",
+  "staff_pick_confirm": "Tolong pastikan bahwa level ini seru, dinilai secara akurat (setidaknya +-1), dan dapat dimain.",
   "staff_pick_add": "Tambah Pilihan Staff",
   "staff_pick_remove": "Hapus Pilihan Staff",
   "random_staff_pick": "Acak Pilihan Staff",
@@ -47,8 +48,8 @@
   "default_engine_desc": "Pilih mesin server untuk dipakai!",
   "default_skin": "Skin Server",
   "default_skin_desc": "Pilih jenis skin default untuk dipakai! Penampakan skin akan menjadi berbeda tergantung mesinnya (cth. Skin V1 kelihatan sedikit berbeda di Rush dibanding dengan Next), tetapi akan berlaku untuk semua mesin.\n\nCATATAN:\nJika mesin tidak memiliki skin yang didukung, mesinnya akan memakai skin default mesin.",
-  "notifications_plural": "Anda memiliki {num} pemberitahuan baru! Pemberitahuan sistem dapat ditemukan di \"Post\". Mohon untuk membaca untuk lanjut ke server.",
-  "notifications_singular": "Anda memiliki {num} pemberitahuan baru! Pemberitahuan sistem dapat ditemukan di \"Post\". Mohon untuk membaca untuk lanjut ke server.",
+  "notifications_plural": "Anda memiliki {num} pemberitahuan baru! Pemberitahuan sistem dapat ditemukan di \"Post\".\nSilakan membaca untuk lanjut ke server.",
+  "notifications_singular": "Anda memiliki {num} pemberitahuan baru! Pemberitahuan sistem dapat ditemukan di \"Post\". Silakan membaca untuk lanjut ke server.",
   "uwu": "UwU >.<",
   "uwu_desc": "UwUify menu anda (HANYA UNTUK EN/TR)",
   "slightly": "Sedikit",
@@ -99,7 +100,7 @@
   },
   "background": {
     "BACKGROUNDSELECT": "Pemilihan Latar",
-    "BACKGROUNDSELECTSUB": "Mohon untuk memilih latar di Konfigurasi.",
+    "BACKGROUNDSELECTSUB": "Silakan memilih latar di Konfigurasi.",
     "USEBACKGROUNDDESC": "Pilih latar untuk dipakai! Telah diunggah berarti pengarang level telah menggungah latar (jika ada).",
     "USEBACKGROUND": "Pilih Latar Level",
     "V1": "PJSK V1",
@@ -122,9 +123,9 @@
     "NOTIFICATION_DESC_UNREAD": "Anda bisa menemukan semua pemberitahuan anda dengan menekan \"Selebihnya\". Anda memiliki pemberitahuan belum dibaca yang harus dibaca.",
     "NOTIFICATION_DESC": "Anda bisa menemukan semua pemberitahuan anda dengan menekan \"Selebihnya\". Saat ini, Anda tidak memiliki pemberitahuan belum dibaca.",
     "templates": {
-      "CHART_VISIBILITY_CHANGED": "Visibilitas level anda \"{chart_name}\" telah diganti ke {visibility_status}. Mohon untuk membaca ulang peraturan unggahan kami untuk mengetahui alasan di balik perubahan ini. Jika anda telah memperbaiki level anda sesuai peraturan, anda bisa mengganti keterlihatan kembali ke Publik. Jika tidak, biarkan apa adanya untuk sekarang, atau kami mungkin terpaksa untuk menghapus level anda.",
-      "COMMENT_DELETED": "Komen anda telah dihapus karena telah melanggar peraturan komentar kami. Mohon untuk memastikan bahwa semua komen sesuai dengan peraturan komunitas kami.\n\n----------------------\nKOMEN:\n\n{comment_content}",
-      "CHART_DELETED": "Level anda \"{chart_name}\" telah dihapus karena melanggar peraturan unggahan kami. Mohon untuk membaca ulang peraturan unggahan level kami untuk informasi lebih lanjut."
+      "CHART_VISIBILITY_CHANGED": "Visibilitas level anda \"{chart_name}\" telah diganti ke {visibility_status}. Silakan membaca ulang peraturan unggahan kami untuk mengetahui alasan di balik perubahan ini. Jika anda telah memperbaiki level anda sesuai peraturan, anda bisa mengganti keterlihatan kembali ke Publik. Jika tidak, biarkan apa adanya untuk sekarang, atau kami mungkin terpaksa untuk menghapus level anda.",
+      "COMMENT_DELETED": "Komen anda telah dihapus karena telah melanggar peraturan komentar kami. Tolong pastikan bahwa semua komen mengikuti peraturan komunitas kami.\n\n----------------------\nKOMEN:\n\n{comment_content}",
+      "CHART_DELETED": "Level anda \"{chart_name}\" telah dihapus karena melanggar peraturan unggahan kami. Silakan membaca ulang peraturan unggahan level kami untuk informasi lebih lanjut."
     }
   }
 }
