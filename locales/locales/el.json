@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "Παρακαλούμε πως συνδεθείτε στον ιστότοπό μας για να ανεβάσετε ένα νέο επίπεδο.\nΔεν υποστηρίζουμε την ανέβασμα επιπέδων εντός του παιχνιδιού.\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\nΤο επίσημο σέρβερ του UntitledCharts!",
   "item_not_found": "Αντικείμενο {item} \"{name}\" Δέν βρέθηκε.",
   "item_type_not_found": "Τύπος αντικειμένου \"{item}\" δέν βρέθηκε.",
