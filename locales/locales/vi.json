@@ -70,10 +70,9 @@
     "ENTER_TAGS": "Nhập thẻ",
     "SORT_BY": "Sắp xếp theo",
     "SORT_BY_DESCRIPTION": "Chọn cách sắp xếp.\nLưu ý: Tiêu đề sẽ sắp theo A-Z khi giảm dần.",
-    "DATE_CREATED": "Ngày tạo",
+    "DATE_CREATED": "Ngày tải lên",
     "RATING": "Xếp hạng",
     "LIKES": "Lượt thích",
-    "COMMENTS": "Bình luận",
     "DECAYING_LIKES": "Xu hướng",
     "TITLE_A_Z": "Tiêu đề (A-Z)",
     "SORT_ORDER": "Thứ tự sắp xếp",
@@ -84,6 +83,8 @@
     "VISIBILITY_PUBLIC": "Công khai",
     "VISIBILITY_UNLISTED": "Không công khai",
     "VISIBILITY_PRIVATE": "Riêng tư"
+  },
+  "leaderboard": {
   },
   "background": {
     "BACKGROUNDSELECT": "Chọn hình nền",
