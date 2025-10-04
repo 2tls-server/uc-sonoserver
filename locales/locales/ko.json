@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "새로운 채보를 업로드하려면 웹사이트에 로그인하세요.\n앱 내에서는 레벨 업로드를 지원하지 않습니다.\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\n공식 UntitledCharts 커스텀 서버!",
   "item_not_found": "{item} 항목 \"{name}\" 을(를) 찾을 수 없습니다.",
   "item_type_not_found": "항목 \"{item}\"을(를) 찾을 수 없습니다.",

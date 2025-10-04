@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "請登入至我們的網站以上傳新關卡。\n我們不支援在遊戲內上傳關卡。\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\nUntitledCharts 官方客製化伺服器！",
   "item_not_found": "找不到 {item} 物件「{name}」。",
   "item_type_not_found": "找不到物件「{item}」。",
