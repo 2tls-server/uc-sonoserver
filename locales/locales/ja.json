@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "Sonolusから譜面をアップロードすることは出来ません。\nウェブサイトにログインして、そこからアップロードしてください。\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\nUntitledChartsの公式創作譜面サーバー!",
   "item_not_found": "{item} \"{name}\"はありません。",
   "item_type_not_found": "\"{item}\"はありません。",
@@ -18,12 +19,12 @@
   "not_admin": "あなたは管理者ではありません。",
   "not_admin_or_owner": "あなたは管理者またはオーナーではありません。",
   "mod_powers": [
-    "コメントを削除する",
-    "譜面を確認する",
-    "譜面の表示を変更する"
+    "違反コメントを削除する",
+    "staff pickを見直す",
+    "違反譜面の表示を変更する"
   ],
   "admin_powers": [
-    "譜面を削除する"
+    "違反譜面を削除する"
   ],
   "staff_pick": "Staff Pick",
   "staff_pick_desc": "StaffPickは「楽しい」と評価された譜面です。",
@@ -78,7 +79,7 @@
     "ENTER_TEXT": "テキストを入力",
     "ENTER_TAGS": "タグを入力",
     "SORT_BY": "並べ替え",
-    "SORT_BY_DESCRIPTION": "オプションで並べ替えます\n\n降順の場合、タイトルはA-Zで並べ替えられます。",
+    "SORT_BY_DESCRIPTION": "オプションで並べ替えます。\n\n降順の場合、タイトルはA-Zで並べ替えられます。",
     "DATE_CREATED": "アップロード日",
     "DATE_PUBLISHED": "公開日",
     "RATING": "難易度",

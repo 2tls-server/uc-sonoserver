@@ -1,4 +1,5 @@
 {
+  "use_website_to_upload": "Accedi al nostro sito web per caricare un nuovo livello.\nNon supportiamo il caricamento di livelli nel gioco.\n\n{url}",
   "server_description": "https://discord.gg/UntitledCharts\nIl server ufficiale di UntitledCharts!",
   "item_not_found": "{item} elemento \"{name}\" non trovato.",
   "item_type_not_found": "Elemento \"{item}\" non trovato.",
