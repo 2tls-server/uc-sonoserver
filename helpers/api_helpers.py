@@ -27,7 +27,7 @@ def api_notif_to_post(
         "author": "UntitledCharts",
         "tags": [
             (
-                {"title": loc.notification.READ_STATUS, "icon": "unlock"}
+                {"title": loc.notification.READ_STATUS, "icon": "envelopeOpen"}
                 if i["is_read"]
                 else {"title": loc.notification.UNREAD_STATUS, "icon": "envelope"}
             )

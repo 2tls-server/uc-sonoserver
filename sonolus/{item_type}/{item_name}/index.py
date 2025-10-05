@@ -651,7 +651,7 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 "PRIVATE": {"title": "#PRIVATE", "icon": "lock"},
                 "UNLISTED": {
                     "title": locale.search.VISIBILITY_UNLISTED,
-                    "icon": "envelopeOpen",
+                    "icon": "unlock",
                 },
             }
             current = response["data"]["status"]
