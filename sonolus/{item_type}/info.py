@@ -275,7 +275,7 @@ async def main(request: Request, item_type: ItemType):
             api_level_to_level,
             request,
             asset_base_url,
-            staffpick_req["data"][0],
+            staffpick_req["data"][0] if len(staffpick_req) > 0 else [],
             request.state.levelbg,
         )
         random = await asyncio.gather(
