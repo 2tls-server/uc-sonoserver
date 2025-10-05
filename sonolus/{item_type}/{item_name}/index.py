@@ -685,7 +685,8 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                                 query="constant",
                                 name="#RATING",
                                 required=True,
-                                default=str(response["data"]["rating"]),
+                                default="",
+                                placeholder=str(response["data"]["rating"]),
                                 description=locale.rerate_desc,
                                 shortcuts=[str(response["data"]["rating"])],
                                 limit=9,  # -999.1234, 9 max possible characters

@@ -51,6 +51,7 @@ async def main(
             "visibility",
             "staff_pick_add",
             "staff_pick_delete",
+            "rerate",
         ]:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail=locale.not_found

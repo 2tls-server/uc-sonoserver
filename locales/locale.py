@@ -493,6 +493,18 @@ class Loc:
     def extreme(self) -> str:
         return self._get("extreme")
 
+    @property
+    def invalid_constant(self) -> str:
+        return self._get("invalid_constant")
+
+    @property
+    def rerate(self) -> str:
+        return self._get("rerate")
+
+    @property
+    def rerate_desc(self) -> str:
+        return self._get("rerate_desc")
+
     def time_ago(self, time_str: str) -> str:
         return self._get("time_ago").format(time_ago=time_str)
 
