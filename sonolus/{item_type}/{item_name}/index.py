@@ -398,9 +398,9 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 query="min_rating",
                 name=locale.search.MIN_RATING,
                 required=False,
-                default=min_rating or 0,
-                min_value=0,
-                max_value=99,
+                default=min_rating or -999,
+                min_value=-999,
+                max_value=999,
                 step=1,
             )
         )
@@ -409,9 +409,9 @@ async def main(request: Request, item_type: ItemType, item_name: str):
                 query="max_rating",
                 name=locale.search.MAX_RATING,
                 required=False,
-                default=max_rating or 99,
-                min_value=0,
-                max_value=99,
+                default=max_rating or 999,
+                min_value=-999,
+                max_value=999,
                 step=1,
             )
         )
@@ -674,6 +674,25 @@ async def main(request: Request, item_type: ItemType, item_name: str):
             )
             actions.append(the_action)
             if response.get("mod"):
+                actions.append(
+                    create_server_form(
+                        type="rerate",
+                        title=locale.rerate,
+                        icon="plus",
+                        require_confirmation=True,
+                        options=[
+                            ServerFormOptionsFactory.server_text_option(
+                                query="constant",
+                                name="#RATING",
+                                required=True,
+                                default=str(response["data"]["rating"]),
+                                description=locale.rerate_desc,
+                                shortcuts=[str(response["data"]["rating"])],
+                                limit=9,  # -999.1234, 9 max possible characters
+                            )
+                        ],
+                    )
+                )
                 if response["data"].get("staff_pick"):
                     actions.append(
                         create_server_form(

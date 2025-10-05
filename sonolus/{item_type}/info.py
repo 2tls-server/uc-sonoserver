@@ -389,9 +389,9 @@ async def main(request: Request, item_type: ItemType):
                 query="min_rating",
                 name=locale.search.MIN_RATING,
                 required=False,
-                default=0,
-                min_value=0,
-                max_value=99,
+                default=-999,
+                min_value=-999,
+                max_value=999,
                 step=1,
             )
         )
@@ -400,9 +400,9 @@ async def main(request: Request, item_type: ItemType):
                 query="max_rating",
                 name=locale.search.MAX_RATING,
                 required=False,
-                default=99,
-                min_value=0,
-                max_value=99,
+                default=999,
+                min_value=-999,
+                max_value=999,
                 step=1,
             )
         )

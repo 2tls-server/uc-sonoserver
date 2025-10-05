@@ -122,6 +122,36 @@ async def main(
                                 status_code=req.status, detail=locale.not_mod
                             )
             resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
+        elif type in ["rerate"]:
+            constant = flattened_data.get("constant")
+
+            def is_valid_constant(c):
+                try:
+                    return (
+                        isinstance(c, str)
+                        and -1000 < (f := float(c)) < 1000
+                        and ("." not in c or len(c.split(".")[1].rstrip("0")) < 4)
+                    )
+                except:
+                    return False
+
+            if not is_valid_constant(constant):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=locale.invalid_constant,
+                )
+            async with aiohttp.ClientSession(headers=headers) as cs:
+                async with cs.patch(
+                    request.app.api_config["url"]
+                    + f"/api/charts/{item_name.removeprefix('UnCh-')}/constant_rate/",
+                    json={"constant": float(constant)},
+                ) as req:
+                    if req.status != 200:
+                        raise HTTPException(
+                            status_code=req.status, detail=locale.not_mod_or_owner
+                        )
+                    data = await req.json()
+            resp = {"key": "", "hashes": [], "shouldUpdateItem": True}
         elif type in ["staff_pick_add", "staff_pick_delete"]:
             async with aiohttp.ClientSession(headers=headers) as cs:
                 async with cs.patch(
