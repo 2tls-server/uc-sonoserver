@@ -1,4 +1,4 @@
-import base64
+import base64, decimal
 from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
@@ -126,14 +126,20 @@ async def main(
         elif type in ["rerate"]:
             constant = flattened_data.get("constant")
 
-            def is_valid_constant(c):
+            def is_valid_constant(c: str):
                 try:
-                    return (
-                        isinstance(c, str)
-                        and -1000 < (f := float(c)) < 1000
-                        and ("." not in c or len(c.split(".")[1].rstrip("0")) < 4)
-                    )
-                except:
+                    if not isinstance(c, str):
+                        return False
+                    d = decimal.Decimal(c)
+                    if not (-1000 < d < 1000):
+                        return False
+                    # precision check: less than 4 digits after decimal (excluding trailing zeros)
+                    if "." in c:
+                        dec_part = c.split(".")[1].rstrip("0")
+                        if len(dec_part) >= 4:
+                            return False
+                    return True
+                except (decimal.InvalidOperation, ValueError):
                     return False
 
             if not is_valid_constant(constant):
@@ -145,7 +151,14 @@ async def main(
                 async with cs.patch(
                     request.app.api_config["url"]
                     + f"/api/charts/{item_name.removeprefix('UnCh-')}/constant_rate/",
-                    json={"constant": float(constant)},
+                    json={
+                        "constant": float(
+                            decimal.Decimal(constant).quantize(
+                                decimal.Decimal("0.0001"),
+                                rounding=decimal.ROUND_HALF_UP,
+                            )
+                        )
+                    },
                 ) as req:
                     if req.status != 200:
                         raise HTTPException(
