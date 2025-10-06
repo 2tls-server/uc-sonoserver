@@ -55,6 +55,10 @@
   "slightly": "약간",
   "a_lot": "많이",
   "extreme": "최대로",
+  "invalid_constant": "잘못된 상수입니다! 소수점 최대 4자리까지의 -999에서 999 사이의 수이여만 합니다.",
+  "rerate": "레벨 변경",
+  "rerate_desc": "채보의 레벨을 다시 평가하고, 선택적으로 상수를 추가합니다.",
+  "rerate_desc_not_mod": "채보의 레벨을 변경합니다.",
   "search": {
     "FILTERS": "필터 (Page {page}/{pageCount})",
     "ADVANCED_SEARCH": "고급 검색",
