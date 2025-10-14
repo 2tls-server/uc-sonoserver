@@ -11,5 +11,7 @@
     "effect_name": "coconut-next-sekai-1",
     "particle_name": "coconut-next-sekai-1",
     "description": "\nNext SEKAI's expansion engine, with a visual extension\nVersion: 1.0.5\n\nhttps://github.com/UntitledCharts/sonolus-next-sekai-rush",
-    "engine_sort_order": 1
+    "engine_sort_order": 1,
+    "can_be_ranked": true,
+    "unrankable_options": []
 }
