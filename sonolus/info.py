@@ -8,7 +8,7 @@ from helpers.data_compilers import (
     compile_engines_list,
     compile_skins_list,
 )
-from helpers.datastructs import ServerInfoButton
+from helpers.models import ServerInfoButton
 from helpers.data_helpers import (
     ServerFormOptionsFactory,
 )

@@ -1,7 +1,7 @@
 from helpers.sha1 import calculate_sha1
 
 from typing import Optional, Union, IO
-from helpers.datastructs import SRL
+from helpers.models import SRL
 
 from pathlib import Path
 from io import BytesIO

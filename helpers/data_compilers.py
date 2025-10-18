@@ -1,7 +1,7 @@
 import json, os
 
 from typing import Optional, List
-from helpers.datastructs import (
+from helpers.models import (
     EngineItem,
     SRL,
     SkinItem,

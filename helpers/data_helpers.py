@@ -1,7 +1,7 @@
 from typing import Union, List, Optional
 
 from helpers.sonolus_typings import Text, ItemType, Icon
-from helpers.datastructs import (
+from helpers.models import (
     ServerItemSection,
     ServerItem,
     ServerForm,
