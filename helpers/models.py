@@ -480,8 +480,8 @@ class ServerItemLeaderboard(BaseModel):
     description: Optional[str] = None
 
 
-class ServerItemDetails(BaseModel, Generic[T]):
-    item: T
+class ServerItemDetails(BaseModel):
+    item: ServerItem
     description: Optional[str] = None
     actions: list[ServerForm]
     hasCommunity: bool
