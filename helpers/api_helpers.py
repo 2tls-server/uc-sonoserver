@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from functools import lru_cache
 from helpers.data_compilers import (
@@ -79,7 +79,7 @@ def api_level_to_level(
     @lru_cache(maxsize=None)
     def get_cached_skin(
         base_url: str, skin_name: str, engine_name: str, localization: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         skins = compile_skins_list(base_url)
 
         candidates = [

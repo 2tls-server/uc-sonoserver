@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
 from helpers.sonolus_typings import ItemType
-from helpers.models import ServerSubmitItemActionRequest, ParsedServerSubmitCommentActionRequest, CommentRequest
+from helpers.models import ServerSubmitItemCommunityActionRequest, ParsedServerSubmitCommentActionRequest, CommentRequest, ServerSubmitItemCommunityCommentActionResponse
 
 from pydantic import BaseModel
 
@@ -15,20 +15,17 @@ from locales.locale import Locale
 import aiohttp
 
 
-@router.post("/")
+@router.post("/", response_model=ServerSubmitItemCommunityCommentActionResponse)
 async def main(
     request: Request,
     item_name: str,
-    data: ServerSubmitItemActionRequest,
+    data: ServerSubmitItemCommunityActionRequest,
 ):
     try:
         locale = request.state.loc
     except AssertionError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    uwu_level = request.state.uwu
-    item_data = None
     auth = request.headers.get("Sonolus-Session")
-    actions = []
 
     parsed_data = ParsedServerSubmitCommentActionRequest.model_validate({k: v[0] for k, v in parse_qs(data.values).items()})
 
@@ -57,6 +54,9 @@ async def main(
                 raise HTTPException(
                     status_code=req.status, detail=locale.unknown_error
                 )
-    resp = {"key": "", "hashes": [], "shouldUpdateComments": True}
 
-    return resp
+    return ServerSubmitItemCommunityCommentActionResponse(
+        key="",
+        hashes=[],
+        shouldUpdateComments=True
+    )

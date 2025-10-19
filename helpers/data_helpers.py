@@ -1,5 +1,3 @@
-from typing import Union, List, Optional
-
 from helpers.sonolus_typings import Text, ItemType, Icon
 from helpers.models import (
     ServerItemSection,
@@ -21,14 +19,14 @@ from helpers.models import (
 
 
 def create_section(
-    title: Union[Text, str],
+    title: Text | str,
     item_type: ItemType,
-    items: List[ServerItem],
-    description: Optional[str] = None,
-    icon: Optional[Union[Icon, str]] = None,
-    search: Optional[ServerForm] = None,
-    search_values: Optional[str] = None,
-    help: Optional[str] = None,
+    items: list[ServerItem],
+    description: str | None = None,
+    icon: Icon | str | None = None,
+    search: ServerForm | None = None,
+    search_values: str | None = None,
+    help: str | None = None,
 ) -> ServerItemSection:
     section_dict = {
         "title": title,
@@ -56,12 +54,12 @@ def create_section(
 
 def create_server_form(
     type: str,
-    title: Union[Text, str],
+    title: Text | str,
     require_confirmation: bool,
-    options: List[ServerOption],
-    description: Optional[str] = None,
-    icon: Optional[Union[Icon, str]] = None,
-    help: Optional[str] = None,
+    options: list[ServerOption],
+    description: str | None = None,
+    icon: Icon | str | None = None,
+    help: str | None = None,
 ) -> ServerForm:
     server_form_dict = {
         "type": type,
@@ -84,13 +82,13 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_text_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         default: str,
-        placeholder: Union[Text, str],
+        placeholder: Text | str,
         limit: int,
-        shortcuts: List[str],
-        description: Optional[str] = None,
+        shortcuts: list[str],
+        description: str | None = None,
     ) -> ServerTextOption:
         option = {
             "query": query,
@@ -109,13 +107,13 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_text_area_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         default: str,
-        placeholder: Union[Text, str],
+        placeholder: Text | str,
         limit: int,
-        shortcuts: List[str],
-        description: Optional[str] = None,
+        shortcuts: list[str],
+        description: str | None = None,
     ) -> ServerTextAreaOption:
         option = {
             "query": query,
@@ -134,14 +132,14 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_slider_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         default: float,
         min_value: float,
         max_value: float,
         step: float,
-        unit: Optional[Union[Text, str]] = None,
-        description: Optional[str] = None,
+        unit: Text | str | None = None,
+        description: str | None = None,
     ) -> ServerSliderOption:
         option = {
             "query": query,
@@ -162,10 +160,10 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_toggle_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         default: bool,
-        description: Optional[str] = None,
+        description: str | None = None,
     ) -> ServerToggleOption:
         option = {
             "query": query,
@@ -181,11 +179,11 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_select_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         default: str,
-        values: List[dict],  # [{"name": str, "title": Text | str}]
-        description: Optional[str] = None,
+        values: list[dict],  # [{"name": str, "title": Text | str}]
+        description: str | None = None,
     ) -> ServerSelectOption:
         option = {
             "query": query,
@@ -202,11 +200,11 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_multi_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
-        default: List[bool],
-        values: List[dict],  # [{"name": str, "title": Text | str}]
-        description: Optional[str] = None,
+        default: list[bool],
+        values: list[dict],  # [{"name": str, "title": Text | str}]
+        description: str | None = None,
     ) -> ServerMultiOption:
         option = {
             "query": query,
@@ -223,12 +221,12 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_server_item_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         item_type: ItemType,
         allow_other_servers: bool,
-        default: Optional[SIL] = None,
-        description: Optional[str] = None,
+        default: SIL | None = None,
+        description: str | None = None,
     ) -> ServerServerItemOption:
         option = {
             "query": query,
@@ -247,13 +245,13 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_server_items_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         item_type: ItemType,
         allow_other_servers: bool,
         limit: int,
-        default: List[SIL] = None,
-        description: Optional[str] = None,
+        default: list[SIL] = None,
+        description: str | None = None,
     ) -> ServerServerItemsOption:
         option = {
             "query": query,
@@ -273,10 +271,10 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_collection_item_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         item_type: ItemType,
-        description: Optional[str] = None,
+        description: str | None = None,
     ) -> ServerCollectionItemOption:
         option = {
             "query": query,
@@ -292,10 +290,10 @@ class ServerFormOptionsFactory:
     @staticmethod
     def server_file_option(
         query: str,
-        name: Union[Text, str],
+        name: Text | str,
         required: bool,
         default: str,
-        description: Optional[str] = None,
+        description: str | None = None,
     ) -> ServerFileOption:
         option = {
             "query": query,

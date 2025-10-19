@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
 from helpers.sonolus_typings import ItemType
+from helpers.models import ServerSubmitItemActionRequest
 
 from pydantic import BaseModel
 
@@ -14,9 +15,6 @@ from locales.locale import Loc
 
 import aiohttp
 
-
-class ServerSubmitItemActionRequest(BaseModel):
-    values: str
 
 
 @router.post("/")

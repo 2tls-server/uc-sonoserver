@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import TypeVar, Optional, Union, Literal, Annotated, Generic
+from typing import TypeVar, Literal, Annotated
 from datetime import datetime
+from decimal import Decimal
 
 from helpers.sonolus_typings import Grade, ServerInfoButtonType, Text, Icon, ItemType
 
@@ -41,7 +42,7 @@ T = TypeVar("T")
 
 class Tag(BaseModel):
     title: str
-    icon: Optional[str] = None
+    icon: str | None = None
 
 
 class SRL(BaseModel):
@@ -59,7 +60,7 @@ class SIL(BaseModel):
 
 class BackgroundItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     subtitle: str
@@ -73,7 +74,7 @@ class BackgroundItem(BaseModel):
 
 class ParticleItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     subtitle: str
@@ -86,7 +87,7 @@ class ParticleItem(BaseModel):
 
 class EffectItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     subtitle: str
@@ -99,7 +100,7 @@ class EffectItem(BaseModel):
 
 class SkinItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     subtitle: str
@@ -115,10 +116,10 @@ class EngineItem(BaseModel):
     version: int
     title: str
     subtitle: str
-    source: Optional[str] = None
+    source: str | None = None
     author: str
     tags: list[Tag]
-    description: Optional[str] = None
+    description: str | None = None
 
     skin: SkinItem
     background: BackgroundItem
@@ -130,29 +131,29 @@ class EngineItem(BaseModel):
     watchData: SRL
     previewData: SRL
     tutorialData: SRL
-    rom: Optional[SRL] = None
+    rom: SRL | None = None
     configuration: SRL
 
 
 class PostItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     time: int
     author: str
     tags: list[Tag]
-    thumbnail: Optional[SRL] = None
+    thumbnail: SRL | None = None
 
 
 class UseItem(BaseModel):
     useDefault: bool
-    item: Union[SkinItem, BackgroundItem, EffectItem, ParticleItem, None] = None
+    item: SkinItem | BackgroundItem | EffectItem | ParticleItem | None = None
 
 
 class LevelItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     rating: int
     title: str
@@ -166,20 +167,20 @@ class LevelItem(BaseModel):
     useParticle: UseItem[ParticleItem]
     cover: SRL
     bgm: SRL
-    preview: Optional[SRL] = None
+    preview: SRL | None = None
     data: SRL
 
 
 class PlaylistItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     subtitle: str
     author: str
     tags: list[Tag]
     levels: list[LevelItem]
-    thumbnail: Optional[SRL] = None
+    thumbnail: SRL | None = None
 
 
 class RoomItem(BaseModel):
@@ -188,14 +189,14 @@ class RoomItem(BaseModel):
     subtitle: str
     master: str
     tags: list[Tag]
-    cover: Optional[SRL] = None
-    bgm: Optional[SRL] = None
-    preview: Optional[SRL] = None
+    cover: SRL | None = None
+    bgm: SRL | None = None
+    preview: SRL | None = None
 
 
 class ReplayItem(BaseModel):
     name: str
-    source: Optional[str] = None
+    source: str | None = None
     version: int
     title: str
     subtitle: str
@@ -206,19 +207,19 @@ class ReplayItem(BaseModel):
     configuration: SRL
 
 
-ServerItem = Union[
-    PostItem,
-    RoomItem,
-    SkinItem,
-    BackgroundItem,
-    ParticleItem,
-    EffectItem,
-    RoomItem,
-    PlaylistItem,
-    ReplayItem,
-    LevelItem,
-    EngineItem,
-]
+ServerItem = (
+    PostItem
+    | RoomItem
+    | SkinItem
+    | BackgroundItem
+    | ParticleItem
+    | EffectItem
+    | RoomItem
+    | PlaylistItem
+    | ReplayItem
+    | LevelItem
+    | EngineItem
+)
 
 
 def get_item_type(type: ItemType) -> ServerItem:
@@ -257,8 +258,8 @@ class ServerInfoButton(BaseModel):
 
 class ServerCollectionItemOption(BaseModel):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["collectionItem"] = "collectionItem"
     itemType: ItemType
@@ -270,54 +271,54 @@ class DumpDefAliasMixin(BaseModel):
 
 class ServerTextOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["text"] = "text"
     default: str = Field(validation_alias="def", serialization_alias="def")
-    placeholder: Union[Text, str]
+    placeholder: Text | str
     limit: int
     shortcuts: list[str]
 
 class ServerTextAreaOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["textArea"] = "textArea"
     default: str = Field(validation_alias="def", serialization_alias="def")
-    placeholder: Union[Text, str]
+    placeholder: Text | str
     limit: int
     shortcuts: list[str]
 
 class ServerSliderOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["slider"] = "slider"
-    default: Union[int, float] = Field(validation_alias="def", serialization_alias="def")
-    min: Union[int, float]
-    max: Union[int, float]
-    step: Union[int, float]
-    unit: Union[Text, str, None] = None
+    default: int | float = Field(validation_alias="def", serialization_alias="def")
+    min: int | float
+    max: int | float
+    step: int | float
+    unit: Text | str | None = None
 
 class ServerToggleOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["toggle"] = "toggle"
     default: bool = Field(validation_alias="def", serialization_alias="def")
 
 class ServerOption_Value(BaseModel):
     name: str
-    title: Union[Text, str]
+    title: Text | str
 
 class ServerSelectOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["select"] = "select"
     default: str = Field(validation_alias="def", serialization_alias="def")
@@ -325,8 +326,8 @@ class ServerSelectOption(DumpDefAliasMixin):
 
 class ServerMultiOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["multi"] = "multi"
     default: list[bool] = Field(validation_alias="def", serialization_alias="def")
@@ -334,18 +335,18 @@ class ServerMultiOption(DumpDefAliasMixin):
 
 class ServerServerItemOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["serverItem"] = "serverItem"
     itemType: ItemType
-    default: Optional[SIL] = Field(None, validation_alias="def", serialization_alias="def")
+    default: SIL | None = Field(None, validation_alias="def", serialization_alias="def")
     allowOtherServers: bool
 
 class ServerServerItemsOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["serverItems"] = "serverItems"
     itemType: ItemType
@@ -355,40 +356,40 @@ class ServerServerItemsOption(DumpDefAliasMixin):
 
 class ServerCollectionItemOption(BaseModel):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["collectionItem"] = "collectionItem"
     itemType: ItemType
 
 class ServerFileOption(DumpDefAliasMixin):
     query: str
-    name: Union[Text, str]
-    description: Optional[str] = None
+    name: Text | str
+    description: str | None = None
     required: bool
     type: Literal["file"] = "file"
     default: str = Field(validation_alias="def", serialization_alias="def")
 
-ServerOption = Union[
-    ServerTextOption,
-    ServerTextAreaOption,
-    ServerSliderOption,
-    ServerToggleOption,
-    ServerSelectOption,
-    ServerMultiOption,
-    ServerServerItemOption,
-    ServerServerItemsOption,
-    ServerCollectionItemOption,
-    ServerFileOption,
-]
+ServerOption = (
+    ServerTextOption
+    | ServerTextAreaOption
+    | ServerSliderOption
+    | ServerToggleOption
+    | ServerSelectOption
+    | ServerMultiOption
+    | ServerServerItemOption
+    | ServerServerItemsOption
+    | ServerCollectionItemOption
+    | ServerFileOption
+)
 
 
 class ServerForm(BaseModel):
     type: str
-    title: Union[Text, str]
-    icon: Union[Icon, str, None] = None
-    description: Optional[str] = None
-    help: Optional[str] = None
+    title: Text | str
+    icon: Icon | str | None = None
+    description: str | None = None
+    help: str | None = None
     requireConfirmation: bool
     options: list[Annotated[ServerOption, Field(discriminator="type")]]
 
@@ -398,13 +399,13 @@ class ServerMessage(BaseModel):
 
 
 class ServerItemSectionTyped(BaseModel):
-    title: Union[str, Text]
-    icon: Optional[Union[Icon, str]] = None
-    description: Optional[str] = None
-    help: Optional[str] = None
+    title: str | Text
+    icon: Icon | str | None = None
+    description: str | None = None
+    help: str | None = None
     itemType: ItemType
-    search: Optional[ServerForm] = None
-    searchValues: Optional[str] = None
+    search: ServerForm | None = None
+    searchValues: str | None = None
 
 class GenericItemSection(ServerItemSectionTyped):
     itemType: str
@@ -460,29 +461,29 @@ class RoomItemSection(ServerItemSectionTyped):
     items: list[RoomItem]
 
 
-ServerItemSection = Union[
-    PostItemSection,
-    PlaylistItemSection,
-    LevelItemSection,
-    SkinItemSection,
-    BackgroundItemSection,
-    EffectItemSection,
-    ParticleItemSection,
-    EngineItemSection,
-    ReplayItemSection,
-    RoomItemSection,
-]
+ServerItemSection = (
+    PostItemSection
+    | PlaylistItemSection
+    | LevelItemSection
+    | SkinItemSection
+    | BackgroundItemSection
+    | EffectItemSection
+    | ParticleItemSection
+    | EngineItemSection
+    | ReplayItemSection
+    | RoomItemSection
+)
 
 
 class ServerItemLeaderboard(BaseModel):
     name: str
-    title: Union[str, Text]
-    description: Optional[str] = None
+    title: str | Text
+    description: str | None = None
 
 
 class ServerItemDetails(BaseModel):
     item: ServerItem
-    description: Optional[str] = None
+    description: str | None = None
     actions: list[ServerForm]
     hasCommunity: bool
     leaderboards: list[ServerItemLeaderboard]
@@ -490,10 +491,10 @@ class ServerItemDetails(BaseModel):
 
 
 class ServerItemInfo(BaseModel):
-    creates: Optional[list[ServerForm]] = None
-    searches: Optional[list[ServerForm]] = None
+    creates: list[ServerForm] | None = None
+    searches: list[ServerForm] | None = None
     sections: list[Annotated[ServerItemSection, Field(discriminator="itemType")]]
-    banner: Optional[SRL] = None
+    banner: SRL | None = None
 
 
 class ServerItemCommunityComment(BaseModel):
@@ -524,46 +525,48 @@ class ServerSubmitItemActionRequest(BaseModel):
 class ServerSubmitItemCommunityCommentActionResponse(BaseModel):
     key: str
     hashes: list[str]
-    shouldUpdateCommunity: Optional[bool] = None
-    shouldUpdateComments: Optional[bool] = None
-    shouldNavigateCommentsToPage: Optional[int] = None
+    shouldUpdateCommunity: bool | None = None
+    shouldUpdateComments: bool | None = None
+    shouldNavigateCommentsToPage: int | None = None
 
 class ServerItemCommunityCommentList(BaseModel):
     pageCount: int
-    cursor: Optional[str] = None
+    cursor: str | None = None
     comments: list[ServerItemCommunityComment]
 
 class Comment(BaseModel):
     id: int
     commenter: str
-    username: Optional[str] = None
+    username: str | None = None
     content: str
-    created_at: Union[datetime, int]
-    deleted_at: Union[datetime, int, None] = None
+    created_at: datetime | int # idk probably TODO figure it out
+    deleted_at: datetime | int | None = None
     chart_id: str
-    owner: Optional[bool] = None
+    owner: bool | None = None
 
 class APIServerDeleteCommentResponse(Comment):
-    mod: Optional[bool] = None
+    mod: bool | None = None
 
 class NotificationRequest(BaseModel):
-    user_id: Optional[str] = None
-    chart_id: Optional[str] = None
+    user_id: str | None = None
+    chart_id: str | None = None
     title: str
-    content: Optional[str] = None
+    content: str | None = None
 
 class APIServerListCommentsResponse(BaseModel):
     data: list[Comment]
     pageCount: int
-    mod: Optional[bool] = None
-    admin: Optional[bool] = None
+    mod: bool | None = None
+    admin: bool | None = None
 
 class ServerItemCommunityInfo(BaseModel):
     actions: list[ServerForm]
     topComments: list[ServerItemCommunityComment]
 
-class ServerSubmitItemActionRequest(BaseModel):
+class ServerSubmitItemCommunityActionRequest(BaseModel):
     values: str
+
+
 
 class CommentRequest(BaseModel):
     content: str
@@ -574,3 +577,42 @@ class ParsedServerSubmitCommentActionRequest(BaseModel):
 
 class ParsedServerSubmitCommentIDActionRequest(BaseModel):
     type: str
+
+class ServerItemList(BaseModel):
+    pageCount: int
+    cursor: str | None = None
+    items: list[ServerItem]
+    searches: list[ServerForm] | None = None
+
+class Chart(BaseModel):
+    id: str
+    rating: int | Decimal
+    author: str  # author sonolus id
+    title: str
+    staff_pick: bool
+    artists: str | None = None
+    jacket_file_hash: str
+    music_file_hash: str
+    chart_file_hash: str
+    background_v1_file_hash: str
+    background_v3_file_hash: str
+    tags: list[str] | None = Field(default_factory=list)
+    description: str | None = None
+    preview_file_hash: str | None = None
+    background_file_hash: str | None = None
+    status: Literal["UNLISTED", "PRIVATE", "PUBLIC"]
+    like_count: int
+    comment_count: int
+    created_at: datetime
+    published_at: datetime | None = None
+    updated_at: datetime
+    author_full: str | None = None
+    chart_design: str
+    is_first_publish: bool | None = None  # only returned on update_status
+    liked: bool | None = None
+
+class APIServerGetChartResponse(BaseModel):
+    data: Chart
+    asset_base_url: str
+    mod: bool | None = None
+    owner: bool

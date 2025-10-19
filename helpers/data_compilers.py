@@ -1,6 +1,5 @@
 import json, os
 
-from typing import Optional, List
 from helpers.models import (
     EngineItem,
     SRL,
@@ -36,7 +35,7 @@ def clear_compile_cache(specific: str = None):
         cached = new_cached.copy()
 
 
-def compile_banner() -> Optional[SRL]:
+def compile_banner() -> SRL | None:
     if cached["banner"]:
         return cached["banner"]
     path = "files/banner/banner.png"
@@ -48,7 +47,7 @@ def compile_banner() -> Optional[SRL]:
 
 def compile_playlists_list(
     source: str = None, locale: str = "en"
-) -> List[PlaylistItem]:
+) -> list[PlaylistItem]:
     loc, locale = Locale.get_messages(locale)
     if cached.get(f"playlists_{locale}"):
         return cached[f"playlists_{locale}"]
@@ -88,7 +87,7 @@ def compile_playlists_list(
     return compiled_data_list
 
 
-def compile_static_posts_list(source: str = None) -> List[PostItem]:
+def compile_static_posts_list(source: str = None) -> list[PostItem]:
     if cached["static_posts"]:
         return cached["static_posts"]
     compiled_data_list = []
@@ -118,11 +117,11 @@ def compile_static_posts_list(source: str = None) -> List[PostItem]:
     return compiled_data_list
 
 
-def sort_posts_by_newest(posts: List[PostItem]) -> List[PostItem]:
+def sort_posts_by_newest(posts: list[PostItem]) -> list[PostItem]:
     return sorted(posts, key=lambda post: post["time"], reverse=True)
 
 
-def compile_effects_list(source: str = None) -> List[EffectItem]:
+def compile_effects_list(source: str = None) -> list[EffectItem]:
     if cached["effects"]:
         return cached["effects"]
     compiled_data_list = []
@@ -152,7 +151,7 @@ def compile_effects_list(source: str = None) -> List[EffectItem]:
 def compile_backgrounds_list(
     source: str = None,
     locale: str = "en",
-) -> List[BackgroundItem]:
+) -> list[BackgroundItem]:
     loc, locale = Locale.get_messages(locale)
     if cached.get(f"backgrounds_{locale}"):
         return cached[f"backgrounds_{locale}"]
@@ -192,7 +191,7 @@ def compile_backgrounds_list(
     return compiled_data_list
 
 
-def compile_particles_list(source: str = None) -> List[ParticleItem]:
+def compile_particles_list(source: str = None) -> list[ParticleItem]:
     if cached["particles"]:
         return cached["particles"]
     compiled_data_list = []
@@ -225,7 +224,7 @@ def compile_particles_list(source: str = None) -> List[ParticleItem]:
     return compiled_data_list
 
 
-def compile_skins_list(source: str = None) -> List[SkinItem]:
+def compile_skins_list(source: str = None) -> list[SkinItem]:
     if cached["skins"]:
         return cached["skins"]
     compiled_data_list = []
@@ -265,7 +264,7 @@ def compile_skins_list(source: str = None) -> List[SkinItem]:
     return compiled_data_list
 
 
-def compile_engines_list(source: str = None, locale: str = "en") -> List[EngineItem]:
+def compile_engines_list(source: str = None, locale: str = "en") -> list[EngineItem]:
     if cached.get(f"engines_{locale}"):
         return cached[f"engines_{locale}"]
     compiled_data_list = []

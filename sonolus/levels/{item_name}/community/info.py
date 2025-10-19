@@ -36,13 +36,8 @@ def process_comment(comment: Comment, is_mod: Optional[bool], localization, uwu_
 
 @router.get("/", response_model=ServerItemCommunityInfo)
 async def main(request: Request, item_name: str):
-    try:
-        locale = request.state.loc
-    except AssertionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     uwu_level = request.state.uwu
     auth = request.headers.get("Sonolus-Session")
-    actions = []
 
     headers = {request.app.auth_header: request.app.auth}
     if auth:
