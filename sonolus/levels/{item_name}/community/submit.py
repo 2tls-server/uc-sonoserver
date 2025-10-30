@@ -2,11 +2,10 @@ from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
 from helpers.sonolus_typings import ItemType
-from helpers.models import ServerSubmitItemCommunityActionRequest, ParsedServerSubmitCommentActionRequest, CommentRequest, ServerSubmitItemCommunityCommentActionResponse
 
-from pydantic import BaseModel
-
-from urllib.parse import parse_qs
+from helpers.models.sonolus.submit import ServerSubmitCommentActionRequest
+from helpers.models.api.comments import CommentRequest
+from helpers.models.sonolus.response import ServerSubmitItemCommunityCommentActionResponse
 
 router = APIRouter()
 
@@ -19,7 +18,7 @@ import aiohttp
 async def main(
     request: Request,
     item_name: str,
-    data: ServerSubmitItemCommunityActionRequest,
+    data: ServerSubmitCommentActionRequest,
 ):
     try:
         locale = request.state.loc
@@ -27,7 +26,7 @@ async def main(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     auth = request.headers.get("Sonolus-Session")
 
-    parsed_data = ParsedServerSubmitCommentActionRequest.model_validate({k: v[0] for k, v in parse_qs(data.values).items()})
+    parsed_data = data.parse()
 
     headers = {request.app.auth_header: request.app.auth}
     if auth:

@@ -8,7 +8,7 @@ from helpers.data_compilers import (
     compile_engines_list,
     compile_skins_list,
 )
-from helpers.models import ServerInfoButton
+from helpers.models.sonolus.misc import ServerInfoButton
 from helpers.data_helpers import (
     ServerFormOptionsFactory,
 )
@@ -139,7 +139,7 @@ async def main(request: Request):
             + [
                 {"name": item["name"], "title": item["title"]}
                 for item in particles
-                if item.get("engine_specific", False) == False
+                if item.get("engine_specific", False) == False # TODO uhh there is no engine_specific anymore
             ],
             description=handle_uwu(
                 locale.default_particle_desc, request.state.localization, uwu_level

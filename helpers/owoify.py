@@ -648,6 +648,7 @@ def handle_uwu(source: str, locale: str, uwu_level: str, symbols: bool = True) -
         return owoify(source, level=2, locale=locale, symbols=symbols)
     return source
 
+# TODO: typevars or something
 
 def handle_item_uwu(source_items: list, locale: str, uwu_level: str) -> list:
     returned = []

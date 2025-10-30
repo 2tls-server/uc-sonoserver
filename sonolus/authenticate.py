@@ -6,7 +6,7 @@ from ecdsa import VerifyingKey, NIST256p, ellipticcurve
 from ecdsa.util import string_to_number, sigdecode_string
 from fastapi import APIRouter, Request, status, HTTPException
 
-from helpers.models import ServerAuthenticateRequest
+from helpers.models.sonolus.account import ServerAuthenticateRequest
 
 from datetime import timedelta
 import time

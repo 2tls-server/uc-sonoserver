@@ -12,7 +12,7 @@ from helpers.data_compilers import (
 )
 from helpers.paginate import list_to_pages
 from helpers.sonolus_typings import ItemType
-from helpers.models import ServerItemList
+from helpers.models.sonolus.response import ServerItemList
 
 router = APIRouter()
 

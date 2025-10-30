@@ -3,7 +3,10 @@ from fastapi import HTTPException, status
 from typing import TypedDict, Optional
 
 from helpers.sonolus_typings import ItemType
-from helpers.models import ServerSubmitItemActionRequest, ServerSubmitItemCommunityCommentActionResponse, APIServerDeleteCommentResponse, NotificationRequest, ParsedServerSubmitCommentIDActionRequest
+from helpers.models.sonolus.submit import ServerSubmitCommentIDActionRequest
+from helpers.models.sonolus.response import ServerSubmitItemCommunityCommentActionResponse
+from helpers.models.api.comments import DeleteCommentResponse
+from helpers.models.api.notifications import NotificationRequest
 from urllib.parse import parse_qs
 
 router = APIRouter()
@@ -17,12 +20,12 @@ async def main(
     request: Request,
     item_name: str,
     comment_id: int,
-    data: ServerSubmitItemActionRequest,
+    data: ServerSubmitCommentIDActionRequest,
 ):
     locale: Loc = request.state.loc
     auth = request.headers.get("Sonolus-Session")
 
-    parsed_data = ParsedServerSubmitCommentIDActionRequest.model_validate({k: v[0] for k, v in parse_qs(data.values).items()})
+    parsed_data = data.parse()
 
     headers = {request.app.auth_header: request.app.auth}
     if auth:
@@ -49,7 +52,7 @@ async def main(
                 raise HTTPException(
                     status_code=req.status, detail=locale.unknown_error
                 )
-            del_data = APIServerDeleteCommentResponse.model_validate_json(await req.json())
+            del_data = DeleteCommentResponse.model_validate_json(await req.json())
             if del_data.mod and not del_data.owner:
                 async with cs.post(
                     request.app.api_config["url"]

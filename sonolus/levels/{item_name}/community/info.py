@@ -4,7 +4,10 @@ from fastapi import HTTPException, status
 from typing import Optional
 
 from helpers.sonolus_typings import ItemType
-from helpers.models import APIServerListCommentsResponse, Comment, ServerForm, ServerItemCommunityComment, ServerTextAreaOption, ServerItemCommunityInfo
+from helpers.models.api.comments import Comment, CommentList
+from helpers.models.sonolus.options import ServerForm, ServerTextAreaOption
+from helpers.models.sonolus.item import ServerItemCommunityComment
+from helpers.models.sonolus.response import ServerItemCommunityInfo
 
 router = APIRouter()
 
@@ -47,7 +50,7 @@ async def main(request: Request, item_name: str):
             request.app.api_config["url"]
             + f"/api/charts/{item_name.removeprefix('UnCh-')}/comment/"
         ) as req:
-            response = APIServerListCommentsResponse.model_validate_json(await req.json())
+            response = CommentList.model_validate_json(await req.json())
 
     comments = response.data
     formatted_comments = []

@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from helpers.sonolus_typings import ItemType
 from pydantic import BaseModel
 from typing import Optional
-from helpers.models import ReplayItem
+from helpers.models.sonolus.item import ReplayItem
 import aiohttp
 import json
 
@@ -11,13 +11,15 @@ router = APIRouter()
 
 from locales.locale import Loc
 
-class ServerSubmitLevelResultRequest(BaseModel):
-    replay: ReplayItem
-    values: str # "type=replay"
+# class ServerSubmitLevelResultRequest(BaseModel):
+#     replay: ReplayItem
+#     values: str # "type=replay"
 
-class ServerSubmitLevelResultResponse(BaseModel):
-    key: str
-    hashes: list[str]
+# class ServerSubmitLevelResultResponse(BaseModel):
+#     key: str
+#     hashes: list[str]
+
+# TODO
 
 @router.post("/")
 async def main(request: Request, item_type: ItemType, data: ServerSubmitLevelResultRequest):

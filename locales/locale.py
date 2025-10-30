@@ -1,6 +1,7 @@
 import json
 from typing import Dict, Tuple
 
+# TODO: Docstring or something like that
 
 class Loc:
     class Playlist:

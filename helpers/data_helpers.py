@@ -1,22 +1,9 @@
 from helpers.sonolus_typings import Text, ItemType, Icon
-from helpers.models import (
-    ServerItemSection,
-    ServerItem,
-    ServerForm,
-    ServerOption,
-    ServerCollectionItemOption,
-    ServerFileOption,
-    ServerMultiOption,
-    ServerSelectOption,
-    ServerSliderOption,
-    ServerServerItemsOption,
-    ServerServerItemOption,
-    ServerTextAreaOption,
-    ServerTextOption,
-    ServerToggleOption,
-    SIL,
-)
 
+from helpers.models.sonolus.item_section import ServerItemSection
+from helpers.models.sonolus.item import ServerItem
+from helpers.models.sonolus.options import *
+from helpers.models.sonolus.misc import SIL
 
 def create_section(
     title: Text | str,

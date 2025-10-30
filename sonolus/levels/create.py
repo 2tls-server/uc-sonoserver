@@ -12,7 +12,7 @@ from locales.locale import Loc
 
 
 @router.post("/")
-async def main(request: Request, item_type: ItemType):
+async def main(request: Request):
     locale: Loc = request.state.loc
 
     raise HTTPException(

@@ -4,7 +4,12 @@ from fastapi import APIRouter, Request
 from fastapi import HTTPException, status
 
 from helpers.sonolus_typings import ItemType
-from helpers.models import ServerItemCommunityCommentList, ServerForm, Comment, ServerItemCommunityComment, APIServerListCommentsResponse
+
+from helpers.models.sonolus.response import ServerItemCommunityCommentList
+from helpers.models.sonolus.options import ServerForm
+from helpers.models.api.comments import Comment
+from helpers.models.sonolus.item import ServerItemCommunityComment
+from helpers.models.api.comments import CommentList
 
 router = APIRouter()
 
@@ -50,7 +55,7 @@ async def main(request: Request, item_name: str):
             + f"/api/charts/{item_name.removeprefix('UnCh-')}/comment/",
             params={"page": page},
         ) as req:
-            response = APIServerListCommentsResponse.model_validate_json(await req.json())
+            response = CommentList.model_validate_json(await req.json())
 
     page_count = response.pageCount
     if page > page_count or page < 0:

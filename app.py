@@ -196,7 +196,7 @@ def load_routes(folder, cleanup: bool = True):
     def traverse_directory(directory):
         for root, dirs, files in os.walk(directory, topdown=False):
             for file in files:
-                if not "__pycache__" in root and file.endswith(".py"):
+                if not "__pycache__" in root and file.endswith(".py") and not file.startswith("_"):
                     route_name: str = (
                         os.path.join(root, file)
                         .removesuffix(".py")

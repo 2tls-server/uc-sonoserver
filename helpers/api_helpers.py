@@ -8,53 +8,9 @@ from helpers.data_compilers import (
     compile_skins_list,
 )
 from locales.locale import Loc
+from helpers.models.sonolus.item import LevelItem
 from helpers.owoify import handle_uwu
 from datetime import datetime, timedelta, timezone
-
-
-def api_notif_to_post(
-    request,
-    i: dict,
-    include_description: bool = False,
-) -> dict | tuple:
-    loc: Loc = request.state.loc
-    d = {
-        "name": f"notification-{i['id']}",
-        "source": request.app.base_url,
-        "version": 1,
-        "title": i["title"],
-        "time": i["timestamp"],
-        "author": "UntitledCharts",
-        "tags": [
-            (
-                {"title": loc.notification.READ_STATUS, "icon": "envelopeOpen"}
-                if i["is_read"]
-                else {"title": loc.notification.UNREAD_STATUS, "icon": "envelope"}
-            )
-        ],
-    }
-    if include_description:
-        content = i["content"]
-        content_parts = content.splitlines()
-        if content_parts[0].startswith("#"):
-            if content_parts[0] == "#CHART_DELETED":
-                del content_parts[0]
-                content = loc.notification.templates.CHART_DELETED(
-                    chart_name="\n".join(content_parts)
-                )
-            elif content_parts[0] == "#CHART_VISIBILITY_CHANGED":
-                del content_parts[0]
-                visibility = content_parts.pop(0)
-                content = loc.notification.templates.CHART_VISIBILITY_CHANGED(
-                    visibility_status=visibility, chart_name="\n".join(content_parts)
-                )
-            elif content_parts[0] == "#COMMENT_DELETED":
-                del content_parts[0]
-                content = loc.notification.templates.COMMENT_DELETED(
-                    comment_content="\n".join(content_parts)
-                )
-        return d, content
-    return d
 
 
 def api_level_to_level(
@@ -65,7 +21,7 @@ def api_level_to_level(
     include_description: bool = False,
     disable_replace_missing_preview: bool = False,
     context: str = "list",  # or level
-) -> dict | tuple:
+) -> tuple[LevelItem, str | None]: # TODO
     loc: Loc = request.state.loc
 
     @lru_cache(maxsize=None)
@@ -306,7 +262,7 @@ def api_level_to_level(
             )
 
     if not include_description:
-        return leveldata
+        return leveldata, None
     else:
         desc = i.get("description")
         if desc:
