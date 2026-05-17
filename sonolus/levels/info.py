@@ -290,6 +290,17 @@ async def main(request: SonolusRequest):
         )
     )
     options.append(
+        ServerTextOption(
+            query="sonolus_handle_is",
+            name=locale.search.AUTHOR_HANDLE,
+            required=False,
+            default="",
+            placeholder=locale.search.ENTER_TEXT,
+            limit=8,
+            shortcuts=[]
+        )
+    )
+    options.append(
         ServerSelectOption(
             query="sort_by",
             name=locale.search.SORT_BY,

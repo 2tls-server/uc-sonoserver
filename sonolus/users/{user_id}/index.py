@@ -41,6 +41,7 @@ async def main(request: SonolusRequest, user_id: str):
             LevelItemSection(
                 title="#POPULAR",
                 icon="level",
+                searchValues=f"type=advanced&sonolus_handle_is={profile.data.account.sonolus_handle}",
                 items=handle_item_uwu(
                     [
                         await request.app.run_blocking(

@@ -97,7 +97,8 @@
         "VISIBILITY_ALL": "All",
         "VISIBILITY_PUBLIC": "Public",
         "VISIBILITY_UNLISTED": "Unlisted",
-        "VISIBILITY_PRIVATE": "Private"
+        "VISIBILITY_PRIVATE": "Private",
+        "AUTHOR_HANDLE": "Author Handle"
     },
     "leaderboard": {
         "YOU_ARE_BANNED": "You are banned",

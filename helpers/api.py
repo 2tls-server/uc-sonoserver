@@ -323,6 +323,7 @@ class API:
         ],
         sort_order: Literal["desc", "asc", None],
         meta_includes: str | None,
+        sonolus_handle_is: int | None,
     ) -> Request[ChartList]:
         params = {
             "type": "advanced",
@@ -345,6 +346,7 @@ class API:
             "sort_by": sort_by,
             "sort_order": sort_order,
             "meta_includes": meta_includes,
+            "sonolus_handle_is": sonolus_handle_is
         }
 
         params = {k: v for k, v in params.items() if v is not None}

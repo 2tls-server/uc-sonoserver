@@ -103,7 +103,8 @@
     "VISIBILITY_ALL": "Все",
     "VISIBILITY_PUBLIC": "Публичные",
     "VISIBILITY_UNLISTED": "Не указанные",
-    "VISIBILITY_PRIVATE": "Приватные"
+    "VISIBILITY_PRIVATE": "Приватные",
+    "AUTHOR_HANDLE": "Хэндл автора"
   },
   "leaderboard": {
     "YOU_ARE_BANNED": "Вы забанены",

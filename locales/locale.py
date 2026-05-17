@@ -457,6 +457,13 @@ class Loc:
             Ascending
             """
             return self._get("ASCENDING")
+        
+        @property
+        def AUTHOR_HANDLE(self) -> str:
+            """
+            Author Handle
+            """
+            return self._get("AUTHOR_HANDLE")
 
     class Notification:
         class Templates:

@@ -49,6 +49,7 @@ async def main(
         "PUBLIC"
     ),  # will only ever be PUBLIC here. anything else, go to playlists
     keywords: str | None = Query(None),
+    sonolus_handle_is: int | None = Query(None),
 ):
     locale = request.state.loc
     uwu_level = request.state.uwu
@@ -92,6 +93,7 @@ async def main(
             sort_by=sort_by,
             sort_order=sort_order,
             meta_includes=keywords,
+            sonolus_handle_is=sonolus_handle_is,
         ).send(auth)
 
     pageCount = response.data.pageCount
